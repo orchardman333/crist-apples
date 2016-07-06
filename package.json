@@ -1,0 +1,15 @@
+{
+  "name": "crist-farms",
+  "version": "0.0.1",
+  "description": "Crist Farms Application.",
+  "main": "server.js",
+  "author": "Scott Ross",
+  "dependencies": {
+    "angular": "^1.5.7",
+    "body-parser": "^1.4.3",
+    "bootstrap": "^3.3.6",
+    "express": "^4.13.4",
+    "method-override": "^2.1.3",
+    "morgan": "^1.1.1"
+  }
+}
