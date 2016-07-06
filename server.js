@@ -1,9 +1,11 @@
+//https://github.com/mscdex/node-mariasql
 // set up ========================
 var express  = require('express');
 var app      = express();                               // create our app w/ express
 var morgan = require('morgan');             // log requests to the console (express4)
 var bodyParser = require('body-parser');    // pull information from HTML POST (express4)
 var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
+var tools = require('./services/example');
 
 // configuration =================
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
@@ -15,8 +17,11 @@ app.use(methodOverride());
 
 // application -------------------------------------------------------------
 app.get('*', function(req, res) {
-    res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+  res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
 });
+
+// REST API -------------------------------------------------------------
+
 
 // listen (start app with node server.js) ======================================
 app.listen(8080);
