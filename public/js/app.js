@@ -6,10 +6,22 @@ angular.module('crist_farms', ['ngRoute'])
         .when('/#', {
             controller: 'HomeController',
             templateUrl: 'js/views/home.html',
-        }) //load_run
+        })
         .when('/load_run', {
             controller: 'LoadRunController',
             templateUrl: 'js/views/load_run.html',
-        }) //load_run
+        })
+        .when('/pack_bin', {
+            controller: 'PackBinController',
+            templateUrl: 'js/views/pack_bin.html',
+        })
+        .when('/storage_transfer', {
+            controller: 'StorageTransferController',
+            templateUrl: 'js/views/storage_transfer.html',
+        })
+        .when('/time_form', {
+            controller: 'TimeFormController',
+            templateUrl: 'js/views/time_form.html',
+        })
         .otherwise({ redirectTo: '/#' });
 }]);
