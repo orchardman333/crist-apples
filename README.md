@@ -13,9 +13,8 @@ NodeJS, ExpressJS, AngularJS, and MariaDB
 
 ## Installation
 Installation is easy using these steps on windows:
-1. Install Chocolatey
-(open up a cmd.exe ... execute this script:
-@powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin)
+
+1. Install Chocolatey (open up a cmd.exe ... execute this script: @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin)
 2. choco install git
 3. choco install nodejs.install
 4. Clone repo using: git clone https://github.com/sross07/crist-apples.git
