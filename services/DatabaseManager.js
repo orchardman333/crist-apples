@@ -11,3 +11,10 @@ module.exports = {
       database : 'orchard_run'
     })
 }};
+
+/*
+host     : 'localhost',
+user     : 'root',
+password : '*****',
+database : 'orchard_run'
+*/
