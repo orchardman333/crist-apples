@@ -1,5 +1,23 @@
 <h1>Load Run</h1>
 <div class="form-group">
+  <label for="truck_driver">Truck Driver:</label>
+  <select class="form-control" ng-model="truck_driver">
+    <option value="Scott">Scott</option>
+    <option value="Jedd">Jedd</option>
+    <option value="Bob">Bob</option>
+    <option value="Mary">Mary</option>
+  </select>
+  <br/>
+
+  <label for="storage">Storage:</label>
+  <select class="form-control" ng-model="storage">
+    <option value="Storage1">Storage1</option>
+    <option value="Storage2">Storage2</option>
+    <option value="Storage3">Storage3</option>
+    <option value="Storage4">Storage4</option>
+  </select>
+  <br/>
+
   <label for="inputlg">Scan Barcode</label>
   <input class="form-control input-lg" id="scan" type="text" ng-model="scan" focus-on="newItemAdded">
   <button type="button" class="btn btn-link" ng-click="submit()">Submit</button>
