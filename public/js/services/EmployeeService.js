@@ -9,6 +9,7 @@ angular.module('crist_farms')
    service.GetTruckDrivers = function(callback){
      $http.get("/api/truck_drivers/").success(function(data, status, headers, config)
      {
+       console.log(data);
        callback(data);
      });
    };

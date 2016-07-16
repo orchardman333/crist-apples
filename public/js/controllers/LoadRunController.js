@@ -24,9 +24,8 @@ angular.module('crist_farms')
      // 25 - Bin Barcode
      // Other - employee
      var typeOfBarCode = "";
-     if ($scope.scan.length == 25){
+     if ($scope.scan.length > 25){
        typeOfBarCode = "BIN";
-
      }
      else {
        typeOfBarCode = "Emplyoee";
@@ -36,6 +35,7 @@ angular.module('crist_farms')
        barcode: $scope.scan,
        typeBarCode:typeOfBarCode
      }
+
      $scope.barCodes.push(value);
      $scope.scan = "";
      $scope.$broadcast('newItemAdded');

@@ -35,6 +35,6 @@ TODO: Write usage instructions
 
 ## Credits
 
-Application Programmer - Scott Ross (sross07 on GitHub)
+Scott Ross (sross07 on GitHub)
 
 ## License
