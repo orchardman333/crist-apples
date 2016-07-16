@@ -2,19 +2,13 @@
 <div class="form-group">
   <label for="truck_driver">Truck Driver:</label>
   <select class="form-control" ng-model="truck_driver">
-    <option value="Scott">Scott</option>
-    <option value="Jedd">Jedd</option>
-    <option value="Bob">Bob</option>
-    <option value="Mary">Mary</option>
+    <option ng-repeat="ee in truckDrivers" value="{{ee.id}}">{{ee.name}}</option>
   </select>
   <br/>
 
   <label for="storage">Storage:</label>
-  <select class="form-control" ng-model="storage">
-    <option value="Storage1">Storage1</option>
-    <option value="Storage2">Storage2</option>
-    <option value="Storage3">Storage3</option>
-    <option value="Storage4">Storage4</option>
+  <select class="form-control" ng-model="default_storage">
+    <option ng-repeat="storage in storageList" value="{{storage.id}}">{{storage.name}}</option>
   </select>
   <br/>
 

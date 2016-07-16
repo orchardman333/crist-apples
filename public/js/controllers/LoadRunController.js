@@ -2,11 +2,22 @@
 
 angular.module('crist_farms')
 
-.controller('LoadRunController', ['$scope', 'LoadRunService', 'StorageService', 'TruckDriversService',
- function ($scope, loadRunService, storageService, truckDriversService) {
+.controller('LoadRunController', ['$scope', 'LoadRunService', 'StorageService', 'EmployeeService',
+ function ($scope, loadRunService, storageService, employeeService) {
 
    $scope.barCodes = [];
+   $scope.truckDrivers = [];
+   $scope.storageList = [];
 
+   employeeService.GetTruckDrivers(function (data) {
+     $scope.truckDrivers=data;
+   });
+
+    storageService.GetStorageList(function (data) {
+      $scope.storageList =data;
+   });
+
+   //console.log($scope.storageList);
    $scope.submit = function(){
 
      // Determine if barcode is a bin vs. employee
@@ -28,6 +39,6 @@ angular.module('crist_farms')
      $scope.barCodes.push(value);
      $scope.scan = "";
      $scope.$broadcast('newItemAdded');
-   }
+   };
 
  }]);

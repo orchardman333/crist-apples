@@ -34,8 +34,15 @@ app.get('/api/storage', function(req, res) {
     id: 1
   };
 
-  var storage_setup =[];storage_setup
+  var store2 ={
+    name: "storage2",
+    id: 2
+  };
+
+
+  var storage_setup =[];
   storage_setup.push(store);
+  storage_setup.push(store2);
   res.json(storage_setup);
 });
 
