@@ -26,6 +26,8 @@ angular.module('crist_farms')
        typeBarCode:typeOfBarCode
      }
      $scope.barCodes.push(value);
+     $scope.scan = "";
+     $scope.$broadcast('newItemAdded');
    }
 
  }]);

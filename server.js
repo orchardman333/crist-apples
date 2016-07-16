@@ -1,5 +1,6 @@
 //https://github.com/mscdex/node-mariasql
 // set up ========================
+var portListen = 4000;
 var express  = require('express');
 var app      = express();                               // create our app w/ express
 var morgan = require('morgan');             // log requests to the console (express4)
@@ -24,5 +25,5 @@ app.get('*', function(req, res) {
 
 
 // listen (start app with node server.js) ======================================
-app.listen(4000);
-console.log("App listening on port 8080");
+app.listen(portListen);
+console.log("App listening on port " + portListen);

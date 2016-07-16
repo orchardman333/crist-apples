@@ -1,7 +1,7 @@
 'use strict';
+var app = angular.module('crist_farms', ['ngRoute']);
 
-angular.module('crist_farms', ['ngRoute'])
-.config(['$routeProvider', function ($routeProvider) {
+app.config(['$routeProvider', function ($routeProvider) {
   $routeProvider
         .when('/#', {
             controller: 'HomeController',
@@ -25,3 +25,11 @@ angular.module('crist_farms', ['ngRoute'])
         })
         .otherwise({ redirectTo: '/#' });
 }]);
+
+app.directive('focusOn', function() {
+   return function(scope, elem, attr) {
+      scope.$on(attr.focusOn, function(e) {
+          elem[0].focus();
+      });
+   };
+});
