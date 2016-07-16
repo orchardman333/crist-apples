@@ -2,8 +2,8 @@
 
 angular.module('crist_farms')
 
-.controller('LoadRunController', ['$scope',
- function ($scope) {
+.controller('LoadRunController', ['$scope', 'LoadRunService', 'StorageService', 'TruckDriversService',
+ function ($scope, loadRunService, storageService, truckDriversService) {
 
    $scope.barCodes = [];
 
