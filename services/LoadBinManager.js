@@ -13,8 +13,11 @@ module.exports = {
 
       //console.log(barcodeValues);
       if (barcodeValues.typeBarcode == 'bin'){
-        insertIntoBinTable(barcodeValues);
+
         // Insert into load_table
+        insertIntoLoadTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id);
+        insertIntoBinTable(barcodeValues);
+
         // Save bin id to variable for next barcode to use
       }
       else {
@@ -24,6 +27,23 @@ module.exports = {
     }
     res.send("Data Saved!");
   }
+};
+
+var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id){
+  //TODO: Find Truck ID
+  var conn = db.connection;
+  var sql = "INSERT INTO `orchard_run`.`load_table` VALUES('1','" +
+              barcodeValues.binId+ "','" +
+              truck_driver_id+ "','" +
+              storage_id+ "'," +
+              "CURDATE(),CURTIME(), '1')";
+  console.log(sql);
+
+  conn().query(sql, function(err, res){
+    console.log(err);
+    conn().commit(function(err) {
+    });
+  })
 };
 
 var insertIntoBinTable = function(barcodeValues){
