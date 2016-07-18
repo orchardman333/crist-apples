@@ -1,1 +1,16 @@
 <h1>Review Load Reports</h1>
+
+<table st-table="rowCollection" class="table table-striped">
+	<thead>
+	<tr>
+		<th>first name</th>
+		<th>last name</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr ng-repeat="row in rowCollection">
+		<td>{{row.firstName}}</td>
+		<td>{{row.lastName}}</td>
+	</tr>
+	</tbody>
+</table>
