@@ -1,20 +1,19 @@
 <h1>Load Run</h1>
 <div class="form-group">
+  <div id="alert_placeholder"></div>
   <label for="truck_driver">Truck Driver:</label>
-  <select class="form-control" ng-model="truck_driver">
-    <option ng-repeat="ee in truckDrivers" value="{{ee.id}}">{{ee.name}}</option>
+  <select class="form-control" ng-model="truck_driver" ng-options="ee.name for ee in truckDrivers">
   </select>
   <br/>
 
   <label for="storage">Storage:</label>
-  <select class="form-control" ng-model="default_storage">
-    <option ng-repeat="storage in storageList" value="{{storage.id}}">{{storage.name}}</option>
+  <select class="form-control" ng-model="default_storage" ng-options="storage.name for storage in storageList">
   </select>
   <br/>
 
   <label for="inputlg">Scan Barcode</label>
   <input class="form-control input-lg" id="scan" type="text" ng-model="scan" focus-on="newItemAdded">
-  <button type="button" class="btn btn-link" ng-click="submit()">Add Barcode</button>
+  <button type="button" class="btn btn-link" ng-click="add_barcode()">Add Barcode</button>
 </div>
 <div class="well">
    <h3>Scanned Bar Codes</h3>
@@ -27,6 +26,6 @@
      </li>
    </ul>
    <br/><br/><br/>
-   <button type="button" class="btn btn-primary">Submit Data</button>
-   <button type="button" class="btn btn-danger">Cancel</button>
+   <button type="button" class="btn btn-primary" ng-click="submit()">Submit Data</button>
+   <button type="button" class="btn btn-danger" ng-click="cancel()">Cancel</button>
 </div>

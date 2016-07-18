@@ -18,7 +18,7 @@ angular.module('crist_farms')
    });
 
    //console.log($scope.storageList);
-   $scope.submit = function(){
+   $scope.add_barcode = function(){
 
      // Determine if barcode is a bin vs. employee
      // 25 - Bin Barcode
@@ -38,6 +38,31 @@ angular.module('crist_farms')
 
      $scope.barCodes.push(value);
      $scope.scan = "";
+     $scope.$broadcast('newItemAdded');
+   };
+
+   $scope.submit = function(){
+      $('#alert_placeholder').html('<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>Load Submitted</span></div>')
+            setTimeout(function () {
+                $("div.alert").remove();
+            }, 2000);
+
+      var data = {
+        storage: $scope.default_storage,
+        truck_driver: $scope.truck_driver,
+        barCodes: $scope.barCodes
+      };
+      loadRunService.SubmitLoadRun(data);
+   };
+
+   $scope.cancel = function(){
+     $('#alert_placeholder').html('<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>Load Cancelled</span></div>')
+            setTimeout(function () {
+                $("div.alert").remove();
+            }, 2000);
+
+     $scope.barCodes = [];
+     $scope.scan="";
      $scope.$broadcast('newItemAdded');
    };
 
