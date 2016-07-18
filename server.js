@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');    // pull information from HTML POST (
 var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
 var eeManager = require('./services/EmployeeManager');
 var storageManager = require('./services/StorageManager');
-
+var loadBinManager = require('./services/LoadBinManager');
 
 // configuration =================
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
@@ -28,8 +28,7 @@ app.get('/api/storage', function(req, res) {
 });
 
 app.post('/api/loadRun', function(req, res) {
-  console.log(req.body);
-  res.send("Good post!");
+  loadBinManager.LoadBins(req, res);
 });
 
 // application -------------------------------------------------------------

@@ -17,23 +17,27 @@ angular.module('crist_farms')
       $scope.storageList =data;
    });
 
+   $scope.removeBarCode = function(barcode){
+     console.log(barcode);
+     var index =  $scope.barCodes.indexOf(barcode);
+     console.log(index);
+     if (index > -1) {
+          $scope.barCodes.splice(index, 1);
+      }
+   };
+
+   $scope.clearData = function(){
+     $scope.barCodes = [];
+     $scope.scan="";
+     $scope.$broadcast('newItemAdded');
+   };
+
    //console.log($scope.storageList);
    $scope.add_barcode = function(){
-
-     // Determine if barcode is a bin vs. employee
-     // 25 - Bin Barcode
-     // Other - employee
-     var typeOfBarCode = "";
-     if ($scope.scan.length > 25){
-       typeOfBarCode = "BIN";
-     }
-     else {
-       typeOfBarCode = "Emplyoee";
-     }
-
      var value = {
        barcode: $scope.scan,
-       typeBarCode:typeOfBarCode
+       storage: $scope.default_storage,
+       truck_driver: $scope.truck_driver
      }
 
      $scope.barCodes.push(value);
@@ -48,11 +52,10 @@ angular.module('crist_farms')
             }, 2000);
 
       var data = {
-        storage: $scope.default_storage,
-        truck_driver: $scope.truck_driver,
         barCodes: $scope.barCodes
       };
       loadRunService.SubmitLoadRun(data);
+      $scope.clearData();
    };
 
    $scope.cancel = function(){
@@ -60,10 +63,7 @@ angular.module('crist_farms')
             setTimeout(function () {
                 $("div.alert").remove();
             }, 2000);
-
-     $scope.barCodes = [];
-     $scope.scan="";
-     $scope.$broadcast('newItemAdded');
+    $scope.clearData();
    };
 
  }]);

@@ -19,11 +19,11 @@
    <h3>Scanned Bar Codes</h3>
    <ul class="list-group">
      <li class="list-group-item" ng-repeat="barcode in barCodes track by $index">
-       {{barcode.barcode}} {{barcode.typeBarCode}}
-       <!--<button type="button">
-          <span class='glyphicon glyphicon-trash'></span>
-      </button>-->
-     </li>
+       {{barcode.barcode}}
+        <button type="button" ng-click="removeBarCode(barcode)">
+            <span class='glyphicon glyphicon-trash'></span>
+        </button>
+    </li>
    </ul>
    <br/><br/><br/>
    <button type="button" class="btn btn-primary" ng-click="submit()">Submit Data</button>
