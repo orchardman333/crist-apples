@@ -9,27 +9,11 @@ module.exports = {
     for(var i=0; i < req.body.barCodes.length; i++)
     {
       var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);
-      console.log(barcodeValues);
+      // TODO: Need to decode the default config to get "boxes"
+
+      //console.log(barcodeValues);
       if (barcodeValues.typeBarcode == 'bin'){
-        // Insert into bin_table
-        var conn = db.connection;
-        // Need to decode the default config to get "boxes"
-        var sql = "INSERT INTO `orchard_run`.`bin_table` VALUES('" +
-                    barcodeValues.binId+ "','" +
-                    barcodeValues.varietyId+ "','" +
-                    barcodeValues.strainId+ "','" +
-                    barcodeValues.blockId+ "'," +
-                    "CURDATE(),'1','" +
-                    barcodeValues.pickId+ "'," +
-                    "null,null)";
-        console.log(sql);
-
-        conn().query(sql, function(err, res){
-          console.log(err);
-          conn().commit(function(err) {
-          });
-        });
-
+        insertIntoBinTable(barcodeValues);
         // Insert into load_table
         // Save bin id to variable for next barcode to use
       }
@@ -40,6 +24,25 @@ module.exports = {
     }
     res.send("Data Saved!");
   }
+};
+
+var insertIntoBinTable = function(barcodeValues){
+    var conn = db.connection;
+    var sql = "INSERT INTO `orchard_run`.`bin_table` VALUES('" +
+                barcodeValues.binId+ "','" +
+                barcodeValues.varietyId+ "','" +
+                barcodeValues.strainId+ "','" +
+                barcodeValues.blockId+ "'," +
+                "CURDATE(),'1','" +
+                barcodeValues.pickId+ "'," +
+                "null,null)";
+    console.log(sql);
+
+    conn().query(sql, function(err, res){
+      console.log(err);
+      conn().commit(function(err) {
+      });
+    });
 };
 
 var decodeBarCode = function(barcode){
@@ -67,6 +70,7 @@ var decodeBarCode = function(barcode){
   }
   else {
     //this is an employee barcode
+    // TODO:  Stub this out with data
     values = {
       typeBarcode : 'employee'
     }
