@@ -68,26 +68,26 @@ var insertIntoBinTable = function(barcodeValues){
 var decodeBarCode = function(barcode){
   var values = {};
   if (barcode.length == 17){
-    values = {
-      typeBarcode : 'bin',
-      strainId: barcode.substring(0, 1),
-      varietyId: barcode.substring(2, 3),
-      blockId: barcode.substring(4, 6),
-      jobId: barcode.substring(7, 10),
-      pickId: barcode.substring(11),
-      binId: barcode.substring(12, 16)
-    }
-  }
-   else if (barcode.length ==15) {
       values = {
         typeBarcode : 'bin',
-        varietyId: barcode.substring(0, 1),
-        blockId:  barcode.substring(2, 4),
-        jobId:  barcode.substring(5, 8),
-        pickId:  barcode.substring(9),
-        binId:  barcode.substring(10, 14)
+        strainId: barcode.substring(0, 2),
+        varietyId: barcode.substring(2, 4),
+        blockId: barcode.substring(4, 7),
+        jobId: barcode.substring(7, 11),
+        pickId: barcode.substring(12, 13),
+        binId: barcode.substring(12, 17)
+     }
       }
-  }
+     else if (barcode.length ==15) {
+        values = {
+          typeBarcode : 'bin',
+          varietyId: barcode.substring(0, 2),
+          blockId:  barcode.substring(2, 5),
+          jobId:  barcode.substring(5, 9),
+          pickId:  barcode.substring(9, 10),
+          binId:  barcode.substring(10, 15)
+          }
+      }
   else {
     //this is an employee barcode
     // TODO:  Stub this out with data
