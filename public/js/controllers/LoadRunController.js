@@ -6,6 +6,7 @@ angular.module('crist_farms')
  function ($scope, loadRunService, storageService, employeeService) {
 
    $scope.barCodes = [];
+   $scope.displayBarCodes = $scope.barCodes.slice().reverse();
    $scope.truckDrivers = [];
    $scope.storageList = [];
 
@@ -18,18 +19,18 @@ angular.module('crist_farms')
    });
 
    $scope.removeBarCode = function(barcode){
-     console.log(barcode);
-     var index =  $scope.barCodes.indexOf(barcode);
-     console.log(index);
+    var index =  $scope.barCodes.indexOf(barcode);
      if (index > -1) {
           $scope.barCodes.splice(index, 1);
       }
+      $scope.displayBarCodes = $scope.barCodes.slice().reverse();
    };
 
    $scope.clearData = function(){
      $scope.barCodes = [];
      $scope.scan="";
      $scope.$broadcast('newItemAdded');
+     $scope.displayBarCodes = $scope.barCodes.slice().reverse();
    };
 
    //console.log($scope.storageList);
@@ -43,6 +44,7 @@ angular.module('crist_farms')
      $scope.barCodes.push(value);
      $scope.scan = "";
      $scope.$broadcast('newItemAdded');
+     $scope.displayBarCodes = $scope.barCodes.slice().reverse();
    };
 
    $scope.submit = function(){

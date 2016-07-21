@@ -12,13 +12,13 @@
   <br/>
 
   <label for="inputlg">Scan Barcode</label>
-  <input class="form-control input-lg" id="scan" type="text" ng-model="scan" focus-on="newItemAdded">
+  <input class="form-control input-lg" id="scan" type="text" ng-model="scan" focus-on="newItemAdded" my-enter="add_barcode()">
   <button type="button" class="btn btn-link" ng-click="add_barcode()">Add Barcode</button>
 </div>
 <div class="well">
    <h3>Scanned Bar Codes</h3>
    <ul class="list-group">
-     <li class="list-group-item" ng-repeat="barcode in barCodes track by $index">
+     <li class="list-group-item" ng-repeat="barcode in displayBarCodes track by $index">
        {{barcode.barcode}}
         <button type="button" ng-click="removeBarCode(barcode)">
             <span class='glyphicon glyphicon-trash'></span>
