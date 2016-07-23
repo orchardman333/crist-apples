@@ -1,5 +1,3 @@
-// databaseManager.js
-// ========
 var mysql   = require("mysql");
 var db   = require("./DatabaseManager");
 module.exports = {
@@ -8,7 +6,6 @@ module.exports = {
       var conn = db.connection;
       conn().query("select `Storage ID` AS uid, `type` as storage_type, `Farm ID` as farm_id from storage_table", function(err, rows, fields) {
         if (err) throw err;
-
         var storageList = [];
         for(var x=0; x<rows.length; x++){
           var row = rows[x];
@@ -21,7 +18,6 @@ module.exports = {
       });
       conn().end();
     }
-
     getData(function(storageList){
       res.json(storageList);
     });

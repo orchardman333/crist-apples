@@ -5,13 +5,11 @@ angular.module('crist_farms')
  function ($http) {
    // this service handles retrieving the truck drivers data from API
    var service = {};
-
    service.GetTruckDrivers = function(callback){
      $http.get("/api/truck_drivers/").success(function(data, status, headers, config)
      {
        callback(data);
      });
    };
-
    return service;
  }]);
