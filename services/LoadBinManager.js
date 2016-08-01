@@ -20,7 +20,6 @@ module.exports = {
         // Save bin id to variable for next barcode to use
         holderBinId=barcodeValues.binId;
         holderJobId=barcodeValues.jobId;
-
       }
       else {
         // Else this is a Employee
@@ -34,20 +33,13 @@ module.exports = {
 };
 
 var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id){
-  //TODO: Find Truck ID
-  var conn = db.connection;
-  var sql = "INSERT INTO `orchard_run`.`load_table` VALUES('1','" +
-              barcodeValues.binId+ "','" +
-              truck_driver_id+ "','" +
-              storage_id+ "'," +
-              "CURDATE(),CURTIME(), '1')";
-  console.log(sql);
 
+  var conn = db.connection;
+  var sql = "INSERT INTO `orchard_run`.`load_table` (`Load ID`, `Bin ID`, `Employee ID`, `Storage ID`, Date, Time, `Truck ID`) select max(`Load ID`)+1, "+  barcodeValues.binId + ","+  truck_driver_id + ","+ storage_id + ", CURDATE(),CURTIME(), '1' from `orchard_run`.`load_table` ";
   conn().query(sql, function(err, res){
-    console.log(err);
     conn().commit(function(err) {
     });
-  })
+  });
 };
 
 var insertIntoBinTable = function(barcodeValues){

@@ -23,6 +23,10 @@ app.config(['$routeProvider', function ($routeProvider) {
             controller: 'TimeFormController',
             templateUrl: 'js/views/time_form.html',
         })
+        .when('/lr', {
+            controller: 'LrController',
+            templateUrl: 'js/views/lr.html',
+        })
         .when('/load_report', {
             controller: 'LoadReportController',
             templateUrl: 'js/views/load_report.html',

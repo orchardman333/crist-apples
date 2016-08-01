@@ -3,6 +3,7 @@
 angular.module('crist_farms')
 .service('LoadRunService', ['$http',
  function ($http) {
+   var thisData = [];
    var service = {};
    service.SubmitLoadRun = function(data){
      $http.post("/api/loadRun/", data ).then(function (result) { /* probably need to do something here */});
@@ -12,6 +13,13 @@ angular.module('crist_farms')
      {
        callback(data);
      });
+   };
+   service.SaveData = function(data){
+     thisData = data;
+   };
+
+   service.GetData = function(data){
+     return thisData;
    };
    return service;
  }]);
