@@ -20,6 +20,9 @@
    <ul class="list-group">
      <li class="list-group-item" ng-repeat="barcode in displayBarCodes track by $index">
        {{barcode.barcode}}
+       {{barcode.variety}}
+       {{barcode.strainName}} 
+       {{barcode.blockName}}
         <button type="button" ng-click="removeBarCode(barcode)">
             <span class='glyphicon glyphicon-trash'></span>
         </button>

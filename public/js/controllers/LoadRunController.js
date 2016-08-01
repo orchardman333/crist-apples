@@ -35,16 +35,24 @@ angular.module('crist_farms')
 
    //console.log($scope.storageList);
    $scope.add_barcode = function(){
-     var value = {
-       barcode: $scope.scan,
-       storage: $scope.default_storage,
-       truck_driver: $scope.truck_driver
-     }
 
-     $scope.barCodes.push(value);
-     $scope.scan = "";
-     $scope.$broadcast('newItemAdded');
-     $scope.displayBarCodes = $scope.barCodes.slice().reverse();
+     var callback = function(decodeData){
+       var value = {
+         barcode: $scope.scan,
+         storage: $scope.default_storage,
+         truck_driver: $scope.truck_driver,
+         variety: decodeData.varietyName,
+         strainName: decodeData.strainName,
+         blockName: decodeData.blockName
+       }
+
+       $scope.barCodes.push(value);
+       $scope.scan = "";
+       $scope.$broadcast('newItemAdded');
+       $scope.displayBarCodes = $scope.barCodes.slice().reverse();
+     };
+
+     loadRunService.DecodeBarCode({barCode: $scope.scan}, callback);
    };
 
    $scope.submit = function(){

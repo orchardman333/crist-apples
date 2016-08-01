@@ -10,6 +10,7 @@ var eeManager = require('./services/EmployeeManager');
 var storageManager = require('./services/StorageManager');
 var loadBinManager = require('./services/LoadBinManager');
 var loadReportManager = require('./services/LoadReportManager');
+var lookupManager = require('./services/LookupManager');
 
 // configuration =================
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
@@ -26,6 +27,10 @@ app.get('/api/truck_drivers', function(req, res) {
 
 app.get('/api/LoadReports', function(req, res) {
   loadReportManager.LoadReport(res);
+});
+
+app.post('/api/LookupManager', function(req, res) {
+  lookupManager.GetVarietyStrainBlock(req,res);
 });
 
 app.get('/api/storage', function(req, res) {

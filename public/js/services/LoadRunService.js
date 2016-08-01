@@ -18,6 +18,13 @@ angular.module('crist_farms')
      thisData = data;
    };
 
+   service.DecodeBarCode = function(data, callback){
+    $http.post("/api/LookupManager/", data ).then(function (result) {
+      //console.log(result.data);
+      callback(result.data);
+    });
+   };
+
    service.GetData = function(data){
      return thisData;
    };

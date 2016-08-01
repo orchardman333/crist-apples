@@ -1,5 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="crist_farms">
+
+  <script type="text/javascript">
+    function CallPrint(strid) {
+        var prtContent = document.getElementById(strid);
+        //var WinPrint = window.open('');
+        var WinPrint = window.open('', '', 'height=400,width=800');
+        WinPrint.document.write(prtContent.innerHTML);
+        WinPrint.document.close();
+        WinPrint.focus();
+        WinPrint.print();
+        WinPrint.close();
+        //prtContent.innerHTML = strOldOne;
+    }
+  </script>
+  
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
