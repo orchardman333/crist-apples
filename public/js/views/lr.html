@@ -1,27 +1,27 @@
 <h1>Review Load</h1>
 
 <div id="printingContent">
-
-<table st-table="rowCollection" class="table table-striped">
-	<thead>
-	<tr>
-		<th>Bin ID</th>
-		<th>Variety</th>
-		<th>Block Names</th>
-		<th>Date Picked</th>
-		<th>Pickers</th>
-	</tr>
-	</thead>
-	<tbody>
-	<tr ng-repeat="row in rowCollection">
-		<td>{{row.bin_id}}</td>
-		<td>{{row.variety}}</td>
-		<td>{{row.block_names}}</td>
-		<td>{{row.date_picked | date:'MM/dd/yyyy'}}</td>
-		<td>{{row.pickers}}</td>
-	</tr>
-	</tbody>
-</table>
+  <table st-table="rowCollection" class="table table-striped">
+  	<thead>
+  	<tr>
+  		<th>Bin ID</th>
+  		<th>Block</th>
+      <th>Variety</th>
+      <th>Storage</th>
+      <th>Truck Driver</th>
+  	</tr>
+  	</thead>
+  	<tbody>
+  	<tr ng-repeat="row in rowCollection">
+  		<td>{{row.bin_id}}</td>
+      <td>{{row.block_names}}</td>
+  		<td>{{row.variety}}</td>
+  		<td>{{row.storage}}</td>
+      <td>{{row.truck_driver}}</td>
+  	</tr>
+  	</tbody>
+  </table>
 <div>
-
+<br>
+<br>
 <a href="javascript:CallPrint('printingContent')">print</a>

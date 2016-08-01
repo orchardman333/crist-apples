@@ -19,13 +19,12 @@ angular.module('crist_farms')
    };
 
    service.DecodeBarCode = function(data, callback){
-    $http.post("/api/LookupManager/", data ).then(function (result) {
-      //console.log(result.data);
+    $http.post("/api/LookupManager/", data ).then(function (result) {  
       callback(result.data);
     });
    };
 
-   service.GetData = function(data){
+   service.GetData = function(){
      return thisData;
    };
    return service;
