@@ -37,6 +37,7 @@ var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id){
   var conn = db.connection;
   var sql = "INSERT INTO `orchard_run`.`load_table` (`Load ID`, `Bin ID`, `Employee ID`, `Storage ID`, Date, Time, `Truck ID`) select max(`Load ID`)+1, "+  barcodeValues.binId + ","+  truck_driver_id + ","+ storage_id + ", CURDATE(),CURTIME(), '1' from `orchard_run`.`load_table` ";
   conn().query(sql, function(err, res){
+    console.log(err);
     conn().commit(function(err) {
     });
   });
