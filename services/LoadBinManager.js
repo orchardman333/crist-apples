@@ -16,13 +16,15 @@ module.exports = {
       if (barcodeValues.typeBarcode == 'bin'){
         number_of_ee = 0;
         // Insert into load_table
-        insertIntoBinTable(barcodeValues);
-        insertIntoLoadTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id);
+        var loadInsert = function(){
+          insertIntoLoadTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id);
+        };
+        insertIntoBinTable(barcodeValues, loadInsert);
+
 
         // Save bin id to variable for next barcode to use
         holderBinId=barcodeValues.binId;
         holderJobId=barcodeValues.jobId;
-
 
         for(var index=i+1; index < req.body.barCodes.length; index++)
         {
@@ -58,7 +60,7 @@ var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id){
   });
 };
 
-var insertIntoBinTable = function(barcodeValues){
+var insertIntoBinTable = function(barcodeValues, loadInsert){
     var conn = db.connection;
     var sql = '';
 
@@ -88,6 +90,7 @@ var insertIntoBinTable = function(barcodeValues){
     conn().query(sql, function(err, res){
       console.log(err);
       conn().commit(function(err) {
+        loadInsert();
       });
     });
 };
