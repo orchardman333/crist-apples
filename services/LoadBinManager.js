@@ -122,7 +122,7 @@ var decodeBarCode = function(barcode){
         varietyId: barcode.substring(2, 4),
         blockId: barcode.substring(4, 7),
         jobId: barcode.substring(7, 11),
-        pickId: barcode.substring(12, 13),
+        pickId: barcode.substring(11, 12),
         binId: barcode.substring(12, 17)
      }
   }
