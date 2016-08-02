@@ -43,8 +43,10 @@ angular.module('crist_farms')
          truck_driver: $scope.truck_driver,
          variety: decodeData.varietyName,
          strainName: decodeData.strainName,
-         blockName: decodeData.blockName
+         blockName: decodeData.blockName,
+         nr_boxes: $scope.nr_boxes
        }
+       console.log($scope.nr_boxes);
 
        $scope.barCodes.push(value);
        $scope.scan = "";

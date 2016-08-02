@@ -11,6 +11,10 @@
   </select>
   <br/>
 
+  <label for="NumberBoxes">Number Boxes:</label>
+  <input type="number" step="1" name="est_mpg" id="nr_boxes" ng-model="nr_boxes" class="form-control" ng-init="nr_boxes=20" />
+  <br/>
+
   <label for="inputlg">Scan Barcode</label>
   <input class="form-control input-lg" id="scan" type="text" ng-model="scan" focus-on="newItemAdded" my-enter="add_barcode()">
   <button type="button" class="btn btn-link" ng-click="add_barcode()">Add Barcode</button>

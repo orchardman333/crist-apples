@@ -10,11 +10,15 @@ module.exports = {
     var holderBinId = '';
     var holderJobId = '';
     var number_of_ee = 0;
+    var nr_boxes=0;
     for(var i=0; i < req.body.barCodes.length; i++)
     {
       var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);
+
       if (barcodeValues.typeBarcode == 'bin'){
         number_of_ee = 0;
+        nr_boxes = req.body.barCodes[i].nr_boxes;
+        console.log("Number boxes: " + nr_boxes);
         // Insert into load_table
         //insertIntoLoadTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id);
         //
@@ -40,7 +44,7 @@ module.exports = {
         //var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);
         // Insert into boxes_table
         //Math.round(100*number_of_ee)/100;
-        insertIntoBoxes(barcodeValues, holderBinId, Math.round(100*number_of_ee)/100, holderJobId)
+        insertIntoBoxes(barcodeValues, holderBinId, Math.round(100*(nr_boxes/number_of_ee))/100, holderJobId)
       }
     }
     res.send("Data Saved!");
