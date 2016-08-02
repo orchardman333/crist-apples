@@ -39,7 +39,8 @@ module.exports = {
         // Else this is a Employee
         var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);
         // Insert into boxes_table
-        insertIntoBoxes(barcodeValues, holderBinId, Math.round(20/number_of_ee), holderJobId)
+        //Math.round(100*number_of_ee)/100;
+        insertIntoBoxes(barcodeValues, holderBinId, Math.round(100*number_of_ee)/100, holderJobId)
       }
     }
     res.send("Data Saved!");
