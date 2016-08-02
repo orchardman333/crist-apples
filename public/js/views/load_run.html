@@ -7,7 +7,7 @@
   <br/>
 
   <label for="storage">Storage:</label>
-  <select class="form-control" ng-model="default_storage" ng-options="storage.name for storage in storageList">
+  <select class="form-control" ng-model="default_storage" ng-options="storage.id for storage in storageList">
   </select>
   <br/>
 
@@ -21,8 +21,10 @@
      <li class="list-group-item" ng-repeat="barcode in displayBarCodes track by $index">
        {{barcode.barcode}}
        {{barcode.variety}}
-       {{barcode.strainName}} 
+       {{barcode.strainName}}
        {{barcode.blockName}}
+       {{barcode.storage}}
+       {{barcode.truck_driver}}
         <button type="button" ng-click="removeBarCode(barcode)">
             <span class='glyphicon glyphicon-trash'></span>
         </button>

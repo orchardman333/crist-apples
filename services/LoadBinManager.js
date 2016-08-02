@@ -21,7 +21,6 @@ module.exports = {
         };
         insertIntoBinTable(barcodeValues, loadInsert);
 
-
         // Save bin id to variable for next barcode to use
         holderBinId=barcodeValues.binId;
         holderJobId=barcodeValues.jobId;
