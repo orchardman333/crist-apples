@@ -16,8 +16,9 @@ module.exports = {
       if (barcodeValues.typeBarcode == 'bin'){
         number_of_ee = 0;
         // Insert into load_table
-        insertIntoLoadTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id);
+        //insertIntoLoadTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id);
         //
+        insertIntoBinTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id);
 
         // Save bin id to variable for next barcode to use
         holderBinId=barcodeValues.binId;
@@ -36,7 +37,7 @@ module.exports = {
       }
       else {
         // Else this is a Employee
-        var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);
+        //var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);
         // Insert into boxes_table
         //Math.round(100*number_of_ee)/100;
         insertIntoBoxes(barcodeValues, holderBinId, Math.round(100*number_of_ee)/100, holderJobId)
@@ -53,12 +54,11 @@ var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id){
   conn().query(sql, function(err, res){
     console.log(err);
     conn().commit(function(err) {
-        insertIntoBinTable(barcodeValues);
     });
   });
 };
 
-var insertIntoBinTable = function(barcodeValues){
+var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id){
     var conn = db.connection;
     var sql = '';
 
@@ -88,7 +88,7 @@ var insertIntoBinTable = function(barcodeValues){
     conn().query(sql, function(err, res){
       console.log(err);
       conn().commit(function(err) {
-
+        insertIntoLoadTable(barcodeValues, truck_driver_id, storage_id);
       });
     });
 };

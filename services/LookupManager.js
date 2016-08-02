@@ -3,51 +3,54 @@ var mysql   = require("mysql");
 var db   = require("./DatabaseManager");
 module.exports = {
   GetVarietyStrainBlock: function (req,res) {
-
     var values = decodeBarCode(req.body.barCode);
-
     if (values.typeBarcode == 'employee'){
       res.send({
         varietyName: '',
-        strainName :'',
+        strainName : '',
         blockName: ''
       });
     }
     else {
-      var getStrainVarietyBlockValues = function(values, callback){
-        var varietyName = '';
-        var strainName = '';
-        var blockName = '';
-
-        console.log(values);
-
-        var conn = db.connection;
-        conn().query("select `Variety Name` as name from variety_table where `Variety Id` ='" + values.varietyId +"'", function(err, rows, fields) {
-          console.log(err);
-          varietyName=rows.name;
-        });
-
-        conn().query("select `Strain Name` as name from strain_table where `Strain Id` ='" + values.stringId +"'", function(err, rows, fields) {
-          strainName=rows.name;
-        });
-
-        conn().query("select `Block Name` as name from block_table where `Block Id` ='" + values.blockId +"'", function(err, rows, fields) {
-          blockName = rows.name;
-        });
-
-        callback( {
-          varietyName: varietyName,
-          strainName :strainName,
-          blockName: blockName
-        });
-      };
-
-      getStrainVarietyBlockValues(values, function(data){
+      doWork(values.varietyId, values.strainId, values.blockId, function(data){
         res.json(data);
       });
     }
   }
 };
+
+var doWork = function(varietyId,strainId, blockId, callback ){
+  var variety, strain, block = '';
+  var conn = db.connection;
+  conn().query("select `Variety Name` as vname from variety_table where `Variety Id` ='" + varietyId+"'", function(err, rows, fields) {
+    if (rows.length == 1)
+    {
+      varietyName = rows[0].vname;
+    }
+    else {
+      varietyName='';
+    }
+    conn().query("select `Strain Name` as name from strain_table where `Strain Id` ='" + strainId +"'", function(err, r, fields) {
+      if (r.length == 1)
+      {
+        strain = r[0].name;
+      }
+      else {
+        strain='';
+      }
+      conn().query("select `Block Name` as name from block_table where `Block Id` ='" + blockId +"'", function(err, t, fields) {
+        if (t.length == 1)
+        {
+          block = t[0].name;
+        }
+        else {
+          block='';
+        }
+        callback({varietyName: varietyName,strainName:strain,blockName:block});
+      });
+    });
+  });
+}
 
 var decodeBarCode = function(barcode){
   var values = {};
