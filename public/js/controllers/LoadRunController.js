@@ -35,26 +35,34 @@ angular.module('crist_farms')
 
    //console.log($scope.storageList);
    $scope.add_barcode = function(){
+     if (angular.isUndefined($scope.scan) || $scope.scan === null  ){
+       $('#alert_placeholder').html('<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>No Barcode entered!</span></div>')
+              setTimeout(function () {
+                  $("div.alert").remove();
+              }, 2000);
+      $scope.clearData();
+     }
+     else{
+       var callback = function(decodeData){
+         var value = {
+           barcode: $scope.scan,
+           storage: $scope.default_storage,
+           truck_driver: $scope.truck_driver,
+           variety: decodeData.varietyName,
+           strainName: decodeData.strainName,
+           blockName: decodeData.blockName,
+           nr_boxes: $scope.nr_boxes
+         }
+         console.log($scope.nr_boxes);
 
-     var callback = function(decodeData){
-       var value = {
-         barcode: $scope.scan,
-         storage: $scope.default_storage,
-         truck_driver: $scope.truck_driver,
-         variety: decodeData.varietyName,
-         strainName: decodeData.strainName,
-         blockName: decodeData.blockName,
-         nr_boxes: $scope.nr_boxes
-       }
-       console.log($scope.nr_boxes);
+         $scope.barCodes.push(value);
+         $scope.scan = "";
+         $scope.$broadcast('newItemAdded');
+         $scope.displayBarCodes = $scope.barCodes.slice().reverse();
+       };
 
-       $scope.barCodes.push(value);
-       $scope.scan = "";
-       $scope.$broadcast('newItemAdded');
-       $scope.displayBarCodes = $scope.barCodes.slice().reverse();
-     };
-
-     loadRunService.DecodeBarCode({barCode: $scope.scan}, callback);
+       loadRunService.DecodeBarCode({barCode: $scope.scan}, callback);
+     }
    };
 
    $scope.submit = function(){
