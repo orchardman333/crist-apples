@@ -9,10 +9,12 @@ module.exports = {
 
     var holderBinId = '';
     var holderJobId = '';
+    var number_of_ee = 0;
     for(var i=0; i < req.body.barCodes.length; i++)
     {
       var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);
       if (barcodeValues.typeBarcode == 'bin'){
+        number_of_ee = 0;
         // Insert into load_table
         insertIntoBinTable(barcodeValues);
         insertIntoLoadTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id);
@@ -20,12 +22,24 @@ module.exports = {
         // Save bin id to variable for next barcode to use
         holderBinId=barcodeValues.binId;
         holderJobId=barcodeValues.jobId;
+
+
+        for(var index=i+1; index < req.body.barCodes.length; index++)
+        {
+          var barcodeValues = decodeBarCode(req.body.barCodes[index].barcode);
+          if (barcodeValues.typeBarcode != 'bin'){
+            number_of_ee = number_of_ee + 1;
+          }
+          else {
+            break;
+          }
+        }
       }
       else {
         // Else this is a Employee
         var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);
         // Insert into boxes_table
-        insertIntoBoxes(barcodeValues, holderBinId, '1', holderJobId)
+        insertIntoBoxes(barcodeValues, holderBinId, Math.round(20/number_of_ee), holderJobId)
       }
     }
     res.send("Data Saved!");
