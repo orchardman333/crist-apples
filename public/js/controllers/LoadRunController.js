@@ -9,6 +9,12 @@ angular.module('crist_farms')
    $scope.displayBarCodes = $scope.barCodes.slice().reverse();
    $scope.truckDrivers = [];
    $scope.storageList = [];
+   $scope.truckList = [];
+   //$scope.comments = '';
+
+   employeeService.GetTrucks(function (data) {
+     $scope.truckList=data;
+   });
 
    employeeService.GetTruckDrivers(function (data) {
      $scope.truckDrivers=data;
@@ -51,9 +57,11 @@ angular.module('crist_farms')
            variety: decodeData.varietyName,
            strainName: decodeData.strainName,
            blockName: decodeData.blockName,
-           nr_boxes: $scope.nr_boxes
+           nr_boxes: $scope.nr_boxes,
+           comments: $scope.comments,
+           truck_id: $scope.default_truck.id
          }
-         console.log($scope.nr_boxes);
+         console.log($scope.default_truck.id);
 
          $scope.barCodes.push(value);
          $scope.scan = "";

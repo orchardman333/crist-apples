@@ -11,5 +11,12 @@ angular.module('crist_farms')
        callback(data);
      });
    };
+
+   service.GetTrucks = function(callback){
+     $http.get("/api/truck/").success(function(data, status, headers, config)
+     {
+       callback(data);
+     });
+   };
    return service;
  }]);

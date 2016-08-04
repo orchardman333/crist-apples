@@ -11,6 +11,7 @@ var storageManager = require('./services/StorageManager');
 var loadBinManager = require('./services/LoadBinManager');
 var loadReportManager = require('./services/LoadReportManager');
 var lookupManager = require('./services/LookupManager');
+var truckManager = require('./services/TruckManager');
 
 // configuration =================
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
@@ -24,6 +25,12 @@ app.use(methodOverride());
 app.get('/api/truck_drivers', function(req, res) {
   eeManager.GetTruckDrivers(res);
 });
+
+// REST API -------------------------------------------------------------
+app.get('/api/truck', function(req, res) {
+  truckManager.GetTrucks(res);
+});
+
 
 app.get('/api/LoadReports', function(req, res) {
   loadReportManager.LoadReport(res);
