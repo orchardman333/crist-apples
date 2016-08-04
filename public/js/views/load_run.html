@@ -11,8 +11,17 @@
   </select>
   <br/>
 
+  <label for="truck_id">Truck ID:</label>
+  <select class="form-control" ng-model="default_truck" ng-options="truck.id for truck in truckList">
+  </select>
+  <br/>
+
   <label for="NumberBoxes">Number Boxes:</label>
   <input type="number" step="1" name="est_mpg" id="nr_boxes" ng-model="nr_boxes" class="form-control" ng-init="nr_boxes=20" />
+  <br/>
+
+  <label for="inputlg">Comments:</label>
+  <input class="form-control input-lg" id="scan" type="text" ng-model="Comments">
   <br/>
 
   <label for="inputlg">Scan Barcode</label>

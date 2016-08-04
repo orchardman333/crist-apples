@@ -1,1 +1,17 @@
-<h3> This will be the place for the time form</h3>
+<h3> Time Form </h3>
+<label for="inputlg">Job ID:</label>
+<input class="form-control input-lg" id="scan" type="text" ng-model="job_id">
+<br/>
+<label for="truck_driver">Employee:</label>
+<select class="form-control" ng-model="employee" ng-options="ee.name for ee in employee">
+</select>
+<br/>
+<div class="radio">
+  <label><input type="radio" name="optradio">Start Shift</label>
+</div>
+<div class="radio">
+  <label><input type="radio" name="optradio">End Shift</label>
+</div>
+<br>
+<button type="button" class="btn btn-primary" ng-click="submit()">Submit Data</button>
+<button type="button" class="btn btn-danger" ng-click="cancel()">Cancel</button>
