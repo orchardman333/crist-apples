@@ -4,8 +4,11 @@
 // ========
 var mysql   = require("mysql");
 var db   = require("./DatabaseManager");
+var conn = '';
+
 module.exports = {
   LoadBins: function (req,res) {
+    conn=db.connection;
 
     var holderBinId = '';
     var holderJobId = '';
@@ -52,7 +55,7 @@ module.exports = {
 };
 
 var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id, truck_id, load_seq_id){
-  var conn = db.connection;
+
   var sql = "INSERT INTO `orchard_run`.`load_table` (`Load ID`, `Bin ID`, `Employee ID`, `Storage ID`, Date, Time, `Truck ID`) values ('" + load_seq_id+ "', "+  barcodeValues.binId + ",'"+  truck_driver_id + "','"+ storage_id + "', CURDATE(),CURTIME(), '"+ truck_id+ "')";
 
   console.log(sql);
@@ -64,7 +67,6 @@ var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id, t
 };
 
 var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, comments, truck_id,load_seq_id){
-    var conn = db.connection;
     var sql = '';
 
     if (barcodeValues.lengthBarCode == 17){
@@ -100,7 +102,6 @@ var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, co
 
 
 var insertIntoBoxes = function(barcodeValues, binId, boxes, jobId){
-    var conn = db.connection;
     var sql = "INSERT INTO `orchard_run`.`boxes_table` VALUES('" +
                 binId+ "','" +
                 barcodeValues.eeId+ "','" +
