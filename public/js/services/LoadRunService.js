@@ -14,6 +14,15 @@ angular.module('crist_farms')
        callback(data);
      });
    };
+
+   service.GetLoadSequenceId = function(callback){
+     $http.get("/api/loadSequenceId/").success(function(data, status, headers, config)
+     {
+       callback(data);
+     });
+   };
+
+
    service.SaveData = function(data){
      thisData = data;
    };

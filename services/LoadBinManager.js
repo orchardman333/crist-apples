@@ -22,7 +22,7 @@ module.exports = {
         // Insert into load_table
         //insertIntoLoadTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id);
         //
-        insertIntoBinTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id, req.body.barCodes[i].comments, req.body.barCodes[i].truck_id);
+        insertIntoBinTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id, req.body.barCodes[i].comments, req.body.barCodes[i].truck_id, req.body.barCodes[i].load_seq_id);
 
         // Save bin id to variable for next barcode to use
         holderBinId=barcodeValues.binId;
@@ -51,9 +51,10 @@ module.exports = {
   }
 };
 
-var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id, truck_id){
+var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id, truck_id, load_seq_id){
   var conn = db.connection;
-  var sql = "INSERT INTO `orchard_run`.`load_table` (`Load ID`, `Bin ID`, `Employee ID`, `Storage ID`, Date, Time, `Truck ID`) select max(`Load ID`)+1, "+  barcodeValues.binId + ",'"+  truck_driver_id + "','"+ storage_id + "', CURDATE(),CURTIME(), '"+ truck_id+ "' from `orchard_run`.`load_table` ";
+  var sql = "INSERT INTO `orchard_run`.`load_table` (`Load ID`, `Bin ID`, `Employee ID`, `Storage ID`, Date, Time, `Truck ID`) values ('" + load_seq_id+ "', "+  barcodeValues.binId + ",'"+  truck_driver_id + "','"+ storage_id + "', CURDATE(),CURTIME(), '"+ truck_id+ "')";
+
   console.log(sql);
   conn().query(sql, function(err, res){
     console.log(err);
@@ -62,7 +63,7 @@ var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id, t
   });
 };
 
-var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, comments, truck_id){
+var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, comments, truck_id,load_seq_id){
     var conn = db.connection;
     var sql = '';
 
@@ -92,7 +93,7 @@ var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, co
     conn().query(sql, function(err, res){
       console.log(err);
       conn().commit(function(err) {
-        insertIntoLoadTable(barcodeValues, truck_driver_id, storage_id, truck_id);
+        insertIntoLoadTable(barcodeValues, truck_driver_id, storage_id, truck_id,load_seq_id);
       });
     });
 };

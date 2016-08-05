@@ -20,8 +20,13 @@ angular.module('crist_farms')
      $scope.truckDrivers=data;
    });
 
-    storageService.GetStorageList(function (data) {
+   storageService.GetStorageList(function (data) {
       $scope.storageList =data;
+   });
+
+   loadRunService.GetLoadSequenceId(function(data){
+     console.log("Sequence ID is: " + data.id);
+     $scope.loadSeqId = data.id;
    });
 
    $scope.removeBarCode = function(barcode){
@@ -59,7 +64,8 @@ angular.module('crist_farms')
            blockName: decodeData.blockName,
            nr_boxes: $scope.nr_boxes,
            comments: $scope.comments,
-           truck_id: $scope.default_truck.id
+           truck_id: $scope.default_truck.id,
+           load_seq_id: $scope.loadSeqId
          }
          console.log($scope.default_truck.id);
 
