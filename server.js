@@ -13,6 +13,7 @@ var loadReportManager = require('./services/LoadReportManager');
 var lookupManager = require('./services/LookupManager');
 var truckManager = require('./services/TruckManager');
 var loadSeqManager = require('./services/LoadSequenceIdManager');
+var timeFormManager = require('./services/TimeFormManager');
 
 // configuration =================
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
@@ -46,6 +47,10 @@ app.get('/api/storage', function(req, res) {
 
 app.post('/api/loadRun', function(req, res) {
   loadBinManager.LoadBins(req, res);
+});
+
+app.post('/api/timeForm', function(req,res) {
+  timeFormManager.DoWork(req,res);
 });
 
 app.get('/api/loadSequenceId', function(req, res){

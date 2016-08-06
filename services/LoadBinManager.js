@@ -4,7 +4,7 @@
 // ========
 var mysql   = require("mysql");
 var db   = require("./DatabaseManager");
-var conn = '';
+var conn = {};
 
 module.exports = {
   LoadBins: function (req,res) {
