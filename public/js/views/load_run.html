@@ -23,6 +23,11 @@
   <label for="inputlg">Comments:</label>
   <input class="form-control input-lg" id="scan" type="text" ng-model="comments">
   <br/>
+  <label for="inputlg">Date:</label>
+  <ng-datepicker ng-model="date" format="YYYY-MM-DD" view-format="YYYY-MM-DD">
+  </ng-datepicker>
+  <span ng-bind="ctrl.date1" style="display: block; margin-top: 5px;"></span>
+  <br/>
 
   <label for="inputlg">Scan Barcode</label>
   <input class="form-control input-lg" id="scan" type="text" ng-model="scan" focus-on="newItemAdded" my-enter="add_barcode()">

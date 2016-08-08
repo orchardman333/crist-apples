@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('crist_farms', ['ngRoute']);
+var app = angular.module('crist_farms', ['ngRoute', 'jkuri.datepicker']);
 
 app.config(['$routeProvider', function ($routeProvider) {
   $routeProvider

@@ -25,7 +25,7 @@ module.exports = {
         // Insert into load_table
         //insertIntoLoadTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id);
         //
-        insertIntoBinTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id, req.body.barCodes[i].comments, req.body.barCodes[i].truck_id, req.body.barCodes[i].load_seq_id);
+        insertIntoBinTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id, req.body.barCodes[i].comments, req.body.barCodes[i].truck_id, req.body.barCodes[i].load_seq_id, req.body.barCodes[i].date);
 
         // Save bin id to variable for next barcode to use
         holderBinId=barcodeValues.binId;
@@ -66,7 +66,7 @@ var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id, t
   });
 };
 
-var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, comments, truck_id,load_seq_id){
+var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, comments, truck_id,load_seq_id, date){
     var sql = '';
 
     if (barcodeValues.lengthBarCode == 17){
@@ -74,8 +74,8 @@ var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, co
               barcodeValues.binId+ "','" +
               barcodeValues.varietyId+ "','" +
               barcodeValues.strainId+ "','" +
-              barcodeValues.blockId+ "'," +
-              "CURDATE(),'1','" +
+              barcodeValues.blockId+ "','" +
+              date +"','1','" +
               barcodeValues.pickId+ "'," +
               "null,'"+comments+"')";
     }
@@ -84,8 +84,8 @@ var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, co
               barcodeValues.binId+ "','" +
               barcodeValues.varietyId+ "'," +
               "null"+ ",'" +
-              barcodeValues.blockId+ "'," +
-              "CURDATE(),'1','" +
+              barcodeValues.blockId+ "','" +
+              date +"'1','" +
               barcodeValues.pickId+ "'," +
               "null,'"+comments+"')";
     }

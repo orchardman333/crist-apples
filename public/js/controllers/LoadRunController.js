@@ -12,6 +12,16 @@ angular.module('crist_farms')
    $scope.truckList = [];
    $scope.default_truck={id:''};
 
+    var d = new Date(Date.now()),
+           month = '' + (d.getMonth() + 1),
+           day = '' + d.getDate(),
+           year = d.getFullYear();
+
+     if (month.length < 2) month = '0' + month;
+     if (day.length < 2) day = '0' + day;
+
+     $scope.date = [year, month, day].join('-');
+
    employeeService.GetTrucks(function (data) {
      $scope.truckList=data;
    });
@@ -72,7 +82,8 @@ angular.module('crist_farms')
            comments: $scope.comments,
            truck_id: $scope.default_truck.id,
            load_seq_id: $scope.loadSeqId,
-           bin_id: binId
+           bin_id: binId,
+           date : $scope.date
          }
          console.log($scope.default_truck.id);
 

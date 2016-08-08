@@ -13,6 +13,7 @@
     "morgan": "^1.1.1",
     "mysql" : "~2.5.5",
     "bluebird" : "*",
-    "angular-smart-table" : "*"
+    "angular-smart-table" : "*",
+    "ng-datepicker" : "*"
   }
 }

@@ -19,7 +19,9 @@ angular.module('crist_farms')
          }
        }
 
-       if (barCodes[index].barcode.length < 13)
+       console.log(barCodes[i].barcode.length);
+
+       if (barCodes[i].barcode.length > 13)
        {
          $scope.rowCollection.push({
           bin_id: barCodes[i].bin_id,
