@@ -10,7 +10,7 @@ angular.module('crist_farms')
    $scope.truckDrivers = [];
    $scope.storageList = [];
    $scope.truckList = [];
-   //$scope.comments = '';
+   $scope.default_truck={id:''};
 
    employeeService.GetTrucks(function (data) {
      $scope.truckList=data;
@@ -25,7 +25,6 @@ angular.module('crist_farms')
    });
 
    loadRunService.GetLoadSequenceId(function(data){
-     console.log("Sequence ID is: " + data.id);
      $scope.loadSeqId = data.id;
    });
 
@@ -55,6 +54,13 @@ angular.module('crist_farms')
      }
      else{
        var callback = function(decodeData){
+         var binId = '';
+         if ($scope.scan.length == 17){
+          binId = $scope.scan.substring(12, 17);
+         }
+         else {
+           binId = $scope.scan.substring(10, 15);
+         }
          var value = {
            barcode: $scope.scan,
            storage: $scope.default_storage,
@@ -65,7 +71,8 @@ angular.module('crist_farms')
            nr_boxes: $scope.nr_boxes,
            comments: $scope.comments,
            truck_id: $scope.default_truck.id,
-           load_seq_id: $scope.loadSeqId
+           load_seq_id: $scope.loadSeqId,
+           bin_id: binId
          }
          console.log($scope.default_truck.id);
 

@@ -39,6 +39,7 @@ var doWork = function(varietyId,strainId, blockId, callback ){
         strain='';
       }
       conn().query("select `Block Name` as name from block_table where `Block Id` ='" + blockId +"'", function(err, t, fields) {
+        console.log(blockId);
         if (t.length == 1)
         {
           block = t[0].name;
