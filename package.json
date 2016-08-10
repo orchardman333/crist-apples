@@ -15,5 +15,9 @@
     "bluebird" : "*",
     "angular-smart-table" : "*",
     "ng-datepicker" : "*"
+  },
+  "scripts": {
+  "install-windows-service": "winser -i",
+  "uninstall-windows-service": "winser -r"
   }
 }
