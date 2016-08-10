@@ -40,12 +40,16 @@ var doWork = function(varietyId,strainId, blockId, callback ){
       }
       conn().query("select `Block Name` as name from block_table where `Block Id` ='" + blockId +"'", function(err, t, fields) {
         console.log(blockId);
-        if (t.length == 1)
-        {
-          block = t[0].name;
-        }
-        else {
+        if t == null{
           block='';
+        }else {
+          if (t.length == 1)
+          {
+            block = t[0].name;
+          }
+          else {
+            block='';
+          }
         }
         callback({varietyName: varietyName,strainName:strain,blockName:block});
       });
