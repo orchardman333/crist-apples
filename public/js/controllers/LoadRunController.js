@@ -17,10 +17,10 @@ angular.module('crist_farms')
            day = '' + d.getDate(),
            year = d.getFullYear();
 
-     if (month.length < 2) month = '0' + month;
-     if (day.length < 2) day = '0' + day;
+   if (month.length < 2) month = '0' + month;
+   if (day.length < 2) day = '0' + day;
 
-     $scope.date = [year, month, day].join('-');
+   $scope.date = [year, month, day].join('-');
 
    employeeService.GetTrucks(function (data) {
      $scope.truckList=data;
