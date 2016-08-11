@@ -50,6 +50,7 @@ module.exports = {
         insertIntoBoxes(barcodeValues, holderBinId, Math.round(100*(nr_boxes/number_of_ee))/100, holderJobId)
       }
     }
+    conn().end();
     res.send("Data Saved!");
   }
 };

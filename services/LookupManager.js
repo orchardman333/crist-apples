@@ -55,6 +55,8 @@ var doWork = function(varietyId,strainId, blockId, callback ){
       });
     });
   });
+
+  conn().end();
 }
 
 var decodeBarCode = function(barcode){
