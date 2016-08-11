@@ -36,5 +36,6 @@ module.exports = {
     });
 
     res.send("Data Saved!");
+    conn().end();
   }
 };
