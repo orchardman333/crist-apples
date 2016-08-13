@@ -113,7 +113,7 @@ var insertIntoBoxes = function(barcodeValues, binId, boxes, jobId){
     console.log(sql);
 
     db.getConnection(function(err, connection) {
-      connection.query.query(sql, function(err, res){
+      connection.query(sql, function(err, res){
         console.log(err);
         connection.commit(function(err) {
           connection.release();
