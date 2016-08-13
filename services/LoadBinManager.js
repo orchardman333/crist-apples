@@ -14,6 +14,11 @@ module.exports = {
     for(var i=0; i < req.body.barCodes.length; i++)
     {
       var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);
+      db.getConnection(function(err, connection) {
+        connection.query("SET FOREIGN_KEY_CHECKS=0;", function(err, res){
+          connection.commit(function(err) {});
+        });
+      });
 
       if (barcodeValues.typeBarcode == 'bin'){
         number_of_ee = 0;
@@ -114,7 +119,9 @@ var insertIntoBoxes = function(barcodeValues, binId, boxes, jobId){
 
     db.getConnection(function(err, connection) {
       connection.query(sql, function(err, res){
-        console.log(err);
+        if (err) {
+            console.log(err);
+        }
         connection.commit(function(err) {
           connection.release();
         });
