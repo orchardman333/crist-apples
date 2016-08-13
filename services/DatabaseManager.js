@@ -2,15 +2,13 @@
 // ========
 var mysql   = require("mysql");
 
-module.exports = {
-  connection: function () {
+var pool  = mysql.createPool({
+    host     : 'localhost',
+    user     : 'root',
+    database : 'orchard_run'
+});
 
-    return mysql.createConnection({
-      host     : 'localhost',
-      user     : 'root',
-      database : 'orchard_run'
-    })
-}};
+exports.pool = pool;
 
 /*
 host     : 'localhost',

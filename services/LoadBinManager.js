@@ -2,14 +2,11 @@
 // LdMch31P090110006
 // Mch31P090110006
 // ========
-var mysql   = require("mysql");
-var db   = require("./DatabaseManager");
-var conn = {};
+
+var db   = require("./DatabaseManager").pool;
 
 module.exports = {
   LoadBins: function (req,res) {
-    conn=db.connection;
-
     var holderBinId = '';
     var holderJobId = '';
     var number_of_ee = 0;
@@ -50,7 +47,6 @@ module.exports = {
         insertIntoBoxes(barcodeValues, holderBinId, Math.round(100*(nr_boxes/number_of_ee))/100, holderJobId)
       }
     }
-    conn().end();
     res.send("Data Saved!");
   }
 };
@@ -60,9 +56,12 @@ var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id, t
   var sql = "INSERT INTO `orchard_run`.`load_table` (`Load ID`, `Bin ID`, `Employee ID`, `Storage ID`, Date, Time, `Truck ID`) values ('" + load_seq_id+ "', "+  barcodeValues.binId + ",'"+  truck_driver_id + "','"+ storage_id + "', CURDATE(),CURTIME(), '"+ truck_id+ "')";
 
   console.log(sql);
-  conn().query(sql, function(err, res){
-    console.log(err);
-    conn().commit(function(err) {
+  db.getConnection(function(err, connection) {
+    connection.query(sql, function(err, res){
+      console.log(err);
+      connection.commit(function(err) {
+        connection.release();
+      });
     });
   });
 };
@@ -93,10 +92,13 @@ var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, co
 
     console.log(sql);
 
-    conn().query(sql, function(err, res){
-      console.log(err);
-      conn().commit(function(err) {
-        insertIntoLoadTable(barcodeValues, truck_driver_id, storage_id, truck_id,load_seq_id);
+    db.getConnection(function(err, connection) {
+      connection.query(sql, function(err, res){
+        console.log(err);
+        connection.commit(function(err) {
+          insertIntoLoadTable(barcodeValues, truck_driver_id, storage_id, truck_id,load_seq_id);
+          connection.release();
+        });
       });
     });
 };
@@ -110,9 +112,12 @@ var insertIntoBoxes = function(barcodeValues, binId, boxes, jobId){
                 jobId+ "')";
     console.log(sql);
 
-    conn().query(sql, function(err, res){
-      console.log(err);
-      conn().commit(function(err) {
+    db.getConnection(function(err, connection) {
+      connection.query.query(sql, function(err, res){
+        console.log(err);
+        connection.commit(function(err) {
+          connection.release();
+        });
       });
     });
 };

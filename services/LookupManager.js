@@ -1,6 +1,6 @@
 // /GetVarietyStrainBlock
-var mysql   = require("mysql");
-var db   = require("./DatabaseManager");
+
+var db   = require("./DatabaseManager").pool;
 module.exports = {
   GetVarietyStrainBlock: function (req,res) {
     var values = decodeBarCode(req.body.barCode);
@@ -22,41 +22,43 @@ module.exports = {
 var doWork = function(varietyId,strainId, blockId, callback ){
   var variety, strain, block = '';
   var conn = db.connection;
-  conn().query("select `Variety Name` as vname from variety_table where `Variety Id` ='" + varietyId+"'", function(err, rows, fields) {
-    if (rows.length == 1)
-    {
-      varietyName = rows[0].vname;
-    }
-    else {
-      varietyName='';
-    }
-    conn().query("select `Strain Name` as name from strain_table where `Strain Id` ='" + strainId +"'", function(err, r, fields) {
-      if (r.length == 1)
+  db.getConnection(function(err, connection) {
+
+    connection.query("select `Variety Name` as vname from variety_table where `Variety Id` ='" + varietyId+"'", function(err, rows, fields) {
+      if (rows.length == 1)
       {
-        strain = r[0].name;
+        varietyName = rows[0].vname;
       }
       else {
-        strain='';
+        varietyName='';
       }
-      conn().query("select `Block Name` as name from block_table where `Block Id` ='" + blockId +"'", function(err, t, fields) {
-        console.log(blockId);
-        if (typeof t === "undefined"){
-          block='';
-        }else {
-          if (t.length == 1)
-          {
-            block = t[0].name;
-          }
-          else {
-            block='';
-          }
+      connection.query("select `Strain Name` as name from strain_table where `Strain Id` ='" + strainId +"'", function(err, r, fields) {
+        if (r.length == 1)
+        {
+          strain = r[0].name;
         }
-        callback({varietyName: varietyName,strainName:strain,blockName:block});
+        else {
+          strain='';
+        }
+        connection.query("select `Block Name` as name from block_table where `Block Id` ='" + blockId +"'", function(err, t, fields) {
+          console.log(blockId);
+          if (typeof t === "undefined"){
+            block='';
+          }else {
+            if (t.length == 1)
+            {
+              block = t[0].name;
+            }
+            else {
+              block='';
+            }
+          }
+          callback({varietyName: varietyName,strainName:strain,blockName:block});
+          connection.release();
+        });
       });
     });
   });
-
-  conn().end();
 }
 
 var decodeBarCode = function(barcode){
