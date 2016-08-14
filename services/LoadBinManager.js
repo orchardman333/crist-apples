@@ -17,7 +17,7 @@ module.exports = {
 
     for(var i=0; i < req.body.barCodes.length; i++)
     {
-      var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);      
+      var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);
       if (barcodeValues.typeBarcode == 'bin'){
         number_of_ee = 0;
         nr_boxes = req.body.barCodes[i].nr_boxes;
@@ -60,7 +60,7 @@ module.exports = {
       {
         connection.query(statements[cnt], function(err, rows, fields) {});
       }
-      connection.commit(function(err) {});
+      connection.commit(function(err) {connection.release();});
     });
 
     res.send("Data Saved!");
