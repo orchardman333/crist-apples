@@ -6,6 +6,11 @@ angular.module('crist_farms')
  function ($scope, loadRunService) {
      $scope.rowCollection = [];
      var barCodes = loadRunService.GetData().barCodes;
+
+     $scope.truck_driver = barCodes[0].truck_driver.name;
+     $scope.truck_id = barCodes[0].default_truck.id;
+     $scope.date = barCodes[0].date;
+
      for(var i=0; i < barCodes.length; i++)
      {
        var eeList = [];
