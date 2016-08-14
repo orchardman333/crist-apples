@@ -11,6 +11,7 @@ angular.module('crist_farms')
    $scope.storageList = [];
    $scope.truckList = [];
    $scope.default_truck={id:''};
+   $scope.comments = '';
 
     var d = new Date(Date.now()),
            month = '' + (d.getMonth() + 1),
