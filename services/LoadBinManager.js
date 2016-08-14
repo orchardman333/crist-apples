@@ -4,6 +4,8 @@
 // ========
 
 var db   = require("./DatabaseManager").pool;
+var statements = [];
+
 
 module.exports = {
   LoadBins: function (req,res) {
@@ -11,15 +13,11 @@ module.exports = {
     var holderJobId = '';
     var number_of_ee = 0;
     var nr_boxes=0;
+    statements.push("SET FOREIGN_KEY_CHECKS=0;");
+
     for(var i=0; i < req.body.barCodes.length; i++)
     {
-      var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);
-      db.getConnection(function(err, connection) {
-        connection.query("SET FOREIGN_KEY_CHECKS=0;", function(err, res){
-          connection.commit(function(err) {});
-        });
-      });
-
+      var barcodeValues = decodeBarCode(req.body.barCodes[i].barcode);      
       if (barcodeValues.typeBarcode == 'bin'){
         number_of_ee = 0;
         nr_boxes = req.body.barCodes[i].nr_boxes;
@@ -52,23 +50,26 @@ module.exports = {
         insertIntoBoxes(barcodeValues, holderBinId, Math.round(100*(nr_boxes/number_of_ee))/100, holderJobId)
       }
     }
+
+
+    console.log("length:" + statements.length);
+    console.log(statements);
+
+    db.getConnection(function(err, connection) {
+      for(var cnt=0; cnt != statements.length; cnt++)
+      {
+        connection.query(statements[cnt], function(err, rows, fields) {});
+      }
+      connection.commit(function(err) {});
+    });
+
     res.send("Data Saved!");
   }
 };
 
 var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id, truck_id, load_seq_id){
-
   var sql = "INSERT INTO `orchard_run`.`load_table` (`Load ID`, `Bin ID`, `Employee ID`, `Storage ID`, Date, Time, `Truck ID`) values ('" + load_seq_id+ "', "+  barcodeValues.binId + ",'"+  truck_driver_id + "','"+ storage_id + "', CURDATE(),CURTIME(), '"+ truck_id+ "')";
-
-  console.log(sql);
-  db.getConnection(function(err, connection) {
-    connection.query(sql, function(err, res){
-      console.log(err);
-      connection.commit(function(err) {
-        connection.release();
-      });
-    });
-  });
+  statements.push(sql);
 };
 
 var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, comments, truck_id,load_seq_id, date, nr_boxes){
@@ -97,15 +98,8 @@ var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, co
 
     console.log(sql);
 
-    db.getConnection(function(err, connection) {
-      connection.query(sql, function(err, res){
-        console.log(err);
-        connection.commit(function(err) {
-          insertIntoLoadTable(barcodeValues, truck_driver_id, storage_id, truck_id,load_seq_id);
-          connection.release();
-        });
-      });
-    });
+    statements.push (sql);
+    insertIntoLoadTable(barcodeValues, truck_driver_id, storage_id, truck_id,load_seq_id);
 };
 
 
@@ -116,17 +110,7 @@ var insertIntoBoxes = function(barcodeValues, binId, boxes, jobId){
                 boxes+ "','" +
                 jobId+ "')";
     console.log(sql);
-
-    db.getConnection(function(err, connection) {
-      connection.query(sql, function(err, res){
-        if (err) {
-            console.log(err);
-        }
-        connection.commit(function(err) {
-          connection.release();
-        });
-      });
-    });
+    statements.push(sql);
 };
 
 
