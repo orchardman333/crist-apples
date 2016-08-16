@@ -33,7 +33,8 @@ var doWork = function(varietyId,strainId, blockId, callback ){
         varietyName='';
       }
       connection.query("select `Strain Name` as name from strain_table where `Strain Id` ='" + strainId +"'", function(err, r, fields) {
-        if (r.length == 1)
+        console.log("select `Strain Name` as name from strain_table where `Strain Id` ='" + strainId +"'");
+        if (r.length > 1)
         {
           strain = r[0].name;
         }
@@ -41,11 +42,12 @@ var doWork = function(varietyId,strainId, blockId, callback ){
           strain='';
         }
         connection.query("select `Block Name` as name from block_table where `Block Id` ='" + blockId +"'", function(err, t, fields) {
+          console.log("select `Strain Name` as name from strain_table where `Strain Id` ='" + strainId +"'");
           console.log(blockId);
           if (typeof t === "undefined"){
             block='';
           }else {
-            if (t.length == 1)
+            if (t.length > 1)
             {
               block = t[0].name;
             }
