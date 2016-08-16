@@ -11,23 +11,16 @@
           <select class="form-control" ng-model="truck_driver" ng-options="ee.name for ee in truckDrivers">
           </select>
           <br/>
-          <label for="storage">Storage:</label>
-          <select class="form-control" ng-model="default_storage" ng-options="storage.id for storage in storageList">
-          </select>
-          <br/>
-          <label for="PackoutId">Packout ID:</label>
-          <input type="text" id="packout_id" ng-model="packout_id" class="form-control" />
-          <br/>
-        </div>
-        <div class="col-md-5">
-          <label for="truck_id">Truck ID:</label>
-          <select class="form-control" ng-model="default_truck" ng-options="truck.id for truck in truckList">
-          </select>
-          <br/>
           <label for="inputlg">Date:</label>
           <ng-datepicker ng-model="date" format="YYYY-MM-DD" view-format="YYYY-MM-DD" class="form-control" >
           </ng-datepicker>
           <br/>
+        </div>
+        <div class="col-md-5">
+          <label for="PackoutId">Packout ID:</label>
+          <input type="text" id="packout_id" ng-model="packout_id" class="form-control" />
+          <br/>
+
 
         </div>
     </div>

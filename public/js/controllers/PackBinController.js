@@ -75,14 +75,14 @@ angular.module('crist_farms')
          }
          var value = {
            barcode: $scope.scan,
-           storage: $scope.default_storage,
-           truck_driver: $scope.truck_driver,
+           storage: {id: 'Pack'},
+           truck_driver: {id: 'Forklift', name: 'Forklift'},
            variety: decodeData.varietyName,
            strainName: decodeData.strainName,
            blockName: decodeData.blockName,
            nr_boxes: $scope.nr_boxes,
            comments: $scope.comments,
-           truck_id: $scope.default_truck.id,
+           truck_id: 'Forklift',
            load_seq_id: $scope.loadSeqId,
            bin_id: binId,
            date : $scope.date,

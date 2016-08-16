@@ -13,6 +13,8 @@ module.exports = {
               id: row.uid
             });
           }
+
+          console.log("StorageList is: " +  storageList);
           callback(storageList);
         });
         connection.release();
