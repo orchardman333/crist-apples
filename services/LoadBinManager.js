@@ -9,6 +9,7 @@ var statements = [];
 
 module.exports = {
   LoadBins: function (req,res) {
+    statements = [];
     var holderBinId = '';
     var holderJobId = '';
     var number_of_ee = 0;
@@ -25,7 +26,7 @@ module.exports = {
         // Insert into load_table
         //insertIntoLoadTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id);
         //
-        insertIntoBinTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id, req.body.barCodes[i].comments, req.body.barCodes[i].truck_id, req.body.barCodes[i].load_seq_id, req.body.barCodes[i].date, nr_boxes);
+        insertIntoBinTable(barcodeValues, req.body.barCodes[i].truck_driver.id, req.body.barCodes[i].storage.id, req.body.barCodes[i].comments, req.body.barCodes[i].truck_id, req.body.barCodes[i].load_seq_id, req.body.barCodes[i].date, nr_boxes, req.body.barCodes[i].packout_id);
 
         // Save bin id to variable for next barcode to use
         holderBinId=barcodeValues.binId;
@@ -72,8 +73,13 @@ var insertIntoLoadTable = function(barcodeValues, truck_driver_id, storage_id, t
   statements.push(sql);
 };
 
-var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, comments, truck_id,load_seq_id, date, nr_boxes){
+var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, comments, truck_id,load_seq_id, date, nr_boxes, packout_id){
     var sql = '';
+    var packout='';
+    if (packout_id != null)
+    {
+      pacout=packout_id;
+    }
 
     if (barcodeValues.lengthBarCode == 17){
       sql = "INSERT INTO `orchard_run`.`bin_table` VALUES('" +
@@ -82,8 +88,8 @@ var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, co
               barcodeValues.strainId+ "','" +
               barcodeValues.blockId+ "','" +
               date +"','" + nr_boxes + "','" +
-              barcodeValues.pickId+ "'," +
-              "null,'"+comments+"')";
+              barcodeValues.pickId+ "','" + packout
+              packout + "','"+comments+"')";
     }
     else {
       sql = "INSERT INTO `orchard_run`.`bin_table` VALUES('" +
@@ -92,8 +98,8 @@ var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, co
               "null"+ ",'" +
               barcodeValues.blockId+ "','" +
               date +"','" + nr_boxes + "','" +
-              barcodeValues.pickId+ "'," +
-              "null,'"+comments+"')";
+              barcodeValues.pickId+ "'," + packout
+              packout + "','"+comments+"')";
     }
 
     console.log(sql);

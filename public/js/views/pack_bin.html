@@ -1,1 +1,65 @@
-<h3> This will be the place for the pack bin</h3>
+<div class="container">
+    <div class="row">
+      <div class="col-md-10">
+      <h1>Orchard Packout Form</h1>
+      <div id="alert_placeholder"></div>
+    </div>
+  </div>
+    <div class="row">
+        <div class="col-md-5">
+          <label for="truck_driver">Truck Driver:</label>
+          <select class="form-control" ng-model="truck_driver" ng-options="ee.name for ee in truckDrivers">
+          </select>
+          <br/>
+          <label for="storage">Storage:</label>
+          <select class="form-control" ng-model="default_storage" ng-options="storage.id for storage in storageList">
+          </select>
+          <br/>
+          <label for="PackoutId">Packout ID:</label>
+          <input type="text" id="packout_id" ng-model="packout_id" class="form-control" />
+          <br/>
+        </div>
+        <div class="col-md-5">
+          <label for="truck_id">Truck ID:</label>
+          <select class="form-control" ng-model="default_truck" ng-options="truck.id for truck in truckList">
+          </select>
+          <br/>
+          <label for="inputlg">Date:</label>
+          <ng-datepicker ng-model="date" format="YYYY-MM-DD" view-format="YYYY-MM-DD" class="form-control" >
+          </ng-datepicker>
+          <br/>
+
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-10">
+        <label for="inputlg">Scan Barcode</label>
+        <input class="form-control input-lg" id="scan" type="text" ng-model="scan" focus-on="newItemAdded" my-enter="add_barcode()">
+        <button type="button" class="btn btn-link" ng-click="add_barcode()">Add Barcode</button>
+
+        <div class="well">
+           <h3>Scanned Bar Codes</h3>
+           <ul class="list-group">
+             <li class="list-group-item" ng-repeat="barcode in displayBarCodes track by $index">
+               {{barcode.barcode}}
+               {{barcode.variety}}
+               {{barcode.strainName}}
+               {{barcode.blockName}}
+               {{barcode.storage.id}}
+               {{barcode.date}}
+               {{barcode.nr_boxes}}
+               {{barcode.comments}}
+
+                <button type="button" ng-click="removeBarCode(barcode)">
+                    <span class='glyphicon glyphicon-trash'></span>
+                </button>
+            </li>
+           </ul>
+           <br/><br/><br/>
+           <button type="button" class="btn btn-primary" ng-click="submit()">Submit Data</button>
+           <button type="button" class="btn btn-danger" ng-click="cancel()">Cancel</button>
+        </div>
+      </div>
+    </div>
+</div>
