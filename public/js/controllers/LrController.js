@@ -34,7 +34,7 @@ angular.module('crist_farms')
           block_names: barCodes[i].block_names,
           variety: barCodes[i].variety,
           storage: barCodes[i].storage.id,
-          truck_driver: barCodes[i].truck_driver.name,
+          truck_driver: barCodes[i].truck_driver.id,
           nr_boxes : barCodes[i].nr_boxes,
           comments: barCodes[i].comments,
           pickers : eeList.join(",")
