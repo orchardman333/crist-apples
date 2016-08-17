@@ -12,6 +12,8 @@ angular.module('crist_farms')
      $scope.truck_id = barCodes[0].truck_driver.id;
      $scope.date = barCodes[0].date;
 
+     $scope.CurrentDate = new Date();
+
      for(var i=0; i < barCodes.length; i++)
      {
        var eeList = [];
