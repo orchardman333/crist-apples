@@ -88,7 +88,7 @@ var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, co
               barcodeValues.strainId+ "','" +
               barcodeValues.blockId+ "','" +
               date +"','" + nr_boxes + "','" +
-              barcodeValues.pickId+ "','" + packout
+              barcodeValues.pickId+ "','" + 
               packout + "','"+comments+"')";
     }
     else {
@@ -98,7 +98,7 @@ var insertIntoBinTable = function(barcodeValues, truck_driver_id, storage_id, co
               "null"+ ",'" +
               barcodeValues.blockId+ "','" +
               date +"','" + nr_boxes + "','" +
-              barcodeValues.pickId+ "'," + packout
+              barcodeValues.pickId+ "','" + 
               packout + "','"+comments+"')";
     }
 
