@@ -45,6 +45,7 @@ angular.module('crist_farms')
           $scope.barCodes.splice(index, 1);
       }
       $scope.displayBarCodes = $scope.barCodes.slice().reverse();
+      $scope.$broadcast('newItemAdded');
    };
 
    $scope.clearData = function(){
@@ -113,6 +114,7 @@ angular.module('crist_farms')
                 $("div.alert").remove();
             }, 2000);
     $scope.clearData();
+    $scope.$broadcast('newItemAdded');
    };
 
  }]);
