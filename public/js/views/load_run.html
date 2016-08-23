@@ -6,7 +6,7 @@
     </div>
   </div>
     <div class="row">
-        <div class="col-md-5">
+        <div class="col-sm-5">
           <label for="truck_driver">Truck Driver:</label>
           <select class="form-control" ng-model="truck_driver" ng-options="ee.name for ee in truckDrivers" >
           </select>
@@ -19,7 +19,7 @@
           <input type="number" step="1" name="est_mpg" id="nr_boxes" ng-model="nr_boxes" class="form-control" ng-init="nr_boxes=20" />
           <br/>
         </div>
-        <div class="col-md-5">
+        <div class="col-sm-5">
           <label for="truck_id">Truck ID:</label>
           <select class="form-control" ng-model="default_truck" ng-options="truck.id for truck in truckList">
           </select>
@@ -35,7 +35,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-10">
+      <div class="col-sm-10">
         <label for="inputlg">Scan Barcode</label>
         <input class="form-control input-lg" id="scan" type="text" ng-model="scan" focus-on="newItemAdded" my-enter="add_barcode()">
         <button type="button" class="btn btn-link" ng-click="add_barcode()">Add Barcode</button>
