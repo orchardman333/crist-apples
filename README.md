@@ -1,7 +1,7 @@
 # Crist Farms
 
 The application provides a font end web application for Crist Farms to enter data into
-their local MariaDB.  There are four components to this applications:
+their local MySQL.  There are four components to this applications:
 
 1. Load Run
 2. Pack Bin
@@ -9,7 +9,7 @@ their local MariaDB.  There are four components to this applications:
 4. Time Form for Employees
 
 This application is written using a hybrid form of the MEAN stack.  It utilizes:
-NodeJS, ExpressJS, AngularJS, and MariaDB
+NodeJS, ExpressJS, AngularJS, and MySQL
 
 ## Installation
 Installation is easy using these steps on windows:
