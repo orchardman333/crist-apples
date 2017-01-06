@@ -1,21 +1,16 @@
 {
-  "name": "crist-farms",
+  "name": "crist-farms2.0",
   "version": "0.0.1",
   "description": "Crist Farms Application.",
   "main": "server.js",
   "author": "Scott Ross",
   "dependencies": {
-    "angular": "^1.5.7",
     "body-parser": "^1.4.3",
-    "bootstrap": "^3.3.6",
     "express": "^4.13.4",
     "method-override": "^2.1.3",
     "morgan": "^1.1.1",
     "mysql" : "~2.5.5",
-    "bluebird" : "*",
-    "angular-smart-table" : "*",
-    "ng-datepicker" : "*"
-  },
+    },
   "scripts": {
   "install-windows-service": "winser -i",
   "uninstall-windows-service": "winser -r"

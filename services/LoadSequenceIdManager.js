@@ -5,10 +5,10 @@ module.exports = {
   getSequence: function (res) {
     var getData = function(callback){
       db.getConnection(function(err, connection) {
-        connection.query("UPDATE load_sequence SET id=id+1", function(err, rows, fields) {
+        connection.query("UPDATE loadsequence_table SET id=id+1", function(err, rows, fields) {
           if (err) throw err;
           connection.commit(function(err) {
-            connection.query("select id from load_sequence", function(err, rows, fields){
+            connection.query("select id from loadsequence_table", function(err, rows, fields){
               var data={};
               for(var x=0; x<rows.length; x++){
                 var row = rows[x];

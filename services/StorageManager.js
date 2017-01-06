@@ -14,7 +14,7 @@ module.exports = {
             });
           }
 
-          console.log("StorageList is: " +  storageList);
+          //console.log("StorageList is: " +  storageList);
           callback(storageList);
         });
         connection.release();

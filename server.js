@@ -1,4 +1,3 @@
-//https://github.com/mscdex/node-mariasql
 // set up ========================
 var portListen = 4000;
 var express  = require('express');
@@ -28,7 +27,6 @@ app.get('/api/truck_drivers', function(req, res) {
   eeManager.GetTruckDrivers(res);
 });
 
-// REST API -------------------------------------------------------------
 app.get('/api/truck', function(req, res) {
   truckManager.GetTrucks(res);
 });
@@ -59,7 +57,7 @@ app.get('/api/loadSequenceId', function(req, res){
 
 // application -------------------------------------------------------------
 app.get('*', function(req, res) {
-  res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+  res.sendFile(__dirname + '/public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
 });
 
 // listen (start app with node server.js) ======================================
