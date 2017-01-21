@@ -2,8 +2,8 @@
 
 angular.module('crist_farms')
 
-.controller('LoadRunController', ['$scope', 'LoadRunService', 'StorageService', 'EmployeeService',
- function ($scope, loadRunService, storageService, employeeService) {
+.controller('OrchardRunLoadController', ['$scope', 'OrchardRunService', 'StorageTransferService', 'TruckService',
+ function ($scope, orchardRunService, storageTransferService, truckService) {
 
    $scope.barCodes = [];
    $scope.displayBarCodes = $scope.barCodes.slice().reverse();
@@ -23,19 +23,19 @@ angular.module('crist_farms')
 
    $scope.date = [year, month, day].join('-');
 
-   employeeService.GetTrucks(function (data) {
+   truckService.GetTrucks(function (data) {
      $scope.truckList=data;
    });
 
-   employeeService.GetTruckDrivers(function (data) {
+   truckService.GetTruckDrivers(function (data) {
      $scope.truckDrivers=data;
    });
 
-   storageService.GetStorageList(function (data) {
+   storageTransferService.GetStorageList(function (data) {
       $scope.storageList =data;
    });
 
-   loadRunService.GetLoadSequenceId(function(data){
+   orchardRunService.GetLoadSequenceId(function(data){
      $scope.loadSeqId = data.id;
    });
 
@@ -76,10 +76,10 @@ angular.module('crist_farms')
          var value = {
            barcode: $scope.scan,
            storage: $scope.default_storage,
-           truck_driver: $scope.truck_driver,
-           variety: decodeData.varietyName,
-           strainName: decodeData.strainName,
-           blockName: decodeData.blockName,
+           truckDriver: $scope.truckDriver,
+          //  variety: decodeData.varietyName,
+          //  strainName: decodeData.strainName,
+          //  blockName: decodeData.blockName,
            nr_boxes: $scope.nr_boxes,
            comments: $scope.comments,
            truck_id: $scope.default_truck.id,
@@ -95,7 +95,7 @@ angular.module('crist_farms')
          $scope.displayBarCodes = $scope.barCodes.slice().reverse();
        };
 
-       loadRunService.DecodeBarCode({barCode: $scope.scan}, callback);
+       orchardRunService.DecodeBarCode({barCode: $scope.scan}, callback);
      }
    };
 
@@ -103,9 +103,9 @@ angular.module('crist_farms')
       var data = {
         barCodes: $scope.barCodes
       };
-      loadRunService.SubmitLoadRun(data);
-      loadRunService.SaveData(data);
-      window.location = "#/lr";
+      orchardRunService.SubmitLoadRun(data);
+      orchardRunService.SaveData(data);
+      window.location = "#/orchard_run_report";
    };
 
    $scope.cancel = function(){

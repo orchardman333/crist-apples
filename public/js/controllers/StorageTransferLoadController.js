@@ -2,7 +2,7 @@
 
 angular.module('crist_farms')
 
-.controller('StorageTransferController', ['$scope',
+.controller('StorageTransferLoadController', ['$scope',
  function ($scope) {
 
  }]);

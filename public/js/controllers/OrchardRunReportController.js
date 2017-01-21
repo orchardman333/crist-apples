@@ -2,10 +2,10 @@
 
 angular.module('crist_farms')
 
-.controller('LrController', ['$scope','LoadRunService',
- function ($scope, loadRunService) {
+.controller('OrchardRunReportController', ['$scope','OrchardRunService',
+ function ($scope, orchardRunService) {
      $scope.rowCollection = [];
-     var barCodes = loadRunService.GetData().barCodes;
+     var barCodes = orchardRunService.GetData().barCodes;
 
      console.log( barCodes[0]);
      $scope.truck_driver = barCodes[0].truck_driver.name;

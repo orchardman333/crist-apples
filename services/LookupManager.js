@@ -1,10 +1,11 @@
-// /GetVarietyStrainBlock
+// Returns a single bin's properties from its full tag
 
-var db   = require("./DatabaseManager").pool;
+var db   = require("./DatabaseManager");
+var decode = require("./BarcodeDecodingManager");
 module.exports = {
-  GetVarietyStrainBlock: function (req,res) {
-    var values = decodeBarCode(req.body.barCode);
-    if (values.typeBarcode == 'employee'){
+  GetBinProperties: function (req,res) {
+    var idValues = decode.decodeBarcode(req.body.barCode);
+    if (idValues.typeBarcode == 'employee'){
       res.send({
         varietyName: '',
         strainName : '',
@@ -12,87 +13,96 @@ module.exports = {
       });
     }
     else {
-      doWork(values.varietyId, values.strainId, values.blockId, function(data){
+      idsToNames(idValues, function(data){
         res.json(data);
       });
     }
   }
 };
 
-var doWork = function(varietyId,strainId, blockId, callback ){
-  var variety, strain, block = '';
-  var conn = db.connection;
+var idsToNames = function(idValues, callback){
+  var blockName=varietyName=strainName=bearingName=treatmentName=pickName=jobName = '';
   db.getConnection(function(err, connection) {
 
-    connection.query("select `Variety Name` as vname from variety_table where `Variety Id` ='" + varietyId+"'", function(err, rows, fields) {
-      if (rows.length == 1)
+    //Block
+    connection.query("SELECT `Block Name` AS blockname FROM block_table WHERE `Block ID` = '" + idValues.blockId + "'", function(err, blockRows, fields) {
+      if (blockRows.length == 1)
       {
-        varietyName = rows[0].vname;
+        blockName = blockRows[0].blockname;
       }
       else {
-        varietyName='';
+        blockName ='Error looking up block name in LookupManager.js';
       }
-      connection.query("select `Strain Name` as sname from strain_table where `Strain Id` ='" + strainId +"'", function(err, r, fields) {
-        console.log("select `Strain Name` as sname from strain_table where `Strain Id` ='" + strainId +"'");
-        if (r.length == 1)
+      //Variety
+      connection.query("SELECT `Variety Name` AS varietyname FROM variety_table WHERE `Variety ID` = '" + idValues.varietyId + "'", function(err, varietyRows, fields) {
+        if (varietyRows.length == 1)
         {
-          strain = r[0].sname;
+          varietyName = varietyRows[0].varietyname;
         }
         else {
-          strain='';
+          varietyName ='Error looking up variety name in LookupManager.js';
         }
-        connection.query("select `Block Name` as bname from block_table where `Block Id` ='" + blockId +"'", function(err, t, fields) {
-          console.log("select `Block Name` as bname from block_table where `Block Id` ='" + blockId +"'");
-          if (typeof t === "undefined"){
-            block='';
-          }else {
-            if (t.length == 1)
+        //Strain
+        connection.query("SELECT `Strain Name` AS strainname FROM strain_table WHERE `Strain ID` = '" + idValues.strainId + "'", function(err, strainRows, fields) {
+          if (strainRows.length == 1)
+          {
+            strainName = strainRows[0].strainname;
+          }
+          else {
+            strainName='Error looking up strain name in LookupManager.js';
+          }
+          //Bearing
+          connection.query("SELECT `Bearing Name` AS bearingname FROM bearing_table WHERE `Bearing ID` = '" + idValues.bearingId + "'", function(err, bearingRows, fields) {
+            if (bearingRows.length == 1)
             {
-              block = t[0].bname;
+              bearingName = bearingRows[0].bearingname;
             }
             else {
-              block='';
+              bearingName='Error looking up bearing name in LookupManager.js';
             }
-          }
-          callback({varietyName: varietyName,strainName:strain,blockName:block});
-          connection.release();
+            //Treatment
+            connection.query("SELECT `Treatment Name` AS treatmentname FROM treatment_table WHERE `Treatment ID` = '" + idValues.treatmentId + "'", function(err, treatmentRows, fields) {
+              if (treatmentRows.length == 1)
+              {
+                treatmentName = treatmentRows[0].treatmentname;
+              }
+              else {
+                treatmentName='Error looking up treatment name in LookupManager.js';
+              }
+              //Pick
+              connection.query("SELECT `Pick Name` AS pickname FROM pick_table WHERE `Pick ID` = '" + idValues.pickId + "'", function(err, pickRows, fields) {
+                if (pickRows.length == 1)
+                {
+                  pickName = pickRows[0].pickname;
+                }
+                else {
+                  pickName='Error looking up pick name in LookupManager.js';
+                }
+                //Job
+                connection.query("SELECT `Job Name` AS jobname FROM job_table WHERE `Job ID` = '" + idValues.jobId + "'", function(err, jobRows, fields) {
+                  if (jobRows.length == 1)
+                  {
+                    jobName = jobRows[0].jobname;
+                  }
+                  else {
+                    jobName='Error looking up job name in LookupManager.js';
+                  }
+                  callback({
+                    blockName: blockName,
+                    varietyName: varietyName,
+                    strainName: strainName,
+                    bearingName: bearingName,
+                    treatmentName: treatmentName,
+                    pickName: pickName,
+                    jobName: jobName
+                  });
+                  connection.release();
+                });
+              });
+            });
+          });
         });
       });
     });
   });
 }
-
-var decodeBarCode = function(barcode){
-  var values = {};
-  if (barcode.length == 17){
-      values = {
-        typeBarcode : 'bin',
-        lengthBarCode: 17,
-        strainId: barcode.substring(0, 2),
-        varietyId: barcode.substring(2, 4),
-        blockId: barcode.substring(4, 7),
-        jobId: barcode.substring(7, 11),
-        pickId: barcode.substring(11, 12),
-        binId: barcode.substring(12, 17)
-     }
-  }
-   else if (barcode.length ==15) {
-      values = {
-        typeBarcode : 'bin',
-        lengthBarCode: 15,
-        varietyId: barcode.substring(0, 2),
-        blockId:  barcode.substring(2, 5),
-        jobId:  barcode.substring(5, 9),
-        pickId:  barcode.substring(9, 10),
-        binId:  barcode.substring(10, 15)
-        }
-    }
-  else {
-    //this is an employee barcode
-    values = {
-      typeBarcode : 'employee',
-      eeId : barcode
-    }
-  }
-  return values;
-};

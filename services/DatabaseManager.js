@@ -1,19 +1,10 @@
-// databaseManager.js
+// Create pooled connection to database
 // ========
-var mysql   = require("mysql");
+var mysql = require("mysql");
 
-var pool  = mysql.createPool({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'root',
-    database : 'orchard_run'
-});
-
-exports.pool = pool;
-
-/*
-host     : 'localhost',
-user     : 'root',
-password : '*****',
-database : 'orchard_run'
-*/
+module.exports = mysql.createPool({
+  host     : 'localhost',
+  user     : 'root',
+  password : 'root',
+  database : 'orchard_run'
+})

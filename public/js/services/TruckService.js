@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('crist_farms')
-.service('EmployeeService', ['$http',
+.service('TruckService', ['$http',
  function ($http) {
-   // this service handles retrieving the truck drivers data from API
+   // this service handles retrieving the trucks and truck drivers data from API
    var service = {};
    service.GetTruckDrivers = function(callback){
-     $http.get("/api/truck_drivers/").success(function(data, status, headers, config)
+     $http.get("/api/truckDrivers/").success(function(data, status, headers, config)
      {
        callback(data);
      });

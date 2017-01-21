@@ -5,14 +5,15 @@ var app = express();                               // create our app w/ express
 var morgan = require('morgan');             // log requests to the console (express4)
 var bodyParser = require('body-parser');    // pull information from HTML POST (express4)
 var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
-var eeManager = require('./services/EmployeeManager');
+var truckDriverManager = require('./services/TruckDriverManager');
 var storageManager = require('./services/StorageManager');
-var loadBinManager = require('./services/LoadBinManager');
+var orchardRunManager = require('./services/OrchardRunManager');
 var loadReportManager = require('./services/LoadReportManager');
 var lookupManager = require('./services/LookupManager');
 var truckManager = require('./services/TruckManager');
 var loadSeqManager = require('./services/LoadSequenceIdManager');
 var timeFormManager = require('./services/TimeFormManager');
+var barcodeDecodingManager = require('./services/BarcodeDecodingManager');
 
 // configuration =================
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
@@ -23,8 +24,8 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(methodOverride());
 
 // REST API -------------------------------------------------------------
-app.get('/api/truck_drivers', function(req, res) {
-  eeManager.GetTruckDrivers(res);
+app.get('/api/truckDrivers', function(req, res) {
+  truckDriverManager.GetTruckDrivers(res);
 });
 
 app.get('/api/truck', function(req, res) {
@@ -36,15 +37,15 @@ app.get('/api/LoadReports', function(req, res) {
 });
 
 app.post('/api/LookupManager', function(req, res) {
-  lookupManager.GetVarietyStrainBlock(req,res);
+  lookupManager.GetBinProperties(req,res);
 });
 
 app.get('/api/storage', function(req, res) {
   storageManager.GetStorageList(res);
 });
 
-app.post('/api/loadRun', function(req, res) {
-  loadBinManager.LoadBins(req, res);
+app.post('/api/orchardRunManager', function(req, res) {
+  orchardRunManager.LoadBins(req, res);
 });
 
 app.post('/api/timeForm', function(req,res) {

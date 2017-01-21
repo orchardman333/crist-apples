@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="crist_farms">
 
-  <script type="text/javascript">
+  <script>
     function CallPrint(strid) {
         var prtContent = document.getElementById(strid);
         //var WinPrint = window.open('');
@@ -23,11 +23,11 @@
     <title>Crist Apples</title>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <!-- Custom styles for this template -->
-    <link href="styles/project.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/project.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="styles/ngDatepicker.css">
+    <link rel="stylesheet" href="styles/ngDatepicker.css">
   </head>
 
   <body>
@@ -44,47 +44,40 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#load_run">Orchard Run Load</a></li>
-            <li><a href="#load_report">Load Report</a></li>
-            <li><a href="#pack_bin">Packout Form</a></li>
-            <!-- <li><a href="#storage_transfer">Storage Transfer Form</a></li>-->
+            <li><a href="#orchard_run_load">Orchard Run Load</a></li>
+            <li><a href="#storage_transfer_load">Storage Transfer Form</a>
+            <li><a href="#pack_dump_load">Packout Form</a></li>
             <li><a href="#time_form">Time Form</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
-    <div class="container">
-
-      <div class="starter-template">
-         <div ng-view=""></div>
-      </div>
-
-    </div><!-- /.container -->
-
+    <!--Individual Page Views-->
+    <div class="starter-template">
+       <div ng-view=""></div>
+    </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-route.js"></script>
+    <script src="lib/ngDatepicker.min.js"></script>
     <script src="lib/smart-table-min.js"></script>
     <script src="js/app.js"></script>
     <script src="js/controllers/HomeController.js"></script>
-    <script src="js/controllers/LoadRunController.js"></script>
-    <script src="js/controllers/PackBinController.js"></script>
-    <script src="js/controllers/StorageTransferController.js"></script>
-    <script src="js/controllers/LoadRunController.js"></script>
+    <script src="js/controllers/OrchardRunLoadController.js"></script>
+    <script src="js/controllers/OrchardRunReportController.js"></script>
+    <script src="js/controllers/PackDumpLoadController.js"></script>
+    <script src="js/controllers/StorageTransferLoadController.js"></script>
     <script src="js/controllers/TimeFormController.js"></script>
-    <script src="js/controllers/LoadReportController.js"></script>
-    <script src="js/controllers/LrController.js"></script>
-    <script src="js/services/LoadRunService.js"></script>
-    <script src="js/services/StorageService.js"></script>
-    <script src="js/services/EmployeeService.js"></script>
+    <script src="js/services/OrchardRunService.js"></script>
+    <script src="js/services/StorageTransferService.js"></script>
+    <script src="js/services/TruckService.js"></script>
     <script src="js/services/TimeFormService.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js"></script>
-    <script type="text/javascript" src="lib/ngDatepicker.min.js"></script>
-  </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js"></script>
+    </body>
 </html>

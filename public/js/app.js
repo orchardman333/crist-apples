@@ -3,35 +3,31 @@ var app = angular.module('crist_farms', ['ngRoute', 'jkuri.datepicker']);
 
 app.config(['$routeProvider', function ($routeProvider) {
   $routeProvider
-        .when('/#', {
+        .when('/', {
             controller: 'HomeController',
             templateUrl: 'js/views/home.html',
         })
-        .when('/load_run', {
-            controller: 'LoadRunController',
-            templateUrl: 'js/views/load_run.html',
+        .when('/orchard_run_load', {
+            controller: 'OrchardRunLoadController',
+            templateUrl: 'js/views/orchard_run_load.html',
         })
-        .when('/pack_bin', {
-            controller: 'PackBinController',
-            templateUrl: 'js/views/pack_bin.html',
+        .when('/orchard_run_report', {
+            controller: 'OrchardRunReportController',
+            templateUrl: 'js/views/orchard_run_report.html',
         })
-        .when('/storage_transfer', {
-            controller: 'StorageTransferController',
-            templateUrl: 'js/views/storage_transfer.html',
+        .when('/pack_dump_load', {
+            controller: 'PackDumpLoadController',
+            templateUrl: 'js/views/pack_dump_load.html',
+        })
+        .when('/storage_transfer_load', {
+            controller: 'StorageTransferLoadController',
+            templateUrl: 'js/views/storage_transfer_load.html',
         })
         .when('/time_form', {
             controller: 'TimeFormController',
             templateUrl: 'js/views/time_form.html',
         })
-        .when('/lr', {
-            controller: 'LrController',
-            templateUrl: 'js/views/lr.html',
-        })
-        .when('/load_report', {
-            controller: 'LoadReportController',
-            templateUrl: 'js/views/load_report.html',
-        })
-        .otherwise({ redirectTo: '/#' });
+        .otherwise({ redirectTo: '/' });
 }]);
 
 app.directive('focusOn', function() {

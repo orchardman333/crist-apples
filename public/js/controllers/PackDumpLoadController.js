@@ -2,7 +2,7 @@
 
 angular.module('crist_farms')
 
-.controller('PackBinController', ['$scope', 'LoadRunService', 'StorageService', 'EmployeeService',
+.controller('PackDumpLoadController', ['$scope', 'LoadRunService', 'StorageService', 'EmployeeService',
  function ($scope, loadRunService, storageService, employeeService) {
 
    $scope.barCodes = [];
