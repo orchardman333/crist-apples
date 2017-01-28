@@ -6,9 +6,9 @@ angular.module('crist_farms')
    // this service handles retrieving the storage data from API
    var service = {};
    service.GetStorageList = function(callback){
-     $http.get("/api/storage/").success(function(data, status, headers, config)
+     $http.get("/api/storage").then(function(response)
      {
-       callback(data);
+       callback(response.data);
      });
    };
    return service;

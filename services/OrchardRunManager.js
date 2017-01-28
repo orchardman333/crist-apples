@@ -18,20 +18,23 @@ module.exports = {
     //Ignore foreign key contraints
     sqlStatements.push("SET FOREIGN_KEY_CHECKS=0;");
 
+    //Push load_heading_table INSERTs
+    insertIntoLoadHeadingTable(req.body.loadDetails);
+
     //Iterate through list of scanned barcodes
-    for(var i=0; i < req.body.scanDetails.length; i++){
+    for(var i=0; i < req.body.scanDetails.length; i++) {
       barcodeProperties = decode.decodeBarcode(req.body.scanDetails[i].barcode);
-      if (barcodeProperties.typeBarcode == 'bin'){    //Start with fresh bin
+      if (barcodeProperties.typeBarcode == 'bin') {    //Start with fresh bin
 
         //Push bin_table & load_table INSERTs to sqlStatements
         insertIntoBinTable(barcodeProperties, req.body.scanDetails[i]);
-        insertIntoLoadTable(barcodeProperties.binId, req.body.scanDetails[i]);
+        insertIntoLoadTable(barcodeProperties.binId, req.body.scanDetails[i].storageId, req.body.loadDetails.loadId);
 
         //Check subsequent objects in scanDetails for pickers
         for(var j=1; j < (req.body.scanDetails.length-i); j++) {
           nextBarcode = decode.decodeBarcode(req.body.scanDetails[i+j].barcode);
 
-          if (nextBarcode.typeBarcode == 'emp'){
+          if (nextBarcode.typeBarcode == 'emp') {
             insertIntoBoxesTable(nextBarcode.employeeId, barcodeProperties.binId)
           }
           else  {
@@ -58,40 +61,49 @@ module.exports = {
   }
 };
 
-var insertIntoBinTable = function(barcodeProperties, scanDetails){
+var insertIntoBinTable = function(barcodeProperties, scanDetails) {
   var sql = "INSERT INTO `orchard_run`.`bin_table` VALUES('" +
-            barcodeProperties.binId + "','" +
-            barcodeProperties.blockId + "','" +
-            barcodeProperties.varietyId + "','" +
-            barcodeProperties.strainId + "','" +
-            barcodeProperties.bearingId + "','" +
-            barcodeProperties.treatmentId + "','" +
-            barcodeProperties.pickId + "','" +
-            barcodeProperties.jobId + "','" +
-            scanDetails.pickDate + "','" +
-            scanDetails.boxesCount + "','" +
-            scanDetails.comments + "')";
+    barcodeProperties.binId + "','" +
+    barcodeProperties.blockId + "','" +
+    barcodeProperties.varietyId + "','" +
+    barcodeProperties.strainId + "','" +
+    barcodeProperties.bearingId + "','" +
+    barcodeProperties.treatmentId + "','" +
+    barcodeProperties.pickId + "','" +
+    barcodeProperties.jobId + "','" +
+    scanDetails.pickDate + "','" +
+    scanDetails.boxesCount + "','" +
+    scanDetails.binComments + "')";
 
   sqlStatements.push (sql);
 };
 
-var insertIntoLoadTable = function(binId, scanDetails){
+var insertIntoLoadHeadingTable = function(loadDetails) {
+  var sql = "INSERT INTO `orchard_run`.`load_heading_table` VALUES('" +
+    loadDetails.loadType + "','" +
+    loadDetails.loadId + "','" +
+    loadDetails.truckDriver + "','" +
+    loadDetails.loadDate + "','" +
+    loadDetails.loadDateTime + "','" +
+    loadDetails.truckId + "','" +
+    loadDetails.loadComments + "')";
+
+  sqlStatements.push (sql);
+};
+
+var insertIntoLoadTable = function(binId, storageId, loadId) {
   var sql = "INSERT INTO `orchard_run`.`load_table` VALUES('" +
-            scanDetails.loadType + "','" +
-            scanDetails.loadId + "','" +
-            scanDetails.loadDate + "','" +
-            binId + "','" +
-            scanDetails.storageId + "','" +
-            scanDetails.packoutId + "','" +
-            scanDetails.truckDriver + "','" +
-            scanDetails.truckId + "')";
+    loadId + "','" +
+    binId + "','" +
+    storageId + "')";
+
   sqlStatements.push (sql);
 };
 
-var insertIntoBoxesTable = function(employeeId, binId){
+var insertIntoBoxesTable = function(employeeId, binId) {
   var sql = "INSERT INTO `orchard_run`.`boxes_table` VALUES('" +
-            binId + "','" +
-            employeeId + "')";  //picker, not truck driver
+    binId + "','" +
+    employeeId + "')";  //picker, not truck driver
 
   sqlStatements.push(sql);
 };

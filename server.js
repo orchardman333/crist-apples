@@ -28,7 +28,7 @@ app.get('/api/truckDrivers', function(req, res) {
   truckDriverManager.GetTruckDrivers(res);
 });
 
-app.get('/api/truck', function(req, res) {
+app.get('/api/trucks', function(req, res) {
   truckManager.GetTrucks(res);
 });
 

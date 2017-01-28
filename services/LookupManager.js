@@ -5,22 +5,20 @@ var decode = require("./BarcodeDecodingManager");
 module.exports = {
   GetBinProperties: function (req,res) {
     var idValues = decode.decodeBarcode(req.body.barCode);
-    if (idValues.typeBarcode == 'employee'){
-      res.send({
-        varietyName: '',
-        strainName : '',
-        blockName: ''
+    if (idValues.typeBarcode == 'emp'){
+      empIdsToNames(idValues, function(data){
+        res.json(data);
       });
     }
     else {
-      idsToNames(idValues, function(data){
+      binIdsToNames(idValues, function(data){
         res.json(data);
       });
     }
   }
 };
 
-var idsToNames = function(idValues, callback){
+var binIdsToNames = function(idValues, callback){
   var blockName=varietyName=strainName=bearingName=treatmentName=pickName=jobName = '';
   db.getConnection(function(err, connection) {
 
@@ -103,6 +101,27 @@ var idsToNames = function(idValues, callback){
           });
         });
       });
+    });
+  });
+}
+
+var empIdsToNames = function(idValues, callback){
+  var empName = '';
+  db.getConnection(function(err, connection) {
+
+    //Employee
+    connection.query("SELECT `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Employee ID` = '" + idValues.empId + "'", function(err, empRows, fields) {
+      if (empRows.length == 1)
+      {
+        empName = empRows[0].firstName + ' ' + empRows[0].lastName;
+      }
+      else {
+        blockName ='Error looking up employee name in LookupManager.js';
+      }
+      callback({
+        empName: empName
+      });
+      connection.release();
     });
   });
 }
