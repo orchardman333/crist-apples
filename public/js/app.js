@@ -31,16 +31,17 @@ app.config(['$routeProvider', function ($routeProvider) {
 }]);
 
 app.directive('focusOn', function() {
-   return function(scope, elem, attr) {
-      scope.$on(attr.focusOn, function(e) {
-          elem[0].focus();
+   return function(scope, element, attrs) {
+      scope.$on(attrs.focusOn, function() {
+          element[0].focus();
       });
    };
 
 });
 app.directive('myEnter', function () {
     return function (scope, element, attrs) {
-        element.bind("keydown keypress", function (event) {
+
+        element.on("keydown keypress", function (event) {
             if(event.which === 13) {
                 scope.$apply(function (){
                     scope.$eval(attrs.myEnter);

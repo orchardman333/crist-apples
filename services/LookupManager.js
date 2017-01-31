@@ -1,4 +1,4 @@
-// Returns a single bin's properties from its full tag
+// Returns a single [bin's properties or employee's name] from its full tag
 
 var db   = require("./DatabaseManager");
 var decode = require("./BarcodeDecodingManager");

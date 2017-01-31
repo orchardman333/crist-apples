@@ -32,11 +32,11 @@ app.get('/api/trucks', function(req, res) {
   truckManager.GetTrucks(res);
 });
 
-app.get('/api/LoadReports', function(req, res) {
+app.get('/api/loadReports', function(req, res) {
   loadReportManager.LoadReport(res);
 });
 
-app.post('/api/LookupManager', function(req, res) {
+app.post('/api/lookupManager', function(req, res) {
   lookupManager.GetBinProperties(req,res);
 });
 
@@ -52,8 +52,8 @@ app.post('/api/timeForm', function(req,res) {
   timeFormManager.DoWork(req,res);
 });
 
-app.get('/api/loadSequenceId', function(req, res){
-  loadSeqManager.getSequence(res);
+app.post('/api/loadId', function(req, res){
+  loadSeqManager.GetLoadId(req, res);
 });
 
 // application -------------------------------------------------------------

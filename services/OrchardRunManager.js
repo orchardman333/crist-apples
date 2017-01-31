@@ -9,7 +9,8 @@ var sqlStatements = [];
 
 //Take entire list of barcode scans (including form data like storage, truck driver, etc.) from Angular
 //Then sort and INSERT them into db
-//req.body.scanDetails = array of bin and employee (picker) barcode objects
+//req.body.loadDetails = object of extra load information
+//req.body.loadData = object array of bin and employee (picker) barcode
 module.exports = {
   LoadBins: function (req,res) {
     sqlStatements = [];   //Clear old statements
@@ -22,17 +23,17 @@ module.exports = {
     insertIntoLoadHeadingTable(req.body.loadDetails);
 
     //Iterate through list of scanned barcodes
-    for(var i=0; i < req.body.scanDetails.length; i++) {
-      barcodeProperties = decode.decodeBarcode(req.body.scanDetails[i].barcode);
+    for(var i=0; i < req.body.loadData.length; i++) {
+      barcodeProperties = decode.decodeBarcode(req.body.loadData[i].barcode);
       if (barcodeProperties.typeBarcode == 'bin') {    //Start with fresh bin
 
         //Push bin_table & load_table INSERTs to sqlStatements
-        insertIntoBinTable(barcodeProperties, req.body.scanDetails[i]);
-        insertIntoLoadTable(barcodeProperties.binId, req.body.scanDetails[i].storageId, req.body.loadDetails.loadId);
+        insertIntoBinTable(barcodeProperties, req.body.loadData[i]);
+        insertIntoLoadTable(barcodeProperties.binId, req.body.loadData[i].storageId, req.body.loadDetails.loadId);
 
-        //Check subsequent objects in scanDetails for pickers
-        for(var j=1; j < (req.body.scanDetails.length-i); j++) {
-          nextBarcode = decode.decodeBarcode(req.body.scanDetails[i+j].barcode);
+        //Check subsequent objects in loadData for pickers
+        for(var j=1; j < (req.body.loadData.length-i); j++) {
+          nextBarcode = decode.decodeBarcode(req.body.loadData[i+j].barcode);
 
           if (nextBarcode.typeBarcode == 'emp') {
             insertIntoBoxesTable(nextBarcode.employeeId, barcodeProperties.binId)
@@ -61,7 +62,7 @@ module.exports = {
   }
 };
 
-var insertIntoBinTable = function(barcodeProperties, scanDetails) {
+var insertIntoBinTable = function(barcodeProperties, loadData) {
   var sql = "INSERT INTO `orchard_run`.`bin_table` VALUES('" +
     barcodeProperties.binId + "','" +
     barcodeProperties.blockId + "','" +
@@ -71,9 +72,9 @@ var insertIntoBinTable = function(barcodeProperties, scanDetails) {
     barcodeProperties.treatmentId + "','" +
     barcodeProperties.pickId + "','" +
     barcodeProperties.jobId + "','" +
-    scanDetails.pickDate + "','" +
-    scanDetails.boxesCount + "','" +
-    scanDetails.binComments + "')";
+    loadData.pickDate + "','" +
+    loadData.boxesCount + "','" +
+    loadData.binComments + "')";
 
   sqlStatements.push (sql);
 };

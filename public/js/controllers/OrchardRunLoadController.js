@@ -5,21 +5,27 @@ angular.module('crist_farms')
 function ($scope, orchardRunService, storageTransferService, truckService){
   // Set default values
 
-  $scope.currentDate = function(){
-    var d = new Date(Date.now()),
-    month = ('00' + (d.getMonth() + 1)).slice(-2),
-    day = ('00' + d.getDate()).slice(-2),
-    year = d.getFullYear();
-    return [year, month, day].join('-');
-  };
+  // $scope.currentDate = function(){
+  //   var d = new Date(Date.now()),
+  //   month = ('00' + (d.getMonth() + 1)).slice(-2),
+  //   day = ('00' + d.getDate()).slice(-2),
+  //   year = d.getFullYear(),
+  //   hour = d.getHours(),
+  //   minute = d.getMinutes(),
+  //   seconds = '00';
+  //
+  //   return ([year, month, day].join('-') + ' ' + [hour, minute, seconds].join(':'));
+  // };
 
-  $scope.scan = '';
+  $scope.scan = null;
   $scope.loadData = [];
   $scope.displayLoadData = $scope.loadData.slice().reverse();
-  $scope.pickDate = $scope.currentDate();
+  $scope.pickDate = moment().format('YYYY-MM-DD');
   $scope.boxesCount = 20;
-  $scope.comments = '';
-  $scope.loadDate = $scope.currentDate();
+  //$scope.binComments = null;
+  //$scope.loadComments = null;
+  $scope.loadDate = moment().format('YYYY-MM-DD');
+  $scope.loadDateTime = moment().format('YYYY-MM-DD hh:mm:00');
 
   truckService.GetTrucks(function (data) {
     $scope.truckList=data;
@@ -36,33 +42,26 @@ function ($scope, orchardRunService, storageTransferService, truckService){
     $scope.storage=$scope.storageList[0];
   });
 
-
-
   $scope.addScan = function(){
-    if (angular.isUndefined($scope.scan) || $scope.scan === null){
+    if ($scope.scan === null){
       $('#alert_placeholder').html('<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>No Barcode entered!</span></div>')
       setTimeout(function () {
         $("div.alert").remove();
+        $scope.$broadcast('newItemAdded');
       }, 2000);
-      $scope.clearData();
     }
     else{
       var callback = function(decodedData){
         if ($scope.scan.length == 19){   //Bin barcode
-
           var value = {
-buttonColor:'success',
-type: 'bin',
+            buttonColor:'success',
+            type: 'bin',
             barcode: $scope.scan,
             pickDate : $scope.pickDate,
             boxesCount: $scope.boxesCount,
-            comments: $scope.comments,
+            binComments: $scope.binComments,
             storageId: $scope.storage.id,
             storageName: $scope.storage.name,
-            truckId: $scope.truck.id,
-            truckName: $scope.truck.name,
-            truckDriverId: $scope.truckDriver.id,
-            truckDriverName: $scope.truckDriver.name,
             blockName: decodedData.blockName,
             varietyName: decodedData.varietyName,
             strainName: decodedData.strainName,
@@ -73,10 +72,9 @@ type: 'bin',
           };
         }
         else if ($scope.scan.length == 3){   //Picker barcode
-
           var value = {
-buttonColor:'info',
-type: 'emp',
+            buttonColor:'info',
+            type: 'emp',
             barcode: $scope.scan
           };
         }
@@ -88,7 +86,7 @@ type: 'emp',
         }
 
         $scope.loadData.push(value);
-        $scope.scan = '';
+        $scope.scan = null;
         $scope.$broadcast('newItemAdded');
         $scope.displayLoadData = $scope.loadData.slice().reverse();
       };
@@ -116,20 +114,30 @@ type: 'emp',
   };
 
   $scope.submitLoad = function(){
-    var data = {
-      loadData: $scope.loadData
-    };
-    orchardRunService.GetLoadSequenceId(function(data){
-      $scope.loadSeqId = data.id;
+
+    orchardRunService.GetLoadId({idType: 'or'}, function(data){
+      $scope.loadId = data.loadId;
+      var load = {
+        loadDetails: {
+          loadType: 'or',
+          loadId: $scope.loadId,
+          truckDriverId: $scope.truckDriver.id,
+          loadDate: $scope.loadDate,
+          loadDateTime: $scope.loadDateTime,
+          truckId: $scope.truck.id,
+          loadComments: $scope.loadComments
+        },
+        loadData: $scope.loadData
+      };
+      orchardRunService.SubmitLoad(load);
+      orchardRunService.SaveData(load);
+      window.location = "#/orchard_run_report";
     });
-    orchardRunService.SubmitLoadRun(data);
-    orchardRunService.SaveData(data);
-    window.location = "#/orchard_run_report";
   };
 
   $scope.clearLoadData = function(){
     $scope.loadData = [];
-    $scope.scan="";
+    $scope.scan=null;
     $scope.$broadcast('newItemAdded');
     $scope.displayLoadData = $scope.loadData.slice().reverse();
   };
@@ -139,7 +147,7 @@ type: 'emp',
     setTimeout(function () {
       $("div.alert").remove();
     }, 2000);
-    $scope.clearData();
+    $scope.clearLoadData();
     $scope.$broadcast('newItemAdded');
   };
 }]);
