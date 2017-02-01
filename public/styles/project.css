@@ -6,6 +6,9 @@ body {
   text-align: center;
 }
 
+.label {
+  margin-right: 5px;
+}
 
 /****************************************
  * Print CSS Rules

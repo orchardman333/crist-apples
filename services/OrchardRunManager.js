@@ -22,32 +22,23 @@ module.exports = {
     //Push load_heading_table INSERTs
     insertIntoLoadHeadingTable(req.body.loadDetails);
 
-    //Iterate through list of scanned barcodes
+    //Iterate through list of bins
     for(var i=0; i < req.body.loadData.length; i++) {
       barcodeProperties = decode.decodeBarcode(req.body.loadData[i].barcode);
-      if (barcodeProperties.typeBarcode == 'bin') {    //Start with fresh bin
 
         //Push bin_table & load_table INSERTs to sqlStatements
         insertIntoBinTable(barcodeProperties, req.body.loadData[i]);
         insertIntoLoadTable(barcodeProperties.binId, req.body.loadData[i].storageId, req.body.loadDetails.loadId);
 
-        //Check subsequent objects in loadData for pickers
-        for(var j=1; j < (req.body.loadData.length-i); j++) {
-          nextBarcode = decode.decodeBarcode(req.body.loadData[i+j].barcode);
+        //Pickers
+        for(var j=0; j < req.body.loadData[i].pickerIds.length; j++) {
 
-          if (nextBarcode.typeBarcode == 'emp') {
-            insertIntoBoxesTable(nextBarcode.employeeId, barcodeProperties.binId)
-          }
-          else  {
-            i = i+j-1;    //allow outer for-loop to skip picker scans
-            break;    //no [more] pickers in this bin, move to next bin
+            insertIntoBoxesTable(req.body.loadData[i].pickerIds[j], barcodeProperties.binId)
           }
         }
-      }
-      else if (barcodeProperties.typeBarcode != 'emp') {
-        console.log(barcodeProperties.typeBarcode + "\nUnexpected barcode length/type in OrchardRunManager.js");
-      }
-    }
+      // else if (barcodeProperties.typeBarcode != 'emp') {
+      //   console.log(barcodeProperties.typeBarcode + "\nUnexpected barcode length/type in OrchardRunManager.js");
+      // }
 
     //Send SQL to db
     db.getConnection(function(err, connection) {
@@ -83,7 +74,7 @@ var insertIntoLoadHeadingTable = function(loadDetails) {
   var sql = "INSERT INTO `orchard_run`.`load_heading_table` VALUES('" +
     loadDetails.loadType + "','" +
     loadDetails.loadId + "','" +
-    loadDetails.truckDriver + "','" +
+    loadDetails.truckDriverId + "','" +
     loadDetails.loadDate + "','" +
     loadDetails.loadDateTime + "','" +
     loadDetails.truckId + "','" +
