@@ -3,22 +3,17 @@
 angular.module('crist_farms')
 .controller('OrchardRunLoadController', ['$scope', 'OrchardRunService', 'StorageTransferService', 'TruckService',
 function ($scope, orchardRunService, storageTransferService, truckService) {
-$scope.$watch('loadData', function() {
-  console.log($scope.loadData);
-});
-$scope.$watch('displayLoadData', function() {
-  console.log($scope.displayLoadData);
-});
+
   // Set default values
   $scope.scan = null;
-  $scope.loadData = [];
-  $scope.displayLoadData = $scope.loadData.slice().reverse();
+  $scope.binData = [];
+  $scope.displayBinData = $scope.binData.slice().reverse();
   $scope.pickDate = moment().format('YYYY-MM-DD');
   $scope.boxesCount = 20;
   //$scope.binComments = null;
   //$scope.loadComments = null;
   $scope.loadDate = moment().format('YYYY-MM-DD');
-  $scope.loadDateTime = moment().format('YYYY-MM-DD hh:mm:00');
+  $scope.loadDateTime = moment().format('YYYY-MM-DD hh:mm:00 A');
 
 
   truckService.GetTrucks(function(data) {
@@ -38,7 +33,7 @@ $scope.$watch('displayLoadData', function() {
 
   $scope.addScan = function() {
     orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
-      if ($scope.loadData.map(function(a) {return a.barcode}).indexOf($scope.scan) == -1){
+      if ($scope.binData.map(function(a) {return a.barcode}).indexOf($scope.scan) == -1){
         if ($scope.scan.length == 19){   //Bin barcode
           var value = {
             barcode: $scope.scan,
@@ -56,12 +51,12 @@ $scope.$watch('displayLoadData', function() {
             jobName: decodedData.jobName,
             pickerIds: []
           };
-          $scope.loadData.push(value);
+          $scope.binData.push(value);
         }
         else if ($scope.scan.length == 3){   //Picker barcode
-          //check for bin as first scan
-          if ($scope.loadData[$scope.loadData.length - 1].pickerIds.indexOf($scope.scan) == -1){
-            $scope.loadData[$scope.loadData.length - 1].pickerIds.push($scope.scan);
+          //need to check for bin as first scan
+          if ($scope.binData[$scope.binData.length - 1].pickerIds.indexOf($scope.scan) == -1){
+            $scope.binData[$scope.binData.length - 1].pickerIds.push($scope.scan);
           }
           else {
             $('#alert_placeholder').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>Duplicate Picker Entered!</span></div>')
@@ -90,7 +85,7 @@ $scope.$watch('displayLoadData', function() {
       }, 2000);
     }
 
-        $scope.displayLoadData = $scope.loadData.slice().reverse();
+        $scope.displayBinData = $scope.binData.slice().reverse();
         $scope.scan = null;
         $scope.$broadcast('newItemAdded');
       });
@@ -98,20 +93,20 @@ $scope.$watch('displayLoadData', function() {
   };
 
   $scope.editScan = function(barcode){
-    // var index =  $scope.loadData.indexOf(barcode);
+    // var index =  $scope.binData.indexOf(barcode);
     //  if (index > -1) {
-    //       $scope.loadData.splice(index, 1);
+    //       $scope.binData.splice(index, 1);
     //   }
-    //   $scope.displayLoadData = $scope.loadData.slice().reverse();
+    //   $scope.displayBinData = $scope.binData.slice().reverse();
     //   $scope.$broadcast('newItemAdded');
   };
 
   $scope.removeScan = function(barcode){
-    var index =  $scope.loadData.indexOf(barcode);
+    var index =  $scope.binData.indexOf(barcode);
     if (index > -1) {
-      $scope.loadData.splice(index, 1);
+      $scope.binData.splice(index, 1);
     }
-    $scope.displayLoadData = $scope.loadData.slice().reverse();
+    $scope.displaybinData = $scope.binData.slice().reverse();
     $scope.$broadcast('newItemAdded');
   };
 
@@ -120,16 +115,18 @@ $scope.$watch('displayLoadData', function() {
     orchardRunService.GetLoadId({idType: 'or'}, function(data){
       $scope.loadId = data.loadId;
       var load = {
-        loadDetails: {
+        loadData: {
           loadType: 'or',
           loadId: $scope.loadId,
           truckDriverId: $scope.truckDriver.id,
+          truckDriverName: $scope.truckDriver.name,
           loadDate: $scope.loadDate,
           loadDateTime: $scope.loadDateTime,
           truckId: $scope.truck.id,
+          truckName: $scope.truck.name,
           loadComments: $scope.loadComments
         },
-        loadData: $scope.loadData
+        binData: $scope.binData
       };
       orchardRunService.SubmitLoad(load);
       orchardRunService.SaveData(load);
@@ -137,11 +134,11 @@ $scope.$watch('displayLoadData', function() {
     });
   };
 
-  $scope.clearLoadData = function(){
-    $scope.loadData = [];
+  $scope.clearBinData = function(){
+    $scope.binData = [];
     $scope.scan=null;
     $scope.$broadcast('newItemAdded');
-    $scope.displayLoadData = $scope.loadData.slice().reverse();
+    $scope.displayBinData = $scope.binData.slice().reverse();
   };
 
   $scope.cancelLoad = function(){
@@ -149,7 +146,7 @@ $scope.$watch('displayLoadData', function() {
     setTimeout(function () {
       $("div.alert").remove();
     }, 2000);
-    $scope.clearLoadData();
+    $scope.clearBinData();
     $scope.$broadcast('newItemAdded');
   };
 }]);

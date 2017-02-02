@@ -1,26 +1,24 @@
 body {
   padding-top: 50px;
+  font: 11pt/1.4em "Times New Roman", Times, serif;
 }
+
 .starter-template {
   padding: 40px 15px;
   text-align: center;
 }
 
 .label {
-  margin-right: 5px;
+  margin-left: 5px;
 }
 
-/****************************************
- * Print CSS Rules
- ****************************************/
+h1, h2, h3, h4, h5, h6 {
+  display: inline;
+}
 
-/****************************************
- * General Formatting
- ****************************************/
-
-body {
-	font: 11pt/1.4em "Times New Roman", Times, serif;
-	}
+td {
+  text-align: left !important;
+}
 
 a {
 	text-decoration: none;

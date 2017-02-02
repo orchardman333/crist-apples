@@ -1,12 +1,13 @@
+<div class="container-fluid">
 <h1>Review Load</h1>
 
 <div id="printingContent">
 </br>
-  <label for="inputlg">Truck ID:</label>{{truck_id}} </br>
-  <label for="inputlg">Truck Driver:</label> {{truck_driver}}</br>
-  <label for="inputlg">Date:</label>{{date}}</br>
-  <label for="inputlg">Time:</label>{{CurrentDate | date:'hh:mm:ss a'}}</br></br>
-  <table st-table="rowCollection" class="table table-striped">
+  <label for="inputlg">Truck ID:</label> {{load.loadData.truckName}} </br>
+  <label for="inputlg">Truck Driver:</label> {{load.loadData.truckDriverName}}</br>
+  <label for="inputlg">Date:</label> {{load.loadData.loadDate}}</br>
+  <label for="inputlg">Time:</label> {{load.loadData.loadDateTime.slice(-11)}}</br></br>
+  <table class="table table-striped">
   	<thead>
   	<tr>
   		<th>Bin ID</th>
@@ -20,19 +21,20 @@
   	</tr>
   	</thead>
   	<tbody>
-  	<tr ng-repeat="row in rowCollection">
-  		<td>{{row.bin_id}}</td>
-      <td>{{row.block_names}}</td>
-  		<td>{{row.variety}}</td>
+  	<tr ng-repeat="row in load.binData track by $index">
+  		<td>{{row.barcode}}</td>
+      <td>{{row.blockName}}</td>
+  		<td>{{row.varietyName}}</td>
       <td>{{row.strainName}}</td>
-  		<td>{{row.storage}}</td>
-      <td>{{row.nr_boxes}}</td>
-      <td>{{row.comments}}</td>
-      <td>{{row.pickers}}</td>
+  		<td>{{row.storageName}}</td>
+      <td>{{row.boxesCount}}</td>
+      <td>{{row.binComments}}</td>
+      <td>{{row.pickerIds.join(', ')}}</td>
   	</tr>
   	</tbody>
   </table>
-<div>
+</div>
 <br>
 <br>
 <a href="javascript:CallPrint('printingContent')">print</a>
+</div>

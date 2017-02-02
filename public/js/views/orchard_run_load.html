@@ -1,13 +1,11 @@
 <div class="container-fluid">
   <div class="row">
-
     <div class="col-sm-12">
       <h1>Orchard Run Load</h1>
     </div>
-
   </div>
-  <div class="row">
 
+  <div class="row">
     <div class="col-sm-3">
       <label for="Truck Driver">Truck Driver:</label>
       <select class="form-control" ng-model="truckDriver" ng-options="truckDrivers.name for truckDrivers in truckDriverList" >
@@ -27,11 +25,10 @@
       <label for="Load Comments">Load Comments:</label>
       <input class="form-control input" ng-model="loadComments" type="text">
     </div>
-
   </div>
   <br/>
-  <div class="row">
 
+  <div class="row">
     <div class="col-sm-3">
       <label for="Storage">Storage:</label>
       <select class="form-control" ng-model="storage" ng-options="storages.name for storages in storageList">
@@ -50,51 +47,45 @@
       <label for="Bin Comments">Bin Comments:</label>
       <input class="form-control input" ng-model="binComments" type="text">
     </div>
-
   </div>
   <br/>
-  <div class="row">
 
+  <div class="row">
     <div class="col-sm-12">
       <label for="Scan Barcode">Scan Barcode</label>
       <input class="form-control input-lg" ng-model="scan" focus-on="newItemAdded" my-enter="addScan()" type="text">
       <button type="button" class="btn btn-link" ng-click="addScan()">Add Barcode</button>
       <div id="alert_placeholder"></div>
       <div class="well">
-        <h3>Scanned Bar Codes</h3>
+        <h3 style="display: inline;">Scanned Bar Codes</h3>
         <ul class="list-group">
-          <li class="list-group-item list-group-item-{{barcode.buttonColor}} clearfix" ng-repeat="barcode in displayLoadData track by $index">
-            {{barcode.type}}
-              <strong>{{barcode.barcode.slice(-5)}}</strong>
-              {{barcode.blockName}}
-              {{barcode.varietyName}}
-              {{barcode.strainName}}
-              {{barcode.storageName}}
-              {{barcode.pickDate}}
-              {{barcode.boxesCount}}
-              {{barcode.binComments}}
-              {{barcode.bearingName}}
-              {{barcode.treatmentName}}
-              {{barcode.pickName}}
-              {{barcode.jobName}}
-              <h4 style="display: inline;"><span class="label label-info" ng-repeat="empBarcode in barcode.pickerIds track by $index">{{empBarcode}}</span></h4>
-              <div class="pull-right">
-                <button type="button" ng-click="editScan(barcode)">
-                  <span class='glyphicon glyphicon-edit'></span>
-                </button>
-                <button type="button" ng-click="removeScan(barcode)">
-                  <span class='glyphicon glyphicon-trash'></span>
-                </button>
-              </div>
+          <li class="list-group-item list-group-item-{{barcode.buttonColor}} clearfix" ng-repeat="barcode in displayBinData track by $index">
+            <strong>{{barcode.barcode.slice(-5)}}</strong>
+            {{barcode.blockName}}
+            {{barcode.varietyName}}
+            {{barcode.strainName}}
+            {{barcode.storageName}}
+            {{barcode.pickDate}}
+            {{barcode.boxesCount}}
+            {{barcode.binComments}}
+            {{barcode.bearingName}}
+            {{barcode.treatmentName}}
+            {{barcode.pickName}}
+            {{barcode.jobName}}
+            <h4 style="display: inline;"><span class="label label-info" ng-repeat="empBarcode in barcode.pickerIds track by $index">{{empBarcode}}</span></h4>
+            <div class="pull-right">
+              <button type="button" ng-click="editScan(barcode)">
+                <span class='glyphicon glyphicon-edit'></span>
+              </button>
+              <button type="button" ng-click="removeScan(barcode)">
+                <span class='glyphicon glyphicon-trash'></span>
+              </button>
             </div>
-          </li>
-        </ul>
-
-        <br/><br/><br/>
-        <button type="button" class="btn btn-primary" ng-click="submitLoad()">Submit Data</button>
-        <button type="button" class="btn btn-danger" ng-click="cancelLoad()">Cancel</button>
-      </div>
+          </div>
+        </li>
+      </ul>
+      <button type="button" class="btn btn-primary" ng-click="submitLoad()">Submit Data</button>
+      <button type="button" class="btn btn-danger" ng-click="cancelLoad()">Cancel</button>
     </div>
-
   </div>
 </div>

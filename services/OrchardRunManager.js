@@ -9,31 +9,30 @@ var sqlStatements = [];
 
 //Take entire list of barcode scans (including form data like storage, truck driver, etc.) from Angular
 //Then sort and INSERT them into db
-//req.body.loadDetails = object of extra load information
-//req.body.loadData = object array of bin and employee (picker) barcode
+//req.body.loadData = object of extra load information
+//req.body.binData = object array of bin and employee (picker) barcode
 module.exports = {
   LoadBins: function (req,res) {
     sqlStatements = [];   //Clear old statements
     var barcodeProperties = {};
-    var nextBarcode = {};
     //Ignore foreign key contraints
     sqlStatements.push("SET FOREIGN_KEY_CHECKS=0;");
 
     //Push load_heading_table INSERTs
-    insertIntoLoadHeadingTable(req.body.loadDetails);
+    insertIntoLoadHeadingTable(req.body.loadData);
 
     //Iterate through list of bins
-    for(var i=0; i < req.body.loadData.length; i++) {
-      barcodeProperties = decode.decodeBarcode(req.body.loadData[i].barcode);
+    for(var i=0; i < req.body.binData.length; i++) {
+      barcodeProperties = decode.decodeBarcode(req.body.binData[i].barcode);
 
         //Push bin_table & load_table INSERTs to sqlStatements
-        insertIntoBinTable(barcodeProperties, req.body.loadData[i]);
-        insertIntoLoadTable(barcodeProperties.binId, req.body.loadData[i].storageId, req.body.loadDetails.loadId);
+        insertIntoBinTable(barcodeProperties, req.body.binData[i]);
+        insertIntoLoadTable(barcodeProperties.binId, req.body.binData[i].storageId, req.body.loadData.loadId);
 
         //Pickers
-        for(var j=0; j < req.body.loadData[i].pickerIds.length; j++) {
+        for(var j=0; j < req.body.binData[i].pickerIds.length; j++) {
 
-            insertIntoBoxesTable(req.body.loadData[i].pickerIds[j], barcodeProperties.binId)
+            insertIntoBoxesTable(req.body.binData[i].pickerIds[j], barcodeProperties.binId)
           }
         }
       // else if (barcodeProperties.typeBarcode != 'emp') {
@@ -53,7 +52,7 @@ module.exports = {
   }
 };
 
-var insertIntoBinTable = function(barcodeProperties, loadData) {
+var insertIntoBinTable = function(barcodeProperties, binData) {
   var sql = "INSERT INTO `orchard_run`.`bin_table` VALUES('" +
     barcodeProperties.binId + "','" +
     barcodeProperties.blockId + "','" +
@@ -63,22 +62,22 @@ var insertIntoBinTable = function(barcodeProperties, loadData) {
     barcodeProperties.treatmentId + "','" +
     barcodeProperties.pickId + "','" +
     barcodeProperties.jobId + "','" +
-    loadData.pickDate + "','" +
-    loadData.boxesCount + "','" +
-    loadData.binComments + "')";
+    binData.pickDate + "','" +
+    binData.boxesCount + "','" +
+    binData.binComments + "')";
 
   sqlStatements.push (sql);
 };
 
-var insertIntoLoadHeadingTable = function(loadDetails) {
+var insertIntoLoadHeadingTable = function(loadData) {
   var sql = "INSERT INTO `orchard_run`.`load_heading_table` VALUES('" +
-    loadDetails.loadType + "','" +
-    loadDetails.loadId + "','" +
-    loadDetails.truckDriverId + "','" +
-    loadDetails.loadDate + "','" +
-    loadDetails.loadDateTime + "','" +
-    loadDetails.truckId + "','" +
-    loadDetails.loadComments + "')";
+    loadData.loadType + "','" +
+    loadData.loadId + "','" +
+    loadData.truckDriverId + "','" +
+    loadData.loadDate + "','" +
+    loadData.loadDateTime + "','" +
+    loadData.truckId + "','" +
+    loadData.loadComments + "')";
 
   sqlStatements.push (sql);
 };
