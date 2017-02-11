@@ -1,9 +1,25 @@
 // Returns a single [bin's properties or employee's name] from its full tag
-
+'use strict'
 var db   = require("./DatabaseManager");
 var decode = require("./BarcodeDecodingManager");
+var async = require("async");
+var now = require("performance-now");
+
+var properties = [['block'], ['variety'], ['strain'], ['bearing'], ['treatment'], ['pick'], ['job']];
+var properties1 = ['block', 'variety', 'strain', 'bearing', 'treatment', 'pick', 'job'];
+var properties2 = [['h02','block'], ['rd','variety'], ['00','strain'], ['b','bearing'], ['u','treatment'], ['1','pick'], ['p100','job']];
+for (var i=0; i < properties.length; i++) {
+  properties[i].push(properties[i][0] + '_table', properties[i][0] + ' ID', properties[i][0] + ' Name');
+}
+for (var i=0; i < properties.length; i++) {
+  properties2[i].push(properties[i][1] + '_table', properties2[i][1] + ' ID', properties2[i][1] + ' Name');
+}
+
 module.exports = {
   GetBinProperties: function (req,res) {
+    var t0 = now();
+    console.log(t0);
+    var object={};
     var idValues = decode.decodeBarcode(req.body.barCode);
     if (idValues.typeBarcode == 'emp'){
       empIdsToNames(idValues, function(data){
@@ -11,10 +27,62 @@ module.exports = {
       });
     }
     else {
-      binIdsToNames(idValues, function(data){
+      // db.getConnection(function(err, connection) {
+      //   async.each(properties2,
+      //     function (property, callback) {
+      //       console.log(now()-t0);
+      //       connection.query('SELECT `'+ property[1] +' Name` AS prop FROM `'+ property[1] +'_table` WHERE `'+ property[1] +" ID` = '" + property[0] + "'" , function(error, results, fields) {
+      //         object[property[1] + 'Name'] = results[0].prop;
+      //         console.log(now()-t0);
+      //         if (error) console.log(error);
+      //         callback();
+      //       });
+      //     },
+      //     function (err) {
+      //       if (err) console.log(err);
+      //       else {
+      //         res.json(object);
+      //         connection.release();
+      //         console.log(now()-t0);
+      //       }
+      //     }
+      //   );
+      //
+      // });
+    db.getConnection(function(err, connection) {
+      select(t0, connection, idValues.idArray, 0, {}, properties, function(data){
         res.json(data);
+        connection.release();
+        console.log(now()-t0);
       });
-    }
+    });
+  }
+  }
+}
+
+      // binIdsToNames(idValues, function(data){
+      //   res.json(data);
+      // });
+
+
+function select (t0, connection, idArray, index, object, properties, callback) {
+  if (index < properties.length) {
+console.log(now()-t0);
+    connection.query('SELECT `'+ properties[index][3] +'` AS prop FROM `'+ properties[index][1] +'` WHERE `'+ properties[index][2] +"` = '" + idArray[index] + "'", function(error, results, fields) {
+console.log(now()-t0);
+      if (results.length == 1)
+      {
+        object[properties[index][0] + 'Name'] = results[0].prop;
+      }
+      else {
+        object[properties[index][0] + 'Name'] = 'Error looking up name in LookupManager.js';
+      }
+      select(t0, connection, idArray, ++index, object, properties, callback);
+      return;
+    });
+  }
+  else {
+    callback(object);
   }
 };
 

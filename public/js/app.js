@@ -30,6 +30,10 @@ app.config(['$routeProvider', function ($routeProvider) {
         .otherwise({ redirectTo: '/' });
 }]);
 
+app.config(['$locationProvider', function($locationProvider) {
+  $locationProvider.hashPrefix('');
+}]);
+
 app.directive('focusOn', function() {
    return function(scope, element, attrs) {
       scope.$on(attrs.focusOn, function() {

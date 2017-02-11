@@ -15,7 +15,8 @@ module.exports={
         treatmentId: barcode.substring(8, 9),
         pickId: barcode.substring(9, 10),
         jobId: barcode.substring(10, 14),
-        binId: barcode.substring(14, 19)
+        binId: barcode.substring(14, 19),
+        idArray: [barcode.substring(0,3),barcode.substring(3,5),barcode.substring(5,7),barcode.substring(7,8),barcode.substring(8,9),barcode.substring(9,10),barcode.substring(10,14)]
       }
     }
     else if (barcode.length == 3){

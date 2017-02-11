@@ -1,10 +1,9 @@
 body {
-  padding-top: 50px;
   font: 11pt/1.4em "Times New Roman", Times, serif;
 }
 
 .starter-template {
-  padding: 40px 15px;
+  padding: 60px 10px 0px ;
   text-align: center;
 }
 
@@ -12,7 +11,7 @@ body {
   margin-left: 5px;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h2, h3, h4, h5, h6 {
   display: inline;
 }
 
@@ -21,100 +20,6 @@ td {
 }
 
 a {
-	text-decoration: none;
-	color: #b31b1b;
+  text-decoration: none;
+  color: red;
 	}
-
-img {
-	border: none;
-}
-
-#cufa-rights a {
-	margin-right: 16px;
-}
-
-#identity h1 em {
-	font-style: normal;
-	}
-
-#identity a, #footer a {
-	color: black;
-	}
-
-hr {
-	height: 1px;
-	border: none;
-	border-bottom: 1px solid #ccc;
-}
-
-#breadcrumbs {
-	float: left;
-	width: 100%;
-}
-
-ul#breadcrumbs {
-	margin-left: 0;
-	margin-top: 0;
-	padding: 0;
-	}
-
-#breadcrumbs li {
-	float: left;
-	padding: 0 12px 0 0;
-	margin: 0 0 0 8px;
-	font-size: 85%;
-	list-style-image: url(/catc/images/layout/bullet.gif);
-}
-
-#breadcrumbs li.first {
-	margin-left: 0;
-	list-style: none;
-}
-
-#breadcrumbs a {
-	color: black;
-	text-decoration: none;
-	}
-
-/* hiding elements */
-#header,
-#nav_main_inner,
-.page_title,
-#GenPDFDiv,
-#nav-sec-middle,
-.box_01,
-#footer,
-#skipnav,
-#cs-pagemodeui,
-#search-form,
-#navigation,
-#nav_main,
-#nav_main_inner,
-#nav-sec-middle,
-#nav-left-side,
-#nav_extra_top,
-.slide-pagination,
-#identity,
-#pagesfor,
-#unit-signature-links,
-#section-navigation,
-#cufa-rights,
-#cu-logo,
-#pagetop,
-#Left,
-#breadcrumb
-{
-	display: none;
-	}
-
-#resultHdrLeft {
-	float:left; width:60%;
-	}
-
-#resultHdrRight {
-	float:right; width:40%;
-	}
-
-#print-only-header {
-    display: normal;
-}

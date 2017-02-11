@@ -5,8 +5,5 @@ angular.module('crist_farms')
  function ($scope, orchardRunService) {
 
      $scope.load = orchardRunService.GetData();
-    //  $scope.truckDriver = $scope.load.loadData.truckDriverName;
-    //  $scope.truck = $scope.load.loadData.truckName;
-    //  $scope.date = $scope.load.loadData.loadDate;
-    //  $scope.dateTime = $scope.load.loadData.loadDateTime;
+     
  }]);

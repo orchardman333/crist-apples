@@ -59,7 +59,7 @@
       <div class="well">
         <h3 style="display: inline;">Scanned Bar Codes</h3>
         <ul class="list-group">
-          <li class="list-group-item list-group-item-{{barcode.buttonColor}} clearfix" ng-repeat="barcode in displayBinData track by $index">
+          <li class="list-group-item list-group-item-success clearfix" ng-repeat="barcode in displayBinData track by $index">
             <strong>{{barcode.barcode.slice(-5)}}</strong>
             {{barcode.blockName}}
             {{barcode.varietyName}}

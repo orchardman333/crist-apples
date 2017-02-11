@@ -13,7 +13,7 @@ function ($scope, orchardRunService, storageTransferService, truckService) {
   //$scope.binComments = null;
   //$scope.loadComments = null;
   $scope.loadDate = moment().format('YYYY-MM-DD');
-  $scope.loadDateTime = moment().format('YYYY-MM-DD hh:mm:00 A');
+  $scope.loadDateTime = moment().format('YYYY-MM-DD kk:mm:00');
 
 
   truckService.GetTrucks(function(data) {
@@ -117,7 +117,7 @@ function ($scope, orchardRunService, storageTransferService, truckService) {
       var load = {
         loadData: {
           loadType: 'or',
-          loadId: $scope.loadId,
+          loadId: '' + $scope.loadId,
           truckDriverId: $scope.truckDriver.id,
           truckDriverName: $scope.truckDriver.name,
           loadDate: $scope.loadDate,
