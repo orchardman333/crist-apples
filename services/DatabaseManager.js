@@ -3,8 +3,8 @@
 var mysql = require("mysql");
 
 module.exports = mysql.createPool({
-  host     : 'localhost',
+  host     : 'cb-production.cf6eebznfzpb.us-east-1.rds.amazonaws.com',
   user     : 'root',
-  password : 'root',
-  database : 'orchard_run'
+  password : 'rootroot',
+  database : 'orchard_run2017'
 })

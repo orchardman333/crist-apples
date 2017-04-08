@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('crist_farms', ['ngRoute', 'jkuri.datepicker']);
+var app = angular.module('crist_farms', ['ngRoute', 'ui.bootstrap.datetimepicker']);
 
 app.config(['$routeProvider', function ($routeProvider) {
   $routeProvider
@@ -31,7 +31,10 @@ app.config(['$routeProvider', function ($routeProvider) {
 }]);
 
 app.config(['$locationProvider', function($locationProvider) {
-  $locationProvider.hashPrefix('');
+  $locationProvider.hashPrefix('').html5Mode({
+  enabled: true,
+  requireBase: false
+});
 }]);
 
 app.directive('focusOn', function() {

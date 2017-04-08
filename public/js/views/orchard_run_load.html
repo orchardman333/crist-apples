@@ -12,15 +12,24 @@
       </select>
     </div>
     <div class="col-sm-3">
-      <label for="Load Date">Load Date:</label>
-      <ng-datepicker class="form-control" ng-model="loadDate" format="YYYY-MM-DD hh:mm:ss" view-format="YYYY-MM-DD hh:mm:ss">
-      </ng-datepicker>
-    </div>
-    <div class="col-sm-3">
       <label for="Truck">Truck:</label>
       <select class="form-control" ng-model="truck" ng-options="trucks.name for trucks in truckList">
       </select>
     </div>
+      <div class="col-sm-3">
+        <div class="dropdown">
+          <label for="Load DateTime">Load DateTime:</label>
+          <a class="dropdown-toggle" id="dropdown" role="button" data-toggle="dropdown" data-target="#" href="#">
+            <div class="input-group"><input type="text" class="form-control" data-ng-model="loadDateTime"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+            </div>
+          </a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <datetimepicker ng-model="loadDateTime" data-datetimepicker-config="{ dropdownSelector: '#dropdown' }"/>
+          </ul>
+        </div>
+        <!-- <label for="Load Date">Load Date:</label>
+        <input class="form-control input" ng-model="loadDateTime" type="text"> -->
+      </div>
     <div class="col-sm-3">
       <label for="Load Comments">Load Comments:</label>
       <input class="form-control input" ng-model="loadComments" type="text">
@@ -39,9 +48,16 @@
       <input class="form-control" ng-model="boxesCount" type="number" step="1">
     </div>
     <div class="col-sm-3">
-      <label for="Pick Date">Pick Date:</label>
-      <ng-datepicker class="form-control" ng-model="pickDate" format="YYYY-MM-DD" view-format="YYYY-MM-DD">
-      </ng-datepicker>
+      <div class="dropdown">
+        <label for="Pick Date">Pick Date:</label>
+    <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
+      <div class="input-group"><input type="text" class="form-control" ng-model="pickDate"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+      </div>
+    </a>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+      <datetimepicker ng-model="pickDate" data-datetimepicker-config="{ dropdownSelector: '#dropdown2', startView:'day', minView:'day' }"/>
+    </ul>
+  </div>
     </div>
     <div class="col-sm-3">
       <label for="Bin Comments">Bin Comments:</label>
@@ -57,7 +73,7 @@
       <button type="button" class="btn btn-link" ng-click="addScan()">Add Barcode</button>
       <div id="alert_placeholder"></div>
       <div class="well">
-        <h3 style="display: inline;">Scanned Bar Codes</h3>
+        <h3>Scanned Bar Codes</h3>
         <ul class="list-group">
           <li class="list-group-item list-group-item-success clearfix" ng-repeat="barcode in displayBinData track by $index">
             <strong>{{barcode.barcode.slice(-5)}}</strong>
@@ -72,7 +88,7 @@
             {{barcode.treatmentName}}
             {{barcode.pickName}}
             {{barcode.jobName}}
-            <h4 style="display: inline;"><span class="label label-info" ng-repeat="empBarcode in barcode.pickerIds track by $index">{{empBarcode}}</span></h4>
+            <h4><span class="label label-info" ng-repeat="empBarcode in barcode.pickerIds track by $index">{{empBarcode}}</span></h4>
             <div class="pull-right">
               <button type="button" ng-click="editScan(barcode)">
                 <span class='glyphicon glyphicon-edit'></span>

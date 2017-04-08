@@ -5,6 +5,7 @@ module.exports = {
   GetLoadId: function (req,res) {
     var num = '';
     var xxid = req.body.idType + " id";
+    //likely don't need callback here, need to escape query values
     var getData = function(callback){
       db.getConnection(function(err, connection) {
         connection.query("SELECT `" + xxid + "`  AS num FROM load_sequence_table", function(err, rows, fields){

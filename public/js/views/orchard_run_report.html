@@ -3,10 +3,11 @@
 
   <div id="printingContent">
   </br>
+  <label for="Load ID">Load ID:</label> {{load.loadData.loadId}} </br>
   <label for="Truck ID">Truck ID:</label> {{load.loadData.truckName}} </br>
   <label for="Truck Driver">Truck Driver:</label> {{load.loadData.truckDriverName}}</br>
-  <label for="Date">Date:</label> {{load.loadData.loadDate}}</br>
-  <label for="Time">Time:</label> {{load.loadData.loadDateTime | date : "shortTime"}}</br></br>
+  <label for="Date">Date:</label> {{load.loadData.loadDateTime.slice(0,11)}}</br>
+  <label for="Time">Time:</label> {{load.loadData.loadDateTime.slice(-8)}}</br></br>
   <table class="table table-striped">
     <thead>
       <tr>
