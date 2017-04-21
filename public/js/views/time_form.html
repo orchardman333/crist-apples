@@ -1,11 +1,27 @@
-<h3> Time Form </h3>
-<div id="alert_placeholder"></div>
-<label for="inputlg">Job ID:</label>
-<input class="form-control input-lg" id="scan" type="text" ng-model="job_id">
-<br/>
-<label for="truck_driver">Employee:</label>
-<select class="form-control" ng-model="employee" ng-options="ee.name for ee in employees">
-</select>
-<br/>
+<h3> Time Form </h3></br>
 
-<button type="button" class="btn btn-primary" ng-click="submit()">Submit Data</button>
+<div id="alert_placeholder"></div>
+<div class="row">
+  <div class="col-sm-3">
+
+  </div>
+  <div class="col-sm-6">
+    <label for="inputlg">Shift Status:</label>
+    <select class="form-control input-lg" type="text" ng-model="shiftStatus" ng-options="status.name for status in shiftStatusOptions">
+</select>
+    <br/>
+<label for="inputlg">Job ID:</label>
+    <input class="form-control input-lg" type="text" ng-model="jobId">
+    <br/>
+    <label for="truck_driver">Employee:</label>
+    <select class="form-control input-lg" ng-model="employee" ng-options="employees.name for employees in employeeList">
+    </select>
+    <br/>
+
+    <button type="button" class="btn btn-primary" ng-click="submit()">Submit Data</button>
+
+  </div>
+  <div class="col-sm-3">
+
+  </div>
+</div>

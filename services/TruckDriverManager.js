@@ -7,13 +7,12 @@ module.exports = {
     var getData = function(callback){
       var truckDriverList = [];
       db.getConnection(function(err, connection) {
-        connection.query("SELECT `Employee ID` AS id, `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Truck Driver`", function(err, rows, fields) {
+        connection.query('SELECT `Employee ID` AS id, `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Truck Driver`', function(error, results, fields) {
           connection.release();
-          for(var x=0; x<rows.length; x++){
-            var row = rows[x];
+          for (var i=0; i<results.length; i++) {
             truckDriverList.push({
-              id: row.id,
-              name: row.firstName + " " + row.lastName
+              id: results[i].id,
+              name: results[i].firstName + ' ' + results[i].lastName
             });
           }
           callback(truckDriverList);

@@ -6,6 +6,7 @@ var morgan = require('morgan');             // log requests to the console (expr
 var bodyParser = require('body-parser');    // pull information from HTML POST (express4)
 var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
 var truckDriverManager = require('./services/TruckDriverManager');
+var employeeManager = require('./services/EmployeeManager');
 var storageManager = require('./services/StorageManager');
 var orchardRunManager = require('./services/OrchardRunManager');
 var loadReportManager = require('./services/LoadReportManager');
@@ -28,6 +29,10 @@ app.get('/api/truckDrivers', function(req, res) {
   truckDriverManager.GetTruckDrivers(res);
 });
 
+app.get('/api/employees', function(req, res) {
+  employeeManager.GetEmployees(res);
+});
+
 app.get('/api/trucks', function(req, res) {
   truckManager.GetTrucks(res);
 });
@@ -37,7 +42,7 @@ app.get('/api/loadReports', function(req, res) {
 });
 
 app.post('/api/lookupManager', function(req, res) {
-  lookupManager.GetBinProperties(req,res);
+  lookupManager.GetBinProperties(req, res);
 });
 
 app.get('/api/storage', function(req, res) {
@@ -52,7 +57,7 @@ app.post('/api/timeForm', function(req,res) {
   timeFormManager.DoWork(req,res);
 });
 
-app.post('/api/loadId', function(req, res){
+app.post('/api/loadId', function(req, res) {
   loadSeqManager.GetLoadId(req, res);
 });
 

@@ -2,15 +2,21 @@
 
 angular.module('crist_farms')
 
-.controller('TimeFormController', ['$scope','EmployeeService','TimeFormService',
- function ($scope,employeeService, timeFormService) {
-   employeeService.GetTruckDrivers(function (data) {
-     $scope.employees=data;
+.controller('TimeFormController', ['$scope', '$location', 'EmployeeService', 'TimeFormService', function ($scope, $location, employeeService, timeFormService) {
+   employeeService.GetEmployees(function (data) {
+     $scope.employeeList = data;
+$scope.employee = $scope.employeeList[0];
    });
+$scope.jobId = 'h001';
+$scope.shiftStatusOptions = [{boolean:true, name:'Shift In'}, {boolean:false, name:'Shift End'}]
+$scope.shiftStatus = $scope.shiftStatusOptions[0]      //true for shifting in, false for shifting out
    $scope.submit = function(){
-     var data = {
-       employee: $scope.employee,
-       job_id: $scope.job_id
+if (shiftStatus != null) {
+var data = {
+       employeeId: $scope.employee.id,
+        shiftIn: $scope.shiftStatus.name,
+        jobId: $scope.jobId,
+        managerId: '000'
      }
      timeFormService.submitTimeRecord(data);
 
@@ -18,5 +24,11 @@ angular.module('crist_farms')
             setTimeout(function () {
                 $("div.alert").remove();
             }, 2000);
-   };
+$location.url('/time_form')
+   }
+
+else {
+  console.log('NULLNULLNULL');
+}
+}
  }]);

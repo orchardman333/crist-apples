@@ -71,18 +71,18 @@ insert(loadHeadingValues, 'load_heading_table', function () {
 
 function insert(values, tableName, callback){
   if (values.length > 0) {
-  db.getConnection(function (err, connection){
-    var query = connection.query('INSERT INTO ' + tableName + ' VALUES ?', [values], function (error, results, fields) {
-if (error) throw error;
-connection.release();
-      callback();
+    db.getConnection(function (err, connection){
+      var query = connection.query('INSERT INTO ' + tableName + ' VALUES ?', [values], function (error, results, fields) {
+        if (error) throw error;
+        connection.release();
+        callback();
+      });
+      console.log(query.sql);
     });
-    console.log(query.sql);
-  });
-}
-else {
-  callback();
-}
+  }
+  else {
+    callback();
+  }
 };
 
 function insertIntoBinTable(binValues, barcodeProperties, binData) {
