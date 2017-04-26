@@ -1,74 +1,68 @@
 // Returns a single [bin's properties or employee's name] from its full tag
 'use strict'
-var db   = require("./DatabaseManager");
+var db = require("./DatabaseManager");
 var decode = require("./BarcodeDecodingManager");
 var async = require("async");
 var now = require("performance-now");
 
-var properties = [['block'], ['variety'], ['strain'], ['bearing'], ['treatment'], ['pick'], ['job']];
+var properties = ['block', 'variety', 'strain', 'bearing', 'treatment', 'pick', 'job'];
 // var properties1 = ['block', 'variety', 'strain', 'bearing', 'treatment', 'pick', 'job'];
 // var properties2 = [['h03','block'], ['rd','variety'], ['00','strain'], ['b','bearing'], ['u','treatment'], ['1','pick'], ['p100','job']];
-for (var i=0; i < properties.length; i++) {
-  properties[i].push(properties[i][0] + '_table', properties[i][0] + ' ID', properties[i][0] + ' Name');
-}
+// for (var i=0; i < properties.length; i++) {
+//   properties[i].push(properties[i][0] + '_table', properties[i][0] + ' ID', properties[i][0] + ' Name');
+// }
 // for (var i=0; i < properties.length; i++) {
 //   properties2[i].push(properties[i][1] + '_table', properties2[i][1] + ' ID', properties2[i][1] + ' Name');
 // }
 
 module.exports = {
-  GetBinProperties: function (req,res) {
+  GetBarcodeProperties: function (req,res) {
     // var t0 = now();
     var object={};
     var idValues = decode.decodeBarcode(req.body.barCode);
-    if (idValues.typeBarcode == 'emp'){
-      empIdsToNames(idValues, function(data){
-        res.json(data);
+    //employee barcode
+    if (idValues.typeBarcode == 'emp') {
+      var name = '';
+      db.getConnection(function(err, connection) {
+        var query = connection.query('SELECT `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Employee ID` = ?', [idValues.empId], function(error, results, fields) {
+          if (error) throw error
+          if (results.length == 1) {
+            name = results[0].firstName + ' ' + results[0].lastName;
+          }
+          else {
+            name ='Error looking up employee name in LookupManager.js';
+          }
+          connection.release();
+          res.json({empName: name});
+        });
+        console.log(query.sql);
       });
     }
-    else {
+    //bin barcode
+    else if (idValues.typeBarcode == 'bin') {
       db.getConnection(function(err, connection) {
         async.eachOf(properties, function(property, index, callback) {
+          // console.log(now()-t0);
+          var query = connection.query('SELECT `'+ property +' Name` AS prop FROM `'+ property +'_table` WHERE `'+ property + ' ID` = ?', [idValues.idArray[index]], function(error, results, fields) {
+            if (error) throw error
+            object[property + 'Name'] = results[0].prop;
             // console.log(now()-t0);
-            connection.query('SELECT `'+ property[0] +' Name` AS prop FROM `'+ property[0] +'_table` WHERE `'+ property[0] +" ID` = '" + idValues.idArray[index] + "'" , function(error, results, fields) {
-              object[property[0] + 'Name'] = results[0].prop;
-              // console.log(now()-t0);
-              if (error) console.log(error);
-              callback();
-            });
-          },
-          function (err) {
-            if (err) console.log(err);
-            else {
-              res.json(object);
-              connection.release();
-              // console.log(now()-t0);
-            }
+            callback();
+          });
+          console.log(query.sql);
+        },
+        function (err) {
+          if (err) console.log(err);
+          else {
+            res.json(object);
+            connection.release();
+            // console.log(now()-t0);
           }
-        );
-      });
-    }
+        }
+      );
+    });
   }
 }
-
-var empIdsToNames = function(idValues, callback){
-  var empName = '';
-  db.getConnection(function(err, connection) {
-
-    //Employee
-    connection.query("SELECT `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Employee ID` = '" + idValues.empId + "'", function(err, empRows, fields) {
-      if (empRows.length == 1)
-      {
-        empName = empRows[0].firstName + ' ' + empRows[0].lastName;
-      }
-      else {
-        empName ='Error looking up employee name in LookupManager.js';
-      }
-      callback({
-        empName: empName
-      });
-      connection.release();
-    });
-  });
 }
 
 // recursive algorithm

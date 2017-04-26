@@ -42,7 +42,7 @@ app.get('/api/loadReports', function(req, res) {
 });
 
 app.post('/api/lookupManager', function(req, res) {
-  lookupManager.GetBinProperties(req, res);
+  lookupManager.GetBarcodeProperties(req, res);
 });
 
 app.get('/api/storage', function(req, res) {

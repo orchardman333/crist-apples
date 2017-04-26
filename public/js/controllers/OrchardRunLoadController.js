@@ -68,6 +68,7 @@ function ($scope, $location, orchardRunService, storageTransferService, truckSer
         //check if duplicate picker ID has been scanned already
         if ($scope.binData[$scope.binData.length - 1].pickerIds.indexOf($scope.scan) == -1) {
           $scope.binData[$scope.binData.length - 1].pickerIds.push($scope.scan);
+console.log(decodedData.empName);
         }
         //duplicate picker
         else {
@@ -90,7 +91,6 @@ function ($scope, $location, orchardRunService, storageTransferService, truckSer
       $scope.displayBinData = $scope.binData.slice().reverse();
       $scope.scan = null;
       $scope.$broadcast('newItemAdded');
-console.log($scope.binData);
 console.log($scope.displayBinData);
 
     });
