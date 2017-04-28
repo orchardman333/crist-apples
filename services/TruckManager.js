@@ -7,22 +7,22 @@ module.exports = {
     var getData = function(callback){
       var truckList = [];
       db.getConnection(function(err, connection) {
-        connection.query("SELECT `Truck ID` AS id, `Truck Name` AS name FROM truck_table", function(err, rows, fields) {
+        var query = connection.query('SELECT `Truck ID` AS id, `Truck Name` AS name FROM truck_table', function(error, results, fields) {
           connection.release();
-          for(var x=0; x<rows.length; x++){
-            var row = rows[x];
+          for(var i=0; i<results.length; i++){
             truckList.push({
-              id: row.id,
-              name: row.name
+              id: results[i].id,
+              name: results[i].name
             });
           }
           callback(truckList);
         });
+        console.log(query.sql);
       });
     };
 
-    getData(function(truckList){
-      res.json(truckList);
+    getData(function(data){
+      res.json(data);
     });
   }
 };

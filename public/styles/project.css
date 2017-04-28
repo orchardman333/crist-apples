@@ -1,9 +1,9 @@
 body {
   font: 11pt/1.4em "Times New Roman", Times, serif;
+  padding: 50px 10px 0px ;
 }
 
 .starter-template {
-  padding: 60px 10px 0px ;
   text-align: center;
 }
 

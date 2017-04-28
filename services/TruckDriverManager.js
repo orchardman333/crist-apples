@@ -7,7 +7,7 @@ module.exports = {
     var getData = function(callback){
       var truckDriverList = [];
       db.getConnection(function(err, connection) {
-        connection.query('SELECT `Employee ID` AS id, `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Truck Driver`', function(error, results, fields) {
+        var query = connection.query('SELECT `Employee ID` AS id, `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Truck Driver`', function(error, results, fields) {
           connection.release();
           for (var i=0; i<results.length; i++) {
             truckDriverList.push({
@@ -17,11 +17,12 @@ module.exports = {
           }
           callback(truckDriverList);
         });
+        console.log(query.sql);
       });
     };
 
-    getData(function(truckDriverList){
-      res.json(truckDriverList);
+    getData(function(data){
+      res.json(data);
     });
   }
 };

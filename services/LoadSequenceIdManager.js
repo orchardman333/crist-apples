@@ -4,7 +4,7 @@ var db   = require("./DatabaseManager");
 module.exports = {
   GetLoadId: function (req,res) {
     var num = '';
-    var idType = req.body.idType + " id";
+    var idType = req.body.idType + ' id';
     //likely don't need callback here, need to escape query values
     var getData = function(callback){
       db.getConnection(function(err, connection) {

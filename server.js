@@ -9,6 +9,8 @@ var truckDriverManager = require('./services/TruckDriverManager');
 var employeeManager = require('./services/EmployeeManager');
 var storageManager = require('./services/StorageManager');
 var orchardRunManager = require('./services/OrchardRunManager');
+var storageTransferManager = require('./services/StorageTransferManager');
+var packingDumpManager = require('./services/PackingDumpManager');
 var loadReportManager = require('./services/LoadReportManager');
 var lookupManager = require('./services/LookupManager');
 var truckManager = require('./services/TruckManager');
@@ -47,6 +49,14 @@ app.post('/api/lookupManager', function(req, res) {
 
 app.get('/api/storage', function(req, res) {
   storageManager.GetStorageList(res);
+});
+
+app.post('/api/storageTransferManager', function(req, res) {
+  storageTransferManager.TransferBins(req, res);
+});
+
+app.post('/api/PackingDumpManager', function(req, res) {
+  packingDumpManager.DumpBins(req, res);
 });
 
 app.post('/api/orchardRunManager', function(req, res) {

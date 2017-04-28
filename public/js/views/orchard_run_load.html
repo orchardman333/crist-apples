@@ -7,29 +7,29 @@
 
   <div class="row">
     <div class="col-sm-3">
-      <label for="Truck Driver">Truck Driver:</label>
+      <label for="Truck Driver">Driver/Conductor:</label>
       <select class="form-control" ng-model="truckDriver" ng-options="truckDrivers.name for truckDrivers in truckDriverList" >
       </select>
     </div>
     <div class="col-sm-3">
-      <label for="Truck">Truck:</label>
+      <label for="Truck">Truck/Camión:</label>
       <select class="form-control" ng-model="truck" ng-options="trucks.name for trucks in truckList">
       </select>
     </div>
-      <div class="col-sm-3">
-        <div class="dropdown">
-          <label for="Load DateTime">Load DateTime:</label>
-          <a class="dropdown-toggle" id="dropdown" role="button" data-toggle="dropdown" data-target="#" href="#">
-            <div class="input-group"><input type="text" class="form-control" data-ng-model="loadDateTime"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-            </div>
-          </a>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-            <datetimepicker ng-model="loadDateTime" data-datetimepicker-config="{ dropdownSelector: '#dropdown' }"/>
-          </ul>
-        </div>
-        <!-- <label for="Load Date">Load Date:</label>
-        <input class="form-control input" ng-model="loadDateTime" type="text"> -->
+    <div class="col-sm-3">
+      <div class="dropdown">
+        <label for="Load DateTime">Load DateTime:</label>
+        <a class="dropdown-toggle" id="dropdown" role="button" data-toggle="dropdown" data-target="#" href="#">
+          <div class="input-group"><input type="text" class="form-control" data-ng-model="loadDateTime"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+          </div>
+        </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+          <datetimepicker ng-model="loadDateTime" data-datetimepicker-config="{ dropdownSelector: '#dropdown' }"/>
+        </ul>
       </div>
+      <!-- <label for="Load Date">Load Date:</label>
+      <input class="form-control input" ng-model="loadDateTime" type="text"> -->
+    </div>
     <div class="col-sm-3">
       <label for="Load Comments">Load Comments:</label>
       <input class="form-control input" ng-model="loadComments" type="text">
@@ -44,20 +44,20 @@
       </select>
     </div>
     <div class="col-sm-3">
-      <label for="Bushels">Bushels:</label>
+      <label for="Bushels">Bushels/Casas:</label>
       <input class="form-control" ng-model="boxesCount" type="number" step="1">
     </div>
     <div class="col-sm-3">
       <div class="dropdown">
         <label for="Pick Date">Pick Date:</label>
-    <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
-      <div class="input-group"><input type="text" class="form-control" ng-model="pickDate"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+        <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
+          <div class="input-group"><input type="text" class="form-control" ng-model="pickDate"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+          </div>
+        </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+          <datetimepicker ng-model="pickDate" data-datetimepicker-config="{ dropdownSelector: '#dropdown2', startView:'day', minView:'day' }"/>
+        </ul>
       </div>
-    </a>
-    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-      <datetimepicker ng-model="pickDate" data-datetimepicker-config="{ dropdownSelector: '#dropdown2', startView:'day', minView:'day' }"/>
-    </ul>
-  </div>
     </div>
     <div class="col-sm-3">
       <label for="Bin Comments">Bin Comments:</label>
@@ -67,41 +67,117 @@
   <br/>
 
   <div class="row">
-    <div class="col-sm-12">
-      <label for="Scan Barcode">Scan Barcode</label>
-      <input class="form-control input-lg" ng-model="scan" focus-on="newItemAdded" my-enter="addScan()" type="text">
-      <button type="button" class="btn btn-link" ng-click="addScan()">Add Barcode</button>
-      <div id="alert_placeholder"></div>
-      <div class="well">
-        <h3>Scanned Bar Codes</h3>
-        <ul class="list-group">
-          <li class="list-group-item list-group-item-success clearfix" ng-repeat="barcode in displayBinData track by $index">
-            <strong>{{barcode.barcode.slice(-5)}}</strong>
-            {{barcode.blockName}}
-            {{barcode.varietyName}}
-            {{barcode.strainName}}
-            {{barcode.storageName}}
-            {{barcode.pickDate}}
-            {{barcode.boxesCount}}
-            {{barcode.binComments}}
-            {{barcode.bearingName}}
-            {{barcode.treatmentName}}
-            {{barcode.pickName}}
-            {{barcode.jobName}}
-            <h4><span class="label label-info" ng-repeat="empBarcode in barcode.pickerIds track by $index">{{empBarcode}}</span></h4>
-            <div class="pull-right">
-              <button type="button" ng-click="editScan(barcode)">
-                <span class='glyphicon glyphicon-edit'></span>
-              </button>
-              <button type="button" ng-click="removeScan(barcode)">
-                <span class='glyphicon glyphicon-trash'></span>
-              </button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <button type="button" class="btn btn-primary" ng-click="submitLoad()">Submit Data</button>
-      <button type="button" class="btn btn-danger" ng-click="cancelLoad()">Cancel</button>
+    <div class="col-sm-2"> </div>
+    <div class="col-sm-8">
+      <label for="Scan Barcode">Scan Barcode vaactrobu1p12510030</label>
+      <div class="input-group">
+        <input class="form-control input" ng-model="scan" focus-on="newItemAdded" my-enter="addScan()" type="text" autofocus="">
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default" ng-click="addScan()">Add Barcode</button>
+        </span>
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default" ng-click="clearScan()">&times;</button>
+        </span>
+      </div>
+    </div>
+    <div class="col-sm-2"> </div>
+  </div>
+  <div class="" ng-if="scan.substring(0,3)=='xxx'">
+    <div class="row" >
+      <div class="col-sm-4">
+        <label for="repBlock">Replacement Block:</label>
+        <select class="form-control" ng-model="repBlock" ng-options="a.b for a in [{b:1},{b:2}]">
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <label for="repVariety">Replacement Variety:</label>
+        <select class="form-control" ng-model="repVariety" ng-options="a.b for a in [{b:1},{b:2}]">
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <label for="repStrain">Replacement Strain:</label>
+        <select class="form-control" ng-model="repStrain" ng-options="a.b for a in [{b:1},{b:2}]">
+        </select>
+      </div>
+    </div>
+  </br>
+  <div class="row">
+    <div class="col-sm-3">
+      <label for="repBearing">Replacement Bearing:</label>
+      <select class="form-control" ng-model="repBearing" ng-options="a.b for a in [{b:1},{b:2}]">
+      </select>
+    </div>
+    <div class="col-sm-3">
+      <label for="repTreatment">Replacement Treatment:</label>
+      <select class="form-control" ng-model="repTreatment" ng-options="a.b for a in [{b:1},{b:2}]">
+      </select>
+    </div>
+    <div class="col-sm-3">
+      <label for="repPick">Replacement Pick:</label>
+      <select class="form-control" ng-model="repPick" ng-options="a.b for a in [{b:1},{b:2}]">
+      </select>
+    </div>
+    <div class="col-sm-3">
+      <label for="repJob">Replacement Job:</label>
+      <select class="form-control" ng-model="repJob" ng-options="a.b for a in [{b:1},{b:2}]">
+      </select>
     </div>
   </div>
+</div>
+</br>
+<div class="row">
+  <div class="sm-col-12">
+    <div id="alert_placeholder"></div>
+    <div class="well">
+      <p><h3>Load/Carga</h3></p>
+      <!-- <div class="panel-group"> -->
+<div class="row">
+<div class="" ng-repeat="barcode in binData.slice().reverse() track by $index" >
+
+<div class="clearfix" ng-if="$index % 2 == 0"></div>
+<div class="col-sm-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <div class="pull-left">
+            {{binData.length-$index}}
+          </div>
+          <h4><strong>{{barcode.barcode}}</strong></h4>
+        </div>
+        <div class="panel-body">
+          {{barcode.blockName}}
+          {{barcode.varietyName}}
+          {{barcode.strainName}}
+          {{barcode.storageName}}
+          {{barcode.pickDate}}
+          {{barcode.boxesCount}}
+          {{barcode.binComments}}
+          {{barcode.bearingName}}
+          {{barcode.treatmentName}}
+          {{barcode.pickName}}
+          {{barcode.jobName}}
+          <h4><span class="label label-info" ng-repeat="empBarcode in barcode.pickerIds track by $index">{{empBarcode}}</span></h4>
+          <div class="pull-right">
+            <button type="button" ng-click="showBoolean = !showBoolean">
+              <span class='glyphicon glyphicon-edit'></span>
+            </button>
+            <button type="button" ng-click="removeScan(barcode)">
+              <span class='glyphicon glyphicon-trash'></span>
+            </button>
+          </div>
+          <div class="" ng-show="showBoolean">
+            <input class="form-control" type="number" step="1" ng-model="barcode.boxesCount">
+          </input>
+        </div>
+      </div>
+    </div>
+</div>
+    <!-- </div> -->
+
+</div>
+</div>
+  </div>
+  <button type="button" class="btn btn-success" ng-click="submitLoad()">Submit Data</button>
+  <button type="button" class="btn btn-danger" ng-click="cancelLoad()">Cancel</button>
+</div>
+</div>
 </div>

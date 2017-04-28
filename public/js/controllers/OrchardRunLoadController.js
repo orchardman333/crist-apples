@@ -11,8 +11,6 @@ function ($scope, $location, orchardRunService, storageTransferService, truckSer
   $scope.binComments = null;
   $scope.loadComments = null;
   $scope.binData = [];
-  $scope.displayBinData = $scope.binData.slice().reverse();
-
 
   truckService.GetTrucks(function(data) {
     $scope.truckList=data;
@@ -30,9 +28,17 @@ function ($scope, $location, orchardRunService, storageTransferService, truckSer
   });
 
   $scope.addScan = function() {
-    orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
-      //scanned barcode is a bin's barcode
-      if ($scope.scan.length == 19) {
+    //scanned barcode is a bin's barcode
+    if ($scope.scan === null) {
+      $('#alert_placeholder').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>Empty!</span></div>')
+      setTimeout(function () {
+        $("div.alert").remove();
+        $scope.$broadcast('newItemAdded');
+      }, 2000);
+    }
+    else if ($scope.scan.length == 19) {
+      orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
+
         //check if duplicate bin ID has been scanned already
         if ($scope.binData.map(function(a) {return a.barcode}).indexOf($scope.scan) == -1) {
           var value = {
@@ -52,6 +58,8 @@ function ($scope, $location, orchardRunService, storageTransferService, truckSer
             pickerIds: []
           };
           $scope.binData.push(value);
+          $scope.scan = null;
+          $scope.$broadcast('newItemAdded');
         }
         //duplicate bin
         else {
@@ -61,14 +69,17 @@ function ($scope, $location, orchardRunService, storageTransferService, truckSer
             $scope.$broadcast('newItemAdded');
           }, 2000);
         }
-      }
-      //scanned barcode is a picker's barcode
-      else if ($scope.scan.length == 3) {
+      });
+    }
+    //scanned barcode is a picker's barcode
+    else if ($scope.scan.length == 3) {
+      orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
         //still need to check for bin as first scan will throw error
         //check if duplicate picker ID has been scanned already
         if ($scope.binData[$scope.binData.length - 1].pickerIds.indexOf($scope.scan) == -1) {
           $scope.binData[$scope.binData.length - 1].pickerIds.push($scope.scan);
-console.log(decodedData.empName);
+          $scope.scan = null;
+          $scope.$broadcast('newItemAdded');
         }
         //duplicate picker
         else {
@@ -78,78 +89,66 @@ console.log(decodedData.empName);
             $scope.$broadcast('newItemAdded');
           }, 2000);
         }
-      }
-      //scanned barcode is invalid type
-      else {
-        $('#alert_placeholder').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>Invalid Barcode Type!</span></div>')
-        setTimeout(function () {
-          $("div.alert").remove();
-          $scope.$broadcast('newItemAdded');
-        }, 2000);
-      }
+      });
+    }
+    //scanned barcode is invalid type
+    else {
+      $('#alert_placeholder').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>Invalid Barcode Type!</span></div>')
+      setTimeout(function () {
+        $("div.alert").remove();
+        $scope.$broadcast('newItemAdded');
+      }, 2000);
+    }
+  };
 
-      $scope.displayBinData = $scope.binData.slice().reverse();
-      $scope.scan = null;
-      $scope.$broadcast('newItemAdded');
-console.log($scope.displayBinData);
+  $scope.removeScan = function(barcode){
+    var index =  $scope.binData.indexOf(barcode);
+    if (index > -1) {
+      $scope.binData.splice(index, 1);
+    }
+    $scope.$broadcast('newItemAdded');
+  };
 
+  $scope.submitLoad = function(){
+
+    orchardRunService.GetLoadId({idType: 'or'}, function(data){
+      $scope.loadId = data.loadId;
+      var load = {
+        loadData: {
+          loadType: 'or',
+          loadId: $scope.loadId,
+          truckDriverId: $scope.truckDriver.id,
+          truckDriverName: $scope.truckDriver.name,
+          loadDateTime: moment($scope.loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
+          truckId: $scope.truck.id,
+          truckName: $scope.truck.name,
+          loadComments: $scope.loadComments
+        },
+        binData: $scope.binData
+      };
+      orchardRunService.SaveData(load);
+      orchardRunService.SubmitLoad(load);
+      $location.url('/orchard_run_report');
     });
   };
 
-$scope.editScan = function(barcode){
-  // var index =  $scope.binData.indexOf(barcode);
-  //  if (index > -1) {
-  //       $scope.binData.splice(index, 1);
-  //   }
-  //   $scope.displayBinData = $scope.binData.slice().reverse();
-  //   $scope.$broadcast('newItemAdded');
-};
+  $scope.clearScan = function(){
+    $scope.scan=null;
+    $scope.$broadcast('newItemAdded');
+  };
 
-$scope.removeScan = function(barcode){
-  var index =  $scope.binData.indexOf(barcode);
-  if (index > -1) {
-    $scope.binData.splice(index, 1);
-  }
-  $scope.displaybinData = $scope.binData.slice().reverse();
-  $scope.$broadcast('newItemAdded');
-};
+  $scope.clearBinData = function(){
+    $scope.binData = [];
+    $scope.scan=null;
+    $scope.$broadcast('newItemAdded');
+  };
 
-$scope.submitLoad = function(){
-
-  orchardRunService.GetLoadId({idType: 'or'}, function(data){
-    $scope.loadId = data.loadId;
-    var load = {
-      loadData: {
-        loadType: 'or',
-        loadId: $scope.loadId,
-        truckDriverId: $scope.truckDriver.id,
-        truckDriverName: $scope.truckDriver.name,
-        loadDateTime: moment($scope.loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
-        truckId: $scope.truck.id,
-        truckName: $scope.truck.name,
-        loadComments: $scope.loadComments
-      },
-      binData: $scope.binData
-    };
-    orchardRunService.SubmitLoad(load);
-    orchardRunService.SaveData(load);
-    $location.url('/orchard_run_report');
-  });
-};
-
-$scope.clearBinData = function(){
-  $scope.binData = [];
-  $scope.scan=null;
-  $scope.$broadcast('newItemAdded');
-  $scope.displayBinData = $scope.binData.slice().reverse();
-};
-
-$scope.cancelLoad = function(){
-  $('#alert_placeholder').html('<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>Load Cancelled</span></div>')
-  setTimeout(function () {
-    $("div.alert").remove();
-  }, 2000);
-  $scope.clearBinData();
-  $scope.$broadcast('newItemAdded');
-};
+  $scope.cancelLoad = function(){
+    $('#alert_placeholder').html('<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>Load Cancelled</span></div>')
+    setTimeout(function () {
+      $("div.alert").remove();
+    }, 2000);
+    $scope.clearBinData();
+    $scope.$broadcast('newItemAdded');
+  };
 }]);
