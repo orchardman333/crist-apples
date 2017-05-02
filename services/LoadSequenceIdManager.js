@@ -10,7 +10,7 @@ module.exports = {
       db.getConnection(function(err, connection) {
         var query = connection.query('SELECT `' + idType + '`  AS num FROM load_sequence_table', function(error, results, fields) {
           if (error) throw error
-          var data= {loadId: rows[0].num};
+          var data= {loadId: results[0].num};
           var query = connection.query('UPDATE load_sequence_table SET `' + idType + '` = `' + idType + '` + 1', function(error, results, fields) {
             if (error) throw error
             connection.release();

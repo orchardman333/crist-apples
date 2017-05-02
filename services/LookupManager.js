@@ -18,22 +18,23 @@ var properties = ['block', 'variety', 'strain', 'bearing', 'treatment', 'pick', 
 module.exports = {
   GetBarcodeProperties: function (req,res) {
     // var t0 = now();
-    var object={};
+    var object={error: false, errorProp: null};
     var idValues = decode.decodeBarcode(req.body.barCode);
     //employee barcode
     if (idValues.typeBarcode == 'emp') {
       var name = '';
       db.getConnection(function(err, connection) {
         var query = connection.query('SELECT `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Employee ID` = ?', [idValues.empId], function(error, results, fields) {
-          if (error) throw error
-          if (results.length == 1) {
-            name = results[0].firstName + ' ' + results[0].lastName;
+          try {
+            object['Emp Name'] = results[0].firstName + ' ' + results[0].lastName;
           }
-          else {
-            name ='Error looking up employee name in LookupManager.js';
+          catch (err) {
+            object['Emp Name']='ERROR!';
+            object['error'] = true;
+            object['errorProp'] = 'EMPLOYEE';
           }
+          res.json(object);
           connection.release();
-          res.json({empName: name});
         });
         console.log(query.sql);
       });
@@ -44,20 +45,28 @@ module.exports = {
         async.eachOf(properties, function(property, index, callback) {
           // console.log(now()-t0);
           var query = connection.query('SELECT `'+ property +' Name` AS prop FROM `'+ property +'_table` WHERE `'+ property + ' ID` = ?', [idValues.idArray[index]], function(error, results, fields) {
-            if (error) throw error
-            object[property + 'Name'] = results[0].prop;
+
+            // if (error) throw error
+            // {object['sqlerror']=error;}
+            //             else
+            try {
+              object[property + 'Name'] = results[0].prop;
+            }
+            catch (err) {
+              object[property + 'Name']='ERROR!';
+              object['error'] = true;
+              object['errorProp'] = property.toUpperCase();
+            }
             // console.log(now()-t0);
             callback();
           });
           console.log(query.sql);
         },
         function (err) {
-          if (err) console.log(err);
-          else {
-            res.json(object);
-            connection.release();
-            // console.log(now()-t0);
-          }
+          if (err) throw err;
+          res.json(object);
+          connection.release();
+          // console.log(now()-t0);
         }
       );
     });

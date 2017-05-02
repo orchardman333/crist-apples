@@ -1,10 +1,16 @@
 body {
-  font: 11pt/1.4em "Times New Roman", Times, serif;
-  padding: 50px 10px 0px ;
+  font: 12pt/1.4em "Times New Roman", Times, serif;
+  color: white;
+  padding: 50px 10px 0px;
+  background: rgba(20,20,20,.9);
 }
 
 .starter-template {
   text-align: center;
+}
+
+.nav.navbar-nav li a, a.navbar-brand {
+color: white !important;
 }
 
 .label {
