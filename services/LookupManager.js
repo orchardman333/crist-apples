@@ -62,7 +62,7 @@ module.exports = {
           });
           console.log(query.sql);
         },
-        function (err) {
+        function(err) {
           if (err) throw err;
           res.json(object);
           connection.release();

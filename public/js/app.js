@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('crist_farms', ['ngRoute', 'ui.bootstrap.datetimepicker']);
+var app = angular.module('crist_farms', ['ngRoute', 'ui.bootstrap.datetimepicker', 'ui.bootstrap']);
 
 app.config(['$routeProvider', function ($routeProvider) {
   $routeProvider

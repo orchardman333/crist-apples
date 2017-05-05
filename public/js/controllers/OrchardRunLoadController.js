@@ -1,11 +1,31 @@
 'use strict';
 
 angular.module('crist_farms')
-.controller('OrchardRunLoadController', ['$scope', '$location', '$timeout', 'OrchardRunService', 'StorageTransferService', 'TruckService',
-function ($scope, $location, $timeout, orchardRunService, storageTransferService, truckService) {
+.controller('OrchardRunLoadController', ['$scope', '$location', '$timeout', '$uibModal', 'OrchardRunService', 'StorageTransferService', 'TruckService',
+function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTransferService, truckService) {
   var currentDateTime = new Date(Date.now());
   $scope.pickDate = currentDateTime;
-  $scope.loadDateTime = currentDateTime;
+  $scope.loadDate = currentDateTime;
+  $scope.loadTime = currentDateTime;
+  $scope.onChange = function() {
+              document.getElementById('scan').focus();
+          };
+$scope.loadTimeHour = currentDateTime.getHours();
+$scope.loadTimeMinute = currentDateTime.getMinutes();
+if ($scope.loadTimeHour > 12) {
+$scope.loadPM = true;
+$scope.loadTimeHour -= 12;
+}
+else if ($scope.loadTimeHour == 12) {
+$scope.loadPM = true;
+}
+else if ($scope.loadTimeHour == 0) {
+$scope.loadTimeHour = 12;
+}
+else {
+  $scope.loadPM = false;
+
+}
   $scope.scan = null;
   $scope.boxesCount = 20;
   $scope.binComments = null;
@@ -41,7 +61,6 @@ function ($scope, $location, $timeout, orchardRunService, storageTransferService
     //scanned barcode is a bin's barcode
     else if ($scope.scan.length == 19) {
       orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
-        console.log(decodedData.error);
         //error in lookupManager
         if (decodedData.error) {
           $scope.error = true;
@@ -75,6 +94,7 @@ function ($scope, $location, $timeout, orchardRunService, storageTransferService
             };
             $scope.binData.push(value);
             $scope.scan = null;
+$scope.boxesCount = 20;
             $scope.$broadcast('newItemAdded');
           }
           //duplicate bin
@@ -184,20 +204,79 @@ function ($scope, $location, $timeout, orchardRunService, storageTransferService
     $scope.$broadcast('newItemAdded');
   };
 
-  $scope.clearBinData = function(){
-    $scope.binData = [];
-    $scope.scan = null;
-    $scope.$broadcast('newItemAdded');
-  };
-
-  $scope.cancelLoad = function(){
+  $scope.clearLoad = function(){
     $scope.error = true;
     $scope.errorColor = 'warning';
     $scope.errorMessage = 'Load Canceled!';
     $timeout(function() {
       $scope.error = false;
     }, 2000);
-    $scope.clearBinData();
+    $scope.binData = [];
+    $scope.scan = null;
     $scope.$broadcast('newItemAdded');
   };
+
+//Confirmation modals
+  $scope.submitLoadButton = function () {
+    var modalInstance = $uibModal.open({
+      templateUrl: 'js/views/modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: function($scope) {
+        $scope.message = 'Are you sure you want to submit the load?';
+        $scope.confirmColor = 'btn-success';
+        $scope.dismissColor = 'btn-warning';
+      }
+    });
+    modalInstance.result.then(function(confirmation) {
+      if (confirmation) {
+        $scope.submitLoad();
+      }
+    });
+  };
+
+  $scope.clearLoadButton = function () {
+    var modalInstance = $uibModal.open({
+      templateUrl: 'js/views/modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: function($scope) {
+        $scope.message = 'Are you sure you want to cancel load?';
+        $scope.confirmColor = 'btn-danger';
+        $scope.dismissColor = 'btn-warning';
+      }
+    });
+    modalInstance.result.then(function(confirmation) {
+      if (confirmation) {
+        $scope.clearLoad();
+      }
+    });
+  };
+
+//Datepickers
+    $scope.dateOptions = {
+      maxDate: new Date($scope.pickDate.getFullYear()+1, 11, 31),
+      minDate: new Date($scope.pickDate.getFullYear()-1, 0, 1),
+      startingDay: 0,
+      showWeeks: false
+    };
+
+    $scope.openLoadDate = function() {
+      $scope.popupLoad.opened = true;
+    };
+
+    $scope.openPickDate = function() {
+      $scope.popupPick.opened = true;
+    };
+
+$scope.popupLoad = {
+  opened: false
+};
+
+$scope.popupPick = {
+  opened: false
+};
+
+
+
 }]);
