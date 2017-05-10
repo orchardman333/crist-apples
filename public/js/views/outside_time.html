@@ -1,0 +1,82 @@
+<h3>Outside Time Form </h3></br>
+<div class="row">
+  <div class="col-sm-3">
+
+  </div>
+  <div class="col-sm-6">
+    <label for="inputlg">Shift Status:</label>
+    <select class="form-control input-lg" type="text" ng-model="shiftStatus" ng-options="status.name for status in shiftStatusOptions">
+</select>
+    <br/>
+<label for="inputlg">Job ID:</label>
+    <select class="form-control input-lg" type="text" ng-model="jobId" ng-options="jobs for jobs in ['a100','p100','h001']">
+    <br/>
+    <label for="truck_driver">Employee:</label>
+    <select class="form-control input-lg" ng-model="employee" ng-options="employees.name for employees in employeeList">
+    </select>
+    <br/>
+
+    <button type="button" class="btn btn-primary" ng-click="findRecords()" >Submit Data</button>
+    <label for="Truck Driver">Manager:</label>
+    <select class="form-control" ng-model="managerId" ng-options="managers for managers in ['100','120']">
+    </select>
+
+    <label for="Time">Time:</label>
+    <div class="row load-time">
+      <div class="col-sm-6">
+        <select class="form-control" ng-model="loadTimeHour" ng-options="hour.value as hour.name for hour in hourOptions">
+        </select>
+      </div>
+      <div class="col-sm-6">
+        <select class="form-control" ng-model="loadTimeMinute" ng-options="minute.value as minute.name for minute in minuteOptions">
+        </select>
+  </div>
+  <div class="col-sm-3">
+
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-4">
+  </div>
+  <div class="col-sm-4">
+    <label for="Date">Date:</label>
+{{date}}
+  </div>
+  <div class="col-sm-4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="well">
+  <div class="row">
+    <div ng-repeat="item in data.timeData track by $index">
+      <div class="col-sm-6">
+
+    <div class="panel panel-default">
+      <div class="panel-heading row" ng-class="{'panel-heading-blue':(data.timeData.length-$index)%2==1, 'panel-heading-teal':(data.timeData.length-$index)%2==0}">
+        <div class="col-sm-4" style="text-align:left;">
+          <h4><strong>{{data.timeData.length-$index}}</strong></h4>
+        </div>
+        <div class="col-sm-4"><h4><strong>{{barcode.barcode.slice(-5)}}</strong></h4></div>
+        <div class="col-sm-4" style="text-align:right;color:black;">
+          <button type="button" ng-click="showBoolean = !showBoolean">
+            <span class='glyphicon glyphicon-pencil' ng-if="!showBoolean"></span>
+            <span class='glyphicon glyphicon-ok' ng-if="showBoolean"></span>
+          </button>
+          <button type="button" ng-click="removeScan(barcode)">
+            <span class='glyphicon glyphicon-trash'></span>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body" style="color:black;">
+            <h4><span class="label label-success">{{item.employeeId}}</span></h4>
+            <h4><span class="label label-danger">{{item.timeIn | date: 'shortTime'}}</span></h4>
+            <h4><span class="label label-warning">{{item.managerId}}</span></h4>
+            <h4><span class="label label-violet">{{item.jobId}}</span></h4>
+</div>
+          </div>
+        </div>
+</div>
+</div>
+</div>

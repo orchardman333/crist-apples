@@ -30,7 +30,7 @@ module.exports = {
 
         //Push bin_table & load_table INSERTs to sqlStatements
         insertIntoBinTable(binValues, barcodeProperties, req.body.binData[i]);
-        insertIntoLoadTable(loadValues, barcodeProperties.binId, req.body.binData[i].storageId, req.body.loadData.loadId);
+        insertIntoLoadTable(loadValues, barcodeProperties.binId, req.body.binData[i].storage.id, req.body.loadData.loadId);
 
         //Pickers
         for (var j=0; j < req.body.binData[i].pickerIds.length; j++) {

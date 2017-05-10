@@ -16,6 +16,7 @@ var lookupManager = require('./services/LookupManager');
 var truckManager = require('./services/TruckManager');
 var loadSeqManager = require('./services/LoadSequenceIdManager');
 var timeFormManager = require('./services/TimeFormManager');
+var outsideTimeManager = require('./services/OutsideTimeManager');
 var barcodeDecodingManager = require('./services/BarcodeDecodingManager');
 
 // configuration =================
@@ -61,6 +62,14 @@ app.post('/api/PackingDumpManager', function(req, res) {
 
 app.post('/api/orchardRunManager', function(req, res) {
   orchardRunManager.LoadBins(req, res);
+});
+
+app.post('/api/outsideTime', function(req,res) {
+  outsideTimeManager.DoWork(req,res);
+});
+
+app.post('/api/getoutsidetime', function(req,res) {
+  outsideTimeManager.SeeWork(req,res);
 });
 
 app.post('/api/timeForm', function(req,res) {

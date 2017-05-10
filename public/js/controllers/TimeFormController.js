@@ -2,7 +2,7 @@
 
 angular.module('crist_farms')
 
-.controller('TimeFormController', ['$scope', '$location', 'EmployeeService', 'TimeFormService', function ($scope, $location, employeeService, timeFormService) {
+.controller('OutsideTimeController', ['$scope', '$location', 'EmployeeService', 'TimeFormService', function ($scope, $location, employeeService, timeFormService) {
   employeeService.GetEmployees(function (data) {
     $scope.employeeList = data;
     $scope.employee = $scope.employeeList[0];

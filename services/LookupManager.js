@@ -3,17 +3,7 @@
 var db = require("./DatabaseManager");
 var decode = require("./BarcodeDecodingManager");
 var async = require("async");
-var now = require("performance-now");
-
-var properties = ['block', 'variety', 'strain', 'bearing', 'treatment', 'pick', 'job'];
-// var properties1 = ['block', 'variety', 'strain', 'bearing', 'treatment', 'pick', 'job'];
-// var properties2 = [['h03','block'], ['rd','variety'], ['00','strain'], ['b','bearing'], ['u','treatment'], ['1','pick'], ['p100','job']];
-// for (var i=0; i < properties.length; i++) {
-//   properties[i].push(properties[i][0] + '_table', properties[i][0] + ' ID', properties[i][0] + ' Name');
-// }
-// for (var i=0; i < properties.length; i++) {
-//   properties2[i].push(properties[i][1] + '_table', properties2[i][1] + ' ID', properties2[i][1] + ' Name');
-// }
+var properties = ['block', 'variety', 'strain', 'bearing', 'treatment', 'pick', 'job'];   //order is important here
 
 module.exports = {
   GetBarcodeProperties: function (req,res) {
@@ -106,7 +96,7 @@ module.exports = {
 //           callback(object);
 //         }
 //       };
-//
+// callback hell algorithm
 // var binIdsToNames = function(idValues, callback){
 //   var blockName=varietyName=strainName=bearingName=treatmentName=pickName=jobName = '';
 //   db.getConnection(function(err, connection) {

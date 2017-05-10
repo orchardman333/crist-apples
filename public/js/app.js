@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('crist_farms', ['ngRoute', 'ui.bootstrap.datetimepicker', 'ui.bootstrap']);
+var app = angular.module('crist_farms', ['ngRoute', 'ui.bootstrap']);
 
 app.config(['$routeProvider', function ($routeProvider) {
   $routeProvider
@@ -27,6 +27,10 @@ app.config(['$routeProvider', function ($routeProvider) {
             controller: 'TimeFormController',
             templateUrl: 'js/views/time_form.html',
         })
+        .when('/outside_time', {
+            controller: 'OutsideTimeController',
+            templateUrl: 'js/views/outside_time.html',
+        })
         .otherwise({ redirectTo: '/' });
 }]);
 
@@ -37,9 +41,9 @@ app.config(['$locationProvider', function($locationProvider) {
 });
 }]);
 
-app.directive('focusOn', function() {
+app.directive('myFocus', function() {
    return function(scope, element, attrs) {
-      scope.$on(attrs.focusOn, function() {
+      scope.$on(attrs.myFocus, function() {
           element[0].focus();
       });
    };
@@ -53,7 +57,6 @@ app.directive('myEnter', function () {
                 scope.$apply(function (){
                     scope.$eval(attrs.myEnter);
                 });
-
                 event.preventDefault();
             }
         });

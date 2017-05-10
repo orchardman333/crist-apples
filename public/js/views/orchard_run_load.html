@@ -13,20 +13,20 @@
   <div class="row">
     <div class="col-sm-3">
       <label for="Storage">Storage:</label>
-      <select class="form-control" ng-model="storage" ng-options="storages.name for storages in storageList" >
+      <select class="form-control" ng-model="storage" ng-options="storages.name for storages in storageList" ng-change="refocus()">
       </select>
     </div>
     <div class="col-sm-3">
       <label for="Bushels">Bushels/Casas:</label>
       <select class="form-control" ng-model="boxesCount" ng-options="x for x in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]">
-</select>
+      </select>
     </div>
     <div class="col-sm-3">
       <label for="Pick Date">Pick Date:</label>
       <div class="input-group" id="pick-date">
-        <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="pickDate" show-button-bar="false" is-open="popupPick.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+        <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="pickDate" show-button-bar="false" is-open="popup.pickDate" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
         <span class="input-group-btn">
-          <button type="button" class="btn btn-default" ng-click="openPickDate()"><i class="glyphicon glyphicon-calendar"></i></button>
+          <button type="button" class="btn btn-default" ng-click="openDate('pickDate')"><i class="glyphicon glyphicon-calendar"></i></button>
         </span>
       </div>
     </div>
@@ -35,64 +35,66 @@
       <input class="form-control input" ng-model="binComments" type="text">
     </div>
   </div>
-
   <div class="row">
     <div class="col-sm-2">
     </div>
     <div class="col-sm-8">
       <label for="Scan Barcode"></label>
-      <div class="input-group">
-        <input class="form-control input-lg" placeholder="Scan Barcode:" ng-model="scan" focus-on="newItemAdded" my-enter="addScan()" type="text" autofocus id="scan">
-        <div class="input-group-btn">
-          <button type="button" class="btn btn-default btn-lg" ng-click="addScan()">Add Barcode</button>
-          <button type="button" class="btn btn-default btn-lg" ng-click="clearScan()">&times;</button>
-        </div>
+      <!-- <div class="input-group"> -->
+      <div class="form-group has-feedback" ng-class="{'has-success':focused, 'has-error':!focused}">
+        <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-enter="addScan()" type="text" ng-blur="focused=false" ng-focus="focused=true">
+        <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':focused, 'glyphicon-warning-sign':!focused}"></span>
       </div>
-    </div>
-    <div class="col-sm-2">
-    </div>
+      <!-- <div class="input-group-btn">
+      <button type="button" class="btn btn-default btn-lg" ng-click="addScan()">Add Barcode</button>
+      <button type="button" class="btn btn-default btn-lg" ng-click="clearScan()">&times;</button>
+    </div> -->
+    <!-- </div> -->
   </div>
-  <div class="" ng-if="scan.substring(0,3)=='xxx'">
-    <div class="row" >
-      <div class="col-sm-4">
-        <label for="repBlock">Replacement Block:</label>
-        <select class="form-control" ng-model="repBlock" ng-options="a.b for a in [{b:1},{b:2}]">
-        </select>
-      </div>
-      <div class="col-sm-4">
-        <label for="repVariety">Replacement Variety:</label>
-        <select class="form-control" ng-model="repVariety" ng-options="a.b for a in [{b:1},{b:2}]">
-        </select>
-      </div>
-      <div class="col-sm-4">
-        <label for="repStrain">Replacement Strain:</label>
-        <select class="form-control" ng-model="repStrain" ng-options="a.b for a in [{b:1},{b:2}]">
-        </select>
-      </div>
-    </div>
-  </br>
-  <div class="row">
-    <div class="col-sm-3">
-      <label for="repBearing">Replacement Bearing:</label>
-      <select class="form-control" ng-model="repBearing" ng-options="a.b for a in [{b:1},{b:2}]">
+  <div class="col-sm-2">
+  </div>
+</div>
+<div class="" ng-if="scan.substring(0,3)=='xxx'">
+  <div class="row" >
+    <div class="col-sm-4">
+      <label for="repBlock">Replacement Block:</label>
+      <select class="form-control" ng-model="repBlock" ng-options="a.b for a in [{b:1},{b:2}]">
       </select>
     </div>
-    <div class="col-sm-3">
-      <label for="repTreatment">Replacement Treatment:</label>
-      <select class="form-control" ng-model="repTreatment" ng-options="a.b for a in [{b:1},{b:2}]">
+    <div class="col-sm-4">
+      <label for="repVariety">Replacement Variety:</label>
+      <select class="form-control" ng-model="repVariety" ng-options="a.b for a in [{b:1},{b:2}]">
       </select>
     </div>
-    <div class="col-sm-3">
-      <label for="repPick">Replacement Pick:</label>
-      <select class="form-control" ng-model="repPick" ng-options="a.b for a in [{b:1},{b:2}]">
-      </select>
-    </div>
-    <div class="col-sm-3">
-      <label for="repJob">Replacement Job:</label>
-      <select class="form-control" ng-model="repJob" ng-options="a.b for a in [{b:1},{b:2}]">
+    <div class="col-sm-4">
+      <label for="repStrain">Replacement Strain:</label>
+      <select class="form-control" ng-model="repStrain" ng-options="a.b for a in [{b:1},{b:2}]">
       </select>
     </div>
   </div>
+</br>
+<div class="row">
+  <div class="col-sm-3">
+    <label for="repBearing">Replacement Bearing:</label>
+    <select class="form-control" ng-model="repBearing" ng-options="a.b for a in [{b:1},{b:2}]">
+    </select>
+  </div>
+  <div class="col-sm-3">
+    <label for="repTreatment">Replacement Treatment:</label>
+    <select class="form-control" ng-model="repTreatment" ng-options="a.b for a in [{b:1},{b:2}]">
+    </select>
+  </div>
+  <div class="col-sm-3">
+    <label for="repPick">Replacement Pick:</label>
+    <select class="form-control" ng-model="repPick" ng-options="a.b for a in [{b:1},{b:2}]">
+    </select>
+  </div>
+  <div class="col-sm-3">
+    <label for="repJob">Replacement Job:</label>
+    <select class="form-control" ng-model="repJob" ng-options="a.b for a in [{b:1},{b:2}]">
+    </select>
+  </div>
+</div>
 </div>
 </br>
 <div class="row">
@@ -111,91 +113,97 @@
     <div class="row">
       <div class="col-sm-4">
         <label for="Truck Driver">Driver/Conductor:</label>
-        <select class="form-control" ng-model="truckDriver" ng-options="truckDrivers.name for truckDrivers in truckDriverList" >
+        <select class="form-control" ng-model="truckDriver" ng-options="truckDrivers.name for truckDrivers in truckDriverList" ng-change="refocus()">
         </select>
       </div>
       <div class="col-sm-4">
         <label for="Load Date">Load Date:</label>
         <div class="input-group" id="load-date">
-          <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="loadDate" show-button-bar="false" is-open="popupLoad.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+          <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="loadDate" show-button-bar="false" is-open="popup.loadDate" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
           <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="openLoadDate()"><i class="glyphicon glyphicon-calendar"></i></button>
+            <button type="button" class="btn btn-default" ng-click="openDate('loadDate')"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
         </div>
       </div>
       <div class="col-sm-4">
         <label for="Load Time">Load Time:</label>
-        <div class="row">
-          <div class="col-sm-4 load-time">
-            <select class="form-control" ng-model="loadTimeHour" ng-options="hour for hour in [1,2,3,4,5,6,7,8,9,10,11,12]">
+        <div class="row load-time">
+          <div class="col-sm-6">
+            <select class="form-control" ng-model="loadTimeHour" ng-options="hour.value as hour.name for hour in hourOptions">
             </select>
           </div>
-          <div class="col-sm-4 load-time">
-            <select class="form-control" ng-model="loadTimeMinute" ng-options="minute for minute in [0,5,10,15,20,25,30,35,40,45,50,55]">
-            </select>
-          </div>
-          <div class="col-sm-4 load-time">
-            <select class="form-control" ng-model="loadTimePM" ng-options="value.name for value in [{name:'AM',value:false},{name:'PM',value:false}]">
+          <div class="col-sm-6">
+            <select class="form-control" ng-model="loadTimeMinute" ng-options="minute.value as minute.name for minute in minuteOptions">
             </select>
           </div>
         </div>
-
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-4">
-      <label for="Truck">Truck/Camión:</label>
-      <select class="form-control" ng-model="truck" ng-options="trucks.name for trucks in truckList">
-      </select>
+    <div class="row">
+      <div class="col-sm-4">
+        <label for="Truck">Truck/Camión:</label>
+        <select class="form-control" ng-model="truck" ng-options="trucks.name for trucks in truckList">
+        </select>
+      </div>
+      <div class="col-sm-8">
+        <label for="Load Comments">Load Comments:</label>
+        <input class="form-control input" ng-model="loadComments" type="text">
+      </div>
     </div>
-    <div class="col-sm-8">
-      <label for="Load Comments">Load Comments:</label>
-      <input class="form-control input" ng-model="loadComments" type="text">
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="" ng-repeat="barcode in binData.slice().reverse() track by $index">
-
-      <div id="bins" class="col-sm-6">
-        <div class="panel panel-default">
-          <div class="panel-heading" ng-class="{'panel-heading-blue':(binData.length-$index)%2==1, 'panel-heading-teal':(binData.length-$index)%2==0}">
-            <div class="pull-left">
-              <h4><strong>{{binData.length-$index}}</strong></h4>
+    <div class="row">
+      <div class="" ng-repeat="barcode in binData.slice().reverse() track by $index">
+        <div id="bins" class="col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading row" ng-class="{'panel-heading-blue':(binData.length-$index)%2==1, 'panel-heading-teal':(binData.length-$index)%2==0}">
+              <div class="col-sm-4" style="text-align:left;">
+                <h4><strong>{{binData.length-$index}}</strong></h4>
+              </div>
+              <div class="col-sm-4"><h4><strong>{{barcode.barcode.slice(-5)}}</strong></h4></div>
+              <div class="col-sm-4" style="text-align:right;color:black;">
+                <button type="button" ng-click="showBoolean = !showBoolean">
+                  <span class='glyphicon glyphicon-pencil' ng-if="!showBoolean"></span>
+                  <span class='glyphicon glyphicon-ok' ng-if="showBoolean"></span>
+                </button>
+                <button type="button" ng-click="removeScan(barcode)">
+                  <span class='glyphicon glyphicon-trash'></span>
+                </button>
+              </div>
             </div>
-            <h4><strong>{{barcode.barcode.slice(-5)}}</strong></h4>
-          </div>
-          <div class="panel-body" style="color:black;">
-            <h4><span class="label label-violet">{{barcode.blockName}}</span></h4>
-            <h4><span class="label label-danger">{{barcode.varietyName}}</span></h4>
-            <h4><span class="label label-success">{{barcode.strainName}}</span></h4>
-            <h4><span class="label label-warning">{{barcode.bearingName}}</span></h4>
-            <h4><span class="label label-primary">{{barcode.treatmentName}}</span></h4>
-            <h4><span class="label label-red">{{barcode.pickName}}</span></h4>
-            <h4><span class="label label-indigo">{{barcode.jobName}}</span></h4>
-            <h4><span class="label label-info">{{barcode.binComments}}</span></h4>
-            <h4><span class="label label-orange">{{barcode.storageName}}</span></h4>
-            <h4><span class="label label-deeppink">{{barcode.pickDate}}</span></h4>
-            <h4><span class="label label-green">{{barcode.boxesCount}}</span></h4></br>
-            <h4><span class="label label-black" ng-repeat="empBarcode in barcode.pickerIds track by $index">{{empBarcode}}</span></h4>
-            <div class="pull-right">
-              <button type="button" ng-click="showBoolean = !showBoolean">
-                <span class='glyphicon glyphicon-pencil' ng-if="!showBoolean"></span>
-                <span class='glyphicon glyphicon-ok' ng-if="showBoolean"></span>
-              </button>
-              <button type="button" ng-click="removeScan(barcode)">
-                <span class='glyphicon glyphicon-trash'></span>
-              </button>
+            <div class="panel-body" style="color:black;">
+              <h4><span class="label label-success">{{barcode.blockName}}</span></h4>
+              <h4><span class="label label-danger">{{barcode.varietyName}}</span></h4>
+              <h4><span class="label label-warning">{{barcode.strainName}}</span></h4>
+              <h4><span class="label label-violet">{{barcode.bearingName}}</span></h4>
+              <h4><span class="label label-blue">{{barcode.treatmentName}}</span></h4>
+              <h4><span class="label label-red">{{barcode.pickName}}</span></h4>
+              <h4><span class="label label-indigo">{{barcode.jobName}}</span></h4>
+              <h4><span class="label label-orange">{{barcode.storage.name}}</span></h4>
+              <h4><span class="label label-deeppink">{{barcode.pickDate | date : 'shortDate'}}</span></h4>
+              <h4><span class="label label-green">{{barcode.boxesCount}}</span></h4></br>
+              <h4><span class="label label-default">{{barcode.binComments}}</span></h4>
+              <h4><span class="label label-black" ng-repeat="empBarcode in barcode.pickerIds track by $index">{{empBarcode}}</span></h4>
+              <div class="" ng-if="showBoolean">
+                <label for="Storage">Storage:</label>
+                <select class="form-control" ng-model="barcode.storage" ng-options="storages.name for storages in storageList" >
+                </select>
+                <label for="Bushels">Bushels/Casas:</label>
+                <select class="form-control" ng-model="barcode.boxesCount" ng-options="x for x in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]">
+                </select>
+                <label for="Pick Date">Pick Date:</label>
+                <div class="input-group" id="pick-date">
+                  <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="barcode.pickDate" show-button-bar="false" is-open="popup['bin'+$index]" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="openDate('bin'+$index)"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                </div>
+                <label for="Bin Comments">Bin Comments:</label>
+                <input class="form-control input" ng-model="barcode.binComments" type="text">
+              </div>
             </div>
-            <div class="" ng-show="showBoolean">
-              <input class="form-control" type="number" step="1" ng-model="barcode.boxesCount">
-            </input>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-</div>
 </div>
 </div>

@@ -3,29 +3,16 @@
 angular.module('crist_farms')
 .controller('OrchardRunLoadController', ['$scope', '$location', '$timeout', '$uibModal', 'OrchardRunService', 'StorageTransferService', 'TruckService',
 function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTransferService, truckService) {
+
+  //Date and Time variable initializing
   var currentDateTime = new Date(Date.now());
   $scope.pickDate = currentDateTime;
   $scope.loadDate = currentDateTime;
-  $scope.loadTime = currentDateTime;
-  $scope.onChange = function() {
-              document.getElementById('scan').focus();
-          };
-$scope.loadTimeHour = currentDateTime.getHours();
-$scope.loadTimeMinute = currentDateTime.getMinutes();
-if ($scope.loadTimeHour > 12) {
-$scope.loadPM = true;
-$scope.loadTimeHour -= 12;
-}
-else if ($scope.loadTimeHour == 12) {
-$scope.loadPM = true;
-}
-else if ($scope.loadTimeHour == 0) {
-$scope.loadTimeHour = 12;
-}
-else {
-  $scope.loadPM = false;
-
-}
+  $scope.loadTimeHour = currentDateTime.getHours();
+  $scope.hourOptions = [{name:'8 (AM)',value:8},{name:'9 (AM)',value:9},{name:'10 (AM)',value:10},{name:'11 (AM)',value:11},{name:'12 (PM)',value:12},{name:'1 (PM)',value:13},{name:'2 (PM)',value:14},{name:'3 (PM)',value:15},{name:'4 (PM)',value:16},{name:'5 (PM)',value:17},{name:'6 (PM)',value:18},{name:'7 (PM)',value:19}]
+  $scope.loadTimeMinute = Math.floor(currentDateTime.getMinutes()/5)*5;
+  $scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5},{name:'10',value:10},{name:'15',value:15},{name:'20',value:20},{name:'25',value:25},{name:'30',value:30},{name:'35',value:35},{name:'40',value:40},{name:'45',value:45},{name:'50',value:50},{name:'55',value:55}]
+$scope.focused = false;
   $scope.scan = null;
   $scope.boxesCount = 20;
   $scope.binComments = null;
@@ -56,7 +43,6 @@ else {
       $timeout(function() {
         $scope.error = false;
       }, 2000);
-      $scope.$broadcast('newItemAdded');
     }
     //scanned barcode is a bin's barcode
     else if ($scope.scan.length == 19) {
@@ -70,19 +56,17 @@ else {
             $scope.error = false;
             $scope.scan = null;
           }, 2000);
-          $scope.$broadcast('newItemAdded');
         }
         //lookupManager OK
         else {
           //check if duplicate bin ID has been scanned already
-          if ($scope.binData.map(function(a) {return a.barcode}).indexOf($scope.scan) == -1) {
+          if ($scope.binData.map(function(a) {return a.barcode.slice(-5)}).indexOf($scope.scan.slice(-5)) == -1) {
             var value = {
               barcode: $scope.scan,
-              pickDate : moment($scope.pickDate).format('YYYY-MM-DD'),
+              pickDate : $scope.pickDate,
               boxesCount: $scope.boxesCount,
               binComments: $scope.binComments,
-              storageId: $scope.storage.id,
-              storageName: $scope.storage.name,
+              storage: $scope.storage,    //object
               blockName: decodedData.blockName,
               varietyName: decodedData.varietyName,
               strainName: decodedData.strainName,
@@ -94,8 +78,7 @@ else {
             };
             $scope.binData.push(value);
             $scope.scan = null;
-$scope.boxesCount = 20;
-            $scope.$broadcast('newItemAdded');
+            $scope.boxesCount = 20;
           }
           //duplicate bin
           else {
@@ -106,7 +89,6 @@ $scope.boxesCount = 20;
               $scope.error = false;
               $scope.scan = null;
             }, 2000);
-            $scope.$broadcast('newItemAdded');
           }
         }
       });
@@ -123,7 +105,6 @@ $scope.boxesCount = 20;
             $scope.error = false;
             $scope.scan = null;
           }, 2000);
-          $scope.$broadcast('newItemAdded');
         }
         //error in lookupManager
         else if (decodedData.error) {
@@ -134,13 +115,12 @@ $scope.boxesCount = 20;
             $scope.error = false;
             $scope.scan = null;
           }, 2000);
-          $scope.$broadcast('newItemAdded');
         }
         //check if duplicate picker ID has been scanned already
         else if ($scope.binData[$scope.binData.length - 1].pickerIds.indexOf($scope.scan) == -1) {
+//good scan
           $scope.binData[$scope.binData.length - 1].pickerIds.push($scope.scan);
           $scope.scan = null;
-          $scope.$broadcast('newItemAdded');
         }
         //duplicate picker
         else {
@@ -151,7 +131,6 @@ $scope.boxesCount = 20;
             $scope.error = false;
             $scope.scan = null;
           }, 2000);
-          $scope.$broadcast('newItemAdded');
         }
       });
     }
@@ -164,22 +143,28 @@ $scope.boxesCount = 20;
         $scope.error = false;
         $scope.scan = null;
       }, 2000);
-      $scope.$broadcast('newItemAdded');
     }
   };
-
+$scope.refocus = function() {
+$scope.$broadcast('refocus');
+console.log('event');
+}
   $scope.removeScan = function(barcode){
     var index =  $scope.binData.indexOf(barcode);
     if (index > -1) {
       $scope.binData.splice(index, 1);
+$scope.refocus();
     }
-    $scope.$broadcast('newItemAdded');
   };
 
   $scope.submitLoad = function(){
 
     orchardRunService.GetLoadId({idType: 'or'}, function(data){
       $scope.loadId = data.loadId;
+      $scope.loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
+      for (var i=0; i<$scope.binData.length; i++) {
+$scope.binData[i].pickDate = moment($scope.binData[i].pickDate).format('YYYY-MM-DD');
+}
       var load = {
         loadData: {
           loadType: 'or',
@@ -201,7 +186,7 @@ $scope.boxesCount = 20;
 
   $scope.clearScan = function(){
     $scope.scan=null;
-    $scope.$broadcast('newItemAdded');
+    $scope.refocus();
   };
 
   $scope.clearLoad = function(){
@@ -213,10 +198,10 @@ $scope.boxesCount = 20;
     }, 2000);
     $scope.binData = [];
     $scope.scan = null;
-    $scope.$broadcast('newItemAdded');
+    $scope.refocus();
   };
 
-//Confirmation modals
+  //Confirmation modals
   $scope.submitLoadButton = function () {
     var modalInstance = $uibModal.open({
       templateUrl: 'js/views/modal.html',
@@ -253,30 +238,21 @@ $scope.boxesCount = 20;
     });
   };
 
-//Datepickers
-    $scope.dateOptions = {
-      maxDate: new Date($scope.pickDate.getFullYear()+1, 11, 31),
-      minDate: new Date($scope.pickDate.getFullYear()-1, 0, 1),
-      startingDay: 0,
-      showWeeks: false
-    };
+  //Datepickers
+  $scope.dateOptions = {
+    maxDate: new Date($scope.pickDate.getFullYear()+1, 11, 31),
+    minDate: new Date($scope.pickDate.getFullYear()-1, 0, 1),
+    startingDay: 0,
+    showWeeks: false
+  };
 
-    $scope.openLoadDate = function() {
-      $scope.popupLoad.opened = true;
-    };
+  $scope.openDate = function(property) {
+    $scope.popup[property] = true;
+  };
 
-    $scope.openPickDate = function() {
-      $scope.popupPick.opened = true;
-    };
-
-$scope.popupLoad = {
-  opened: false
-};
-
-$scope.popupPick = {
-  opened: false
-};
-
-
-
+  $scope.popup = {};
+  //
+  // $scope.popupPick = {
+  //   opened: false
+  // };
 }]);

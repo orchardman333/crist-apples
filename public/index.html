@@ -4,14 +4,10 @@
   <script>
     function CallPrint(strid) {
         var prtContent = document.getElementById(strid);
-        //var WinPrint = window.open('');
-        var WinPrint = window.open('', '', 'height=400,width=800');
-        WinPrint.document.write(prtContent.innerHTML);
-        WinPrint.document.close();
-        WinPrint.focus();
-        WinPrint.print();
-        WinPrint.close();
-        //prtContent.innerHTML = strOldOne;
+        var popupWin = window.open('', '', 'height=400,width=800');
+        popupWin.document.open();
+        popupWin.document.write(prtContent.innerHTML);
+        popupWin.close();
     }
   </script>
 
@@ -27,8 +23,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="styles/project.css">
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-    <link rel="stylesheet" href="styles/datetimepicker.css">
+
   </head>
 
   <body>
@@ -46,10 +41,10 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="orchard_run_load">Orchard Run Load</a></li>
-            <li><a href="storage_transfer_load">Storage Transfer Form</a>
-            <li><a href="pack_dump_load">Packout Form</a></li>
+            <!-- <li><a href="storage_transfer_load">Storage Transfer Form</a> -->
+            <!-- <li><a href="pack_dump_load">Packout Form</a></li> -->
             <li><a href="time_form">Time Form</a></li>
-            <li><a href="outside_time_form">Outside Time Form</a></li>
+            <li><a href="outside_time">Outside Time Form</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -66,11 +61,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="lib/ui-bootstrap-tpls-2.5.0.min.js"></script>
-<script src="lib/datetimepicker.js"></script>
-    <script src="lib/datetimepicker.templates.js"></script>
+    <script src="lib/ui-bootstrap-tpls-2.5.0.min.js"></script>
     <script src="js/app.js"></script>
     <script src="js/controllers/HomeController.js"></script>
     <script src="js/controllers/OrchardRunLoadController.js"></script>
@@ -83,5 +74,6 @@
     <script src="js/services/StorageTransferService.js"></script>
     <script src="js/services/TruckService.js"></script>
     <script src="js/services/TimeFormService.js"></script>
+    <script src="js/controllers/OutsideTimeController.js"></script>
     </body>
 </html>

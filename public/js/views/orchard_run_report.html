@@ -1,13 +1,11 @@
 <div class="container-fluid">
-  <h1>Review Load</h1>
 
-  <div id="printingContent">
-  </br>
-  <label for="Load ID">Load ID:</label> {{load.loadData.loadId}} </br>
-  <label for="Truck ID">Truck ID:</label> {{load.loadData.truckName}} </br>
+  <label for="Load ID">Load ID:</label> {{load.loadData.loadId}}</br>
+  <label for="Truck ID">Truck ID:</label> {{load.loadData.truckName}}</br>
   <label for="Truck Driver">Truck Driver:</label> {{load.loadData.truckDriverName}}</br>
-  <label for="Date">Date:</label> {{load.loadData.loadDateTime.slice(0,11)}}</br>
-  <label for="Time">Time:</label> {{load.loadData.loadDateTime.slice(-8)}}</br></br>
+  <label for="Date">Arrival Date:</label> {{load.loadData.loadDateTime.slice(0,11)}}</br>
+  <label for="Time">Arrival Time:</label> {{load.loadData.loadDateTime.slice(-8)}}</br>
+<label for="Submitted">Submitted:</label> {{timeSubmitted | date:'short'}}</br>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -15,19 +13,29 @@
         <th>Block</th>
         <th>Variety</th>
         <th>Strain</th>
+        <th>Bearing</th>
+        <th>Treament</th>
+        <th>Pick</th>
+        <th>Job</th>
         <th>Storage</th>
-        <th>Boxes</th>
+        <th>Date Picked</th>
+        <th>Bushels</th>
         <th>Comments</th>
         <th>Pickers</th>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="row in load.binData track by $index">
-        <td>{{row.barcode}}</td>
+      <tr ng-repeat="row in load.binData track by $index" ng-class-odd="'grey-td'">
+        <td>{{row.barcode.slice(-5)}}</td>
         <td>{{row.blockName}}</td>
         <td>{{row.varietyName}}</td>
         <td>{{row.strainName}}</td>
-        <td>{{row.storageName}}</td>
+        <td>{{row.bearingName}}</td>
+        <td>{{row.treatmentName}}</td>
+        <td>{{row.pickName}}</td>
+        <td>{{row.jobName}}</td>
+        <td>{{row.storage.name}}</td>
+        <td>{{row.pickDate}}</td>
         <td>{{row.boxesCount}}</td>
         <td>{{row.binComments}}</td>
         <td>{{row.pickerIds.join(', ')}}</td>
@@ -37,5 +45,4 @@
 </div>
 <br>
 <br>
-<a href="javascript:CallPrint('printingContent')">print</a>
-</div>
+<a href="javascript:window.print()">print</a>

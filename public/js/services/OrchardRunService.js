@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('crist_farms')
-.service('OrchardRunService', ['$http', function ($http) {
+.service('OrchardRunService', ['$http', function($http) {
   var thisData = [];
   var service = {};
 
   service.SubmitLoad = function(data) {
-    $http.post("/api/orchardRunManager/", data).then(function (response) { /* probably need to do something here */});
+    $http.post("/api/orchardRunManager/", data).then(function(response) { /* probably need to do something here */});
   };
 
   service.GetLoadReport = function(callback) {
@@ -22,7 +22,7 @@ angular.module('crist_farms')
   };
 
   service.DecodeBarcode = function(data, callback) {
-    $http.post("/api/LookupManager/", data).then(function (response) {
+    $http.post("/api/LookupManager/", data).then(function(response) {
       callback(response.data);
     });
   };
