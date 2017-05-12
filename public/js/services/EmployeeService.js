@@ -8,6 +8,11 @@ angular.module('crist_farms')
     $http.get("/api/employees").then(function(response){
       callback(response.data);
     });
+}
+    service.GetManagers = function(callback){
+      $http.get("/api/managers").then(function(response){
+        callback(response.data);
+      });
   }
 
 return service;

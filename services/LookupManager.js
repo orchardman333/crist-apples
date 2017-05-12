@@ -16,10 +16,10 @@ module.exports = {
       db.getConnection(function(err, connection) {
         var query = connection.query('SELECT `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Employee ID` = ?', [idValues.empId], function(error, results, fields) {
           try {
-            object['Emp Name'] = results[0].firstName + ' ' + results[0].lastName;
+            object['employeeName'] = results[0].firstName + ' ' + results[0].lastName;
           }
           catch (err) {
-            object['Emp Name']='ERROR!';
+            object['employeeName']='ERROR!';
             object['error'] = true;
             object['errorProp'] = 'EMPLOYEE';
           }

@@ -2,38 +2,29 @@ var db   = require("./DatabaseManager");
 var async = require("async");
 
 module.exports = {
-SeeWork: function(req,res) {
-var object = {
-  timeData: []
-};
-  db.getConnection(function (err, connection){
-    // async.each(req.body.employeeIds, function(employeeId, callback) {
-      var query = connection.query('SELECT `Employee ID` AS employeeId, MAX(`Time In`) AS timeIn, `Time Out` AS timeOut, `Manager ID` AS managerId, `Job ID` AS jobId FROM time_table WHERE `Manager ID`= ? AND (DATE(`Time In`)=CURDATE()) AND ISNULL(`Time Out`) GROUP BY employeeId ORDER BY timeIn DESC', [req.body.managerId], function (error, results, fields) {
+  SeeWork: function(req,res) {
+    var object = {
+      timeData: []
+    };
+    db.getConnection(function (err, connection){
+      var query = connection.query('SELECT * FROM (SELECT sub1.*, `time_table`.`Time Out` AS timeOut, `time_table`.`Job ID` AS jobId FROM (SELECT `time_table`.`Employee ID` AS employeeId, `employee_table`.`Employee First Name` AS firstName, `employee_table`.`Employee Last Name` AS lastName, MAX(`time_table`.`Time In`) AS timeIn, `time_table`.`Manager ID` AS managerId FROM `time_table` JOIN `employee_table` ON `employee_table`.`Employee ID` = `time_table`.`Employee ID` WHERE `Manager ID`= ? AND (DATE(`Time In`)=CURDATE()) GROUP BY employeeId) sub1 JOIN `time_table` ON `time_table`.`time In`=sub1.timeIn and `time_table`.`Employee ID`=sub1.employeeid) sub2 WHERE ISNULL(sub2.timeOut)', [req.body.managerId], function (error, results, fields) {
         if (error) throw error;
         if (results.length == 0) {
           console.log('no clock-in records');
         }
-        else if (results.length > 0) {
-for (var i=0; i<results.length; i++) {
-
-object.timeData.push({employeeId: results[i].employeeId, timeIn: results[i].timeIn, managerId: results[i].managerId, jobId: results[i].jobId })
-    }
-}
-        // else {
-        //   console.log('error finding clock-in record');
-        // }
-        // callback();
-      connection.release();
-res.json(object);
+        else {
+          for (var i=0; i<results.length; i++) {
+            object.timeData.push({employeeId: results[i].employeeId, employeeName: results[i].firstName+' '+results[i].lastName, timeIn: results[i].timeIn, managerId: results[i].managerId, jobId: results[i].jobId })
+          }
+        }
+        connection.release();
+        res.json(object);
       });
       console.log(query.sql);
-    // }, function (err) {
-    //   if (err) throw err;
-    //});
-  });
-},
+    });
+  },
 
-DoWork: function(req,res) {
+  DoWork: function(req,res) {
     var sqlValues = [];
     if (req.body.shiftIn) {   //employees beginning shift
       for (var i=0; i < req.body.employeeIds.length; i++) {
@@ -59,7 +50,6 @@ DoWork: function(req,res) {
             else if (results.length == 1) {
               if (results[0].timeOut == null) {
                 sqlValues = [req.body.time, employeeId, results[0].timeIn, results[0].timeIn];
-                console.log(sqlValues);
                 var query = connection.query('UPDATE time_table SET `Time Out` = ? WHERE `Employee ID`= ? AND `Time In`= ? AND (SELECT DATE(?) = CURDATE())', sqlValues, function (error, results, fields) {
                   if (error) throw error;
                 });
@@ -81,6 +71,6 @@ DoWork: function(req,res) {
         });
       });
     }
-    res.send("Data Saved!");
+    res.json({message: 'SUCCESS!'});
   }
 }

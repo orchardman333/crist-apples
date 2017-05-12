@@ -36,6 +36,10 @@ app.get('/api/employees', function(req, res) {
   employeeManager.GetEmployees(res);
 });
 
+app.get('/api/managers', function(req, res) {
+  employeeManager.GetManagers(res);
+});
+
 app.get('/api/trucks', function(req, res) {
   truckManager.GetTrucks(res);
 });

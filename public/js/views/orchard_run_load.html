@@ -106,9 +106,7 @@
   </div>
   <div class="well">
     <div class="row">
-      <div class="col-sm-12">
         <p><strong><h3>Load/Carga vaactrobu1p12510020</h3></strong></p>
-      </div>
     </div>
     <div class="row">
       <div class="col-sm-4">
@@ -151,53 +149,53 @@
       </div>
     </div>
     <div class="row">
-      <div class="" ng-repeat="barcode in binData.slice().reverse() track by $index">
+      <div class="" ng-repeat="bin in binData.slice().reverse() track by $index">
         <div id="bins" class="col-sm-6">
           <div class="panel panel-default">
             <div class="panel-heading row" ng-class="{'panel-heading-blue':(binData.length-$index)%2==1, 'panel-heading-teal':(binData.length-$index)%2==0}">
               <div class="col-sm-4" style="text-align:left;">
                 <h4><strong>{{binData.length-$index}}</strong></h4>
               </div>
-              <div class="col-sm-4"><h4><strong>{{barcode.barcode.slice(-5)}}</strong></h4></div>
+              <div class="col-sm-4"><h4><strong>{{bin.barcode.slice(-5)}}</strong></h4></div>
               <div class="col-sm-4" style="text-align:right;color:black;">
                 <button type="button" ng-click="showBoolean = !showBoolean">
                   <span class='glyphicon glyphicon-pencil' ng-if="!showBoolean"></span>
                   <span class='glyphicon glyphicon-ok' ng-if="showBoolean"></span>
                 </button>
-                <button type="button" ng-click="removeScan(barcode)">
+                <button type="button" ng-click="removeScan(bin)">
                   <span class='glyphicon glyphicon-trash'></span>
                 </button>
               </div>
             </div>
             <div class="panel-body" style="color:black;">
-              <h4><span class="label label-success">{{barcode.blockName}}</span></h4>
-              <h4><span class="label label-danger">{{barcode.varietyName}}</span></h4>
-              <h4><span class="label label-warning">{{barcode.strainName}}</span></h4>
-              <h4><span class="label label-violet">{{barcode.bearingName}}</span></h4>
-              <h4><span class="label label-blue">{{barcode.treatmentName}}</span></h4>
-              <h4><span class="label label-red">{{barcode.pickName}}</span></h4>
-              <h4><span class="label label-indigo">{{barcode.jobName}}</span></h4>
-              <h4><span class="label label-orange">{{barcode.storage.name}}</span></h4>
-              <h4><span class="label label-deeppink">{{barcode.pickDate | date : 'shortDate'}}</span></h4>
-              <h4><span class="label label-green">{{barcode.boxesCount}}</span></h4></br>
-              <h4><span class="label label-default">{{barcode.binComments}}</span></h4>
-              <h4><span class="label label-black" ng-repeat="empBarcode in barcode.pickerIds track by $index">{{empBarcode}}</span></h4>
+              <h4><span class="label label-success">{{bin.blockName}}</span></h4>
+              <h4><span class="label label-danger">{{bin.varietyName}}</span></h4>
+              <h4><span class="label label-warning">{{bin.strainName}}</span></h4>
+              <h4><span class="label label-violet">{{bin.bearingName}}</span></h4>
+              <h4><span class="label label-blue">{{bin.treatmentName}}</span></h4>
+              <h4><span class="label label-red">{{bin.pickName}}</span></h4>
+              <h4><span class="label label-indigo">{{bin.jobName}}</span></h4>
+              <h4><span class="label label-orange">{{bin.storage.name}}</span></h4>
+              <h4><span class="label label-deeppink">{{bin.pickDate | date : 'shortDate'}}</span></h4>
+              <h4><span class="label label-green">{{bin.boxesCount}}</span></h4></br>
+              <h4><span class="label label-default">{{bin.binComments}}</span></h4>
+              <h4><span class="label label-black" ng-repeat="empId in bin.pickerIds track by $index">{{empId}}</span></h4>
               <div class="" ng-if="showBoolean">
                 <label for="Storage">Storage:</label>
-                <select class="form-control" ng-model="barcode.storage" ng-options="storages.name for storages in storageList" >
+                <select class="form-control" ng-model="bin.storage" ng-options="storages.name for storages in storageList" >
                 </select>
                 <label for="Bushels">Bushels/Casas:</label>
-                <select class="form-control" ng-model="barcode.boxesCount" ng-options="x for x in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]">
+                <select class="form-control" ng-model="bin.boxesCount" ng-options="x for x in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]">
                 </select>
                 <label for="Pick Date">Pick Date:</label>
                 <div class="input-group" id="pick-date">
-                  <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="barcode.pickDate" show-button-bar="false" is-open="popup['bin'+$index]" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                  <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="bin.pickDate" show-button-bar="false" is-open="popup['bin'+$index]" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
                   <span class="input-group-btn">
                     <button type="button" class="btn btn-default" ng-click="openDate('bin'+$index)"><i class="glyphicon glyphicon-calendar"></i></button>
                   </span>
                 </div>
                 <label for="Bin Comments">Bin Comments:</label>
-                <input class="form-control input" ng-model="barcode.binComments" type="text">
+                <input class="form-control input" ng-model="bin.binComments" type="text">
               </div>
             </div>
           </div>
