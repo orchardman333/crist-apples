@@ -1,7 +1,13 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-sm-3">
+
+    </div>
+    <div class="col-sm-6">
       <p><strong><h2>Outside Time Form</h2></strong></p>
+    </div>
+    <div class="col-sm-3">
+      <button type="button" class="btn btn-primary" ng-click="submitRecords()" >Submit Data</button>
     </div>
   </div>
 
@@ -12,7 +18,7 @@
       </select>
     </br>
     <label for="inputlg">Job ID:</label>
-    <select class="form-control" type="text" ng-model="jobId" ng-options="jobs for jobs in ['p100','p125','p200','h001']" ng-init="jobId='p100'">
+    <select class="form-control" type="text" ng-model="jobId" ng-options="jobs for jobs in ['p100','p125','p200','h001']" ng-init="jobId='p100'" ng-disabled="shiftStatus">
     </select>
   </div>
   <div class="col-sm-6">
@@ -40,7 +46,6 @@
     <label for="Scan Barcode"></label>
     <div class="form-group has-feedback" ng-class="{'has-success':focused, 'has-error':!focused}">
       <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-enter="addToWorkingChanges()" type="text" ng-blur="focused=false" ng-focus="focused=true">
-      <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':focused, 'glyphicon-warning-sign':!focused}"></span>
     </div>
   </div>
   <div class="col-sm-3"></div>
@@ -51,51 +56,62 @@
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     <strong>{{errorMessage}}</strong>
   </div>
-  <div class="well">
-    <p><strong><h3>Working Changes</h3></strong></p>
-    <div ng-repeat="person in workingData track by $index">
-      <div class="col-sm-6">
-        <div class="panel panel-default">
-          <div class="panel-heading row" ng-class="{'panel-heading-blue':(workingData.length-$index)%2==1, 'panel-heading-teal':(workingData.length-$index)%2==0}">
-            <div class="col-sm-1" style="text-align:left;">
-              <h4><strong>{{workingData.length-$index}}</strong></h4>
+  <div class="well" ng-if="shiftStatus.boolean">
+    <p><strong><h3>Clock-in Employees:</h3></strong></p>
+    <div class="row">
+      <div ng-repeat="person in workingData track by $index">
+        <div class="col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading row" ng-class="{'panel-heading-blue':(workingData.length-$index)%2==1, 'panel-heading-teal':(workingData.length-$index)%2==0}">
+              <div class="col-sm-1" style="text-align:left;">
+                <h4><strong>{{person.employeeId}}</strong></h4>
+              </div>
+              <div class="col-sm-9"><h4><strong>{{person.employeeName}}</strong></h4></div>
+              <div class="col-sm-1" style="color:black;">
+                <button type="button" ng-click="removeFromWorkingChanges($index)">
+                  <span class='glyphicon glyphicon-trash'></span>
+                </button>
+              </div>
             </div>
-            <div class="col-sm-9"><h4><strong>{{person.employeeName}}</strong></h4></div>
-            <div class="col-sm-1" style="color:black;">
-            <button type="button" ng-click="removeFromWorkingChanges(person)">
-              <span class='glyphicon glyphicon-trash'></span>
-            </button>
-          </div>
-        </div>
-    </div>
-  </div>
-</div>
-<button type="button" class="btn btn-primary" ng-click="submitRecords()" >Submit Data</button>
-</div>
-
-<div class="well">
-  <div class="row">
-    <p><strong><h3>Saved Clock-In Records</h3></strong></p>
-    <div ng-repeat="record in retrievedData track by $index">
-      <div class="col-sm-6">
-        <div class="panel panel-default">
-          <div class="panel-heading row" ng-class="{'panel-heading-blue':(retrievedData.length-$index)%2==1, 'panel-heading-teal':(retrievedData.length-$index)%2==0}">
-            <div class="col-sm-1" style="text-align:left;">
-              <h4><strong>{{record.employeeId}}</strong></h4>
-            </div>
-            <div class="col-sm-9"><h4><strong>{{record.employeeName}}</strong></h4></div>
-            <div class="col-sm-1" style="color:black;">
-              <input type="checkbox" ng-model="record.selected" ng-if="!shiftStatus.boolean"></input>
-            </div>
-          </div>
-          <div class="panel-body" style="color:black;">
-            <h4><span class="label label-danger">{{record.timeIn | date: 'shortTime'}}</span></h4>
-            <h4><span class="label label-success">{{record.jobId}}</span></h4>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+
+  <div class="well">
+    <div class="row">
+      <div class="col-sm-3"></div>
+      <div class="col-sm-6">
+        <p><strong><h3>{{shiftStatus.boolean? 'Current Shifts:' : 'Clock-out Employees:'}}</h3></strong></p>
+      </div>
+      <div class="col-sm-3">
+        <div class="" ng-if="!shiftStatus.boolean">
+          <h5>Select All</h5>&nbsp;<input type="checkbox" ng-model="toggleAll" ng-change="toggle()">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div ng-repeat="record in retrievedData track by $index">
+        <div class="col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading row" ng-class="{'panel-heading-blue':(retrievedData.length-$index)%2==1, 'panel-heading-teal':(retrievedData.length-$index)%2==0}">
+              <div class="col-sm-1" style="text-align:left;">
+                <h4><strong>{{record.employeeId}}</strong></h4>
+              </div>
+              <div class="col-sm-9"><h4><strong>{{record.employeeName}}</strong></h4></div>
+              <div class="col-sm-1" style="color:black;">
+                <input type="checkbox" ng-model="record.selected" ng-if="!shiftStatus.boolean">
+              </div>
+            </div>
+            <div class="panel-body" style="color:black;">
+              <h4><span class="label label-danger">{{record.timeIn | date: 'shortTime'}}</span></h4>
+              <h4><span class="label label-success">{{record.jobId}}</span></h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>

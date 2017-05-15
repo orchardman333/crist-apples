@@ -12,7 +12,7 @@ Coming Later
 2. Storage Transfer
 
 This application is written using a hybrid form of the MEAN stack.  It utilizes:
-Node.js, Express web framework, AngularJS, and MySQL
+Node.js, Express web framework, AngularJS, and MySQL.
 
 ## Installation
 Installation is easy using these steps on Windows:

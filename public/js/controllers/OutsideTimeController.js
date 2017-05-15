@@ -9,7 +9,7 @@ angular.module('crist_farms')
     $scope.manager=$scope.managerList[0];
   });
 
-$scope.shiftStatusOptions = [{boolean:true, name:'Shift In'}, {boolean:false, name:'Shift End'}];
+  $scope.shiftStatusOptions = [{boolean:true, name:'Shift In'}, {boolean:false, name:'Shift End'}];
   $scope.shiftStatus = $scope.shiftStatusOptions[0];
   $scope.time = new Date(Date.now());
   if ($scope.time.getMinutes()>55) {
@@ -36,7 +36,7 @@ $scope.shiftStatusOptions = [{boolean:true, name:'Shift In'}, {boolean:false, na
     //scanned barcode is a picker's barcode
     else if ($scope.scan.length == 3) {
       //check if duplicate picker ID has been scanned already
-      if ($scope.workingData.indexOf($scope.scan) == -1) {
+      if ($scope.workingData.map(a => a.employeeId).indexOf($scope.scan) == -1) {
         orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
           //error in lookupManager
           if (decodedData.error) {
@@ -79,36 +79,60 @@ $scope.shiftStatusOptions = [{boolean:true, name:'Shift In'}, {boolean:false, na
     }
   }
 
+  $scope.toggle = function() {
+    if (!$scope.toggleAll) {
+      for (var i=0; i<$scope.retrievedData.length; i++) {
+        $scope.retrievedData[i].selected = true;
+      }
+      $scope.toggleAll=true;
+    }
+    else {
+      for (var i=0; i<$scope.retrievedData.length; i++) {
+        $scope.retrievedData[i].selected = false;
+      }
+      $scope.toggleAll=false;
+    }
+  }
+
   $scope.refocus = function() {
     $scope.$broadcast('refocus');
   }
 
   $scope.submitRecords = function() {
+var data = {};
     var dateTime = new Date($scope.time.getFullYear(),$scope.time.getMonth(),$scope.time.getDate(),$scope.timeHours, $scope.timeMinutes, 0, 0);
-    var data = {
-      employeeIds: $scope.workingData.map(a => a.employeeId),
-      shiftIn: $scope.shiftStatus.boolean,
-      time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
-      jobId: $scope.jobId,
-      managerId: $scope.manager.id
-    };
-    timeFormService.submitOutsideRecords(data, function(response) {
+    //shifting in
+    if ($scope.shiftStatus.boolean) {
+      data = {
+        employeeIds: $scope.workingData.map(a => a.employeeId),
+        shiftIn: true,
+        time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
+        jobId: $scope.jobId,
+        managerId: $scope.manager.id
+      };
+    }
+    //shifting out
+    else {
+       data = {
+        employeeIds: $scope.retrievedData.filter(a => a.selected).map(b => b.employeeId),
+        shiftIn: false,
+        time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
+      };
+    }
+    timeFormService.submitOutsideRecords(data, function() {
       $scope.workingData = [];
       $scope.retrieveRecords();
     });
   }
 
-  $scope.removeFromWorkingChanges = function(person) {
-    var index =  $scope.workingData.indexOf(person);
-    if (index > -1) {
-      $scope.workingData.splice(index, 1);
-    }
-$scope.refocus();
+  $scope.removeFromWorkingChanges = function(index) {
+    $scope.workingData.splice(index, 1);
+    $scope.refocus();
+  }
 
-}
   $scope.retrieveRecords = function() {
     timeFormService.getOutsideRecords({managerId:$scope.manager.id}, function(data) {
-      $scope.retrievedData=data.timeData;
+      $scope.retrievedData = data.timeData;
     })
   }
 

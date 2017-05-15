@@ -12,7 +12,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTran
   $scope.hourOptions = [{name:'8 (AM)',value:8},{name:'9 (AM)',value:9},{name:'10 (AM)',value:10},{name:'11 (AM)',value:11},{name:'12 (PM)',value:12},{name:'1 (PM)',value:13},{name:'2 (PM)',value:14},{name:'3 (PM)',value:15},{name:'4 (PM)',value:16},{name:'5 (PM)',value:17},{name:'6 (PM)',value:18},{name:'7 (PM)',value:19}];
   $scope.loadTimeMinute = Math.floor(currentDateTime.getMinutes()/5)*5;
   $scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5},{name:'10',value:10},{name:'15',value:15},{name:'20',value:20},{name:'25',value:25},{name:'30',value:30},{name:'35',value:35},{name:'40',value:40},{name:'45',value:45},{name:'50',value:50},{name:'55',value:55}];
-$scope.focused = false;
+  $scope.focused = false;
   $scope.scan = null;
   $scope.boxesCount = 20;
   $scope.binComments = null;
@@ -46,21 +46,21 @@ $scope.focused = false;
     }
     //scanned barcode is a bin's barcode
     else if ($scope.scan.length == 19) {
-      orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
-        //error in lookupManager
-        if (decodedData.error) {
-          $scope.error = true;
-          $scope.errorColor = 'danger';
-          $scope.errorMessage = 'No ' + decodedData.errorProp + ' Found!';
-          $timeout(function() {
-            $scope.error = false;
-            $scope.scan = null;
-          }, 2000);
-        }
-        //lookupManager OK
-        else {
-          //check if duplicate bin ID has been scanned already
-          if ($scope.binData.map(function(a) {return a.barcode.slice(-5)}).indexOf($scope.scan.slice(-5)) == -1) {
+      //check if duplicate bin ID has been scanned already
+      if ($scope.binData.map(a => a.barcode).map(b => b.slice(-5)).indexOf($scope.scan.slice(-5)) == -1) {
+        orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
+          //error in lookupManager
+          if (decodedData.error) {
+            $scope.error = true;
+            $scope.errorColor = 'danger';
+            $scope.errorMessage = 'No ' + decodedData.errorProp + ' Found!';
+            $timeout(function() {
+              $scope.error = false;
+              $scope.scan = null;
+            }, 2000);
+          }
+          //lookupManager OK
+          else {
             var value = {
               barcode: $scope.scan,
               pickDate : $scope.pickDate,
@@ -80,59 +80,62 @@ $scope.focused = false;
             $scope.scan = null;
             $scope.boxesCount = 20;
           }
-          //duplicate bin
-          else {
+        });
+      }
+      //duplicate bin
+      else {
+        $scope.error = true;
+        $scope.errorColor = 'danger';
+        $scope.errorMessage = 'Duplicate Bin Entered!';
+        $timeout(function() {
+          $scope.error = false;
+          $scope.scan = null;
+        }, 2000);
+      }
+    }
+
+    //scanned barcode is a picker's barcode
+    else if ($scope.scan.length == 3) {
+      //check to make sure at least one bin is present
+      if ($scope.binData.length <= 0) {
+        $scope.error = true;
+        $scope.errorColor = 'danger';
+        $scope.errorMessage = 'Need Bin First!';
+        $timeout(function() {
+          $scope.error = false;
+          $scope.scan = null;
+        }, 2000);
+      }
+      //check if duplicate picker ID has been scanned already
+      else if ($scope.binData[$scope.binData.length - 1].pickerIds.indexOf($scope.scan) == -1) {
+        orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
+          //error in lookupManager
+          if (decodedData.error) {
             $scope.error = true;
             $scope.errorColor = 'danger';
-            $scope.errorMessage = 'Duplicate Bin Entered!';
+            $scope.errorMessage = 'No ' + decodedData.errorProp + ' Found!';
             $timeout(function() {
               $scope.error = false;
               $scope.scan = null;
             }, 2000);
           }
-        }
-      });
-    }
-    //scanned barcode is a picker's barcode
-    else if ($scope.scan.length == 3) {
-      orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
-        //check for bin as first scan
-        if ($scope.binData.length == 0) {
-          $scope.error = true;
-          $scope.errorColor = 'danger';
-          $scope.errorMessage = 'Need Bin First!';
-          $timeout(function() {
-            $scope.error = false;
+          else {
+            //good scan
+            $scope.binData[$scope.binData.length - 1].pickerIds.push($scope.scan);
             $scope.scan = null;
-          }, 2000);
-        }
-        //error in lookupManager
-        else if (decodedData.error) {
-          $scope.error = true;
-          $scope.errorColor = 'danger';
-          $scope.errorMessage = 'No ' + decodedData.errorProp + ' Found!';
-          $timeout(function() {
-            $scope.error = false;
-            $scope.scan = null;
-          }, 2000);
-        }
-        //check if duplicate picker ID has been scanned already
-        else if ($scope.binData[$scope.binData.length - 1].pickerIds.indexOf($scope.scan) == -1) {
-//good scan
-          $scope.binData[$scope.binData.length - 1].pickerIds.push($scope.scan);
+          }
+        });
+      }
+      //duplicate picker
+      else {
+        $scope.error = true;
+        $scope.errorColor = 'danger';
+        $scope.errorMessage = 'Duplicate Picker Entered!';
+        $timeout(function() {
+          $scope.error = false;
           $scope.scan = null;
-        }
-        //duplicate picker
-        else {
-          $scope.error = true;
-          $scope.errorColor = 'danger';
-          $scope.errorMessage = 'Duplicate Picker Entered!';
-          $timeout(function() {
-            $scope.error = false;
-            $scope.scan = null;
-          }, 2000);
-        }
-      });
+        }, 2000);
+      }
     }
     //scanned barcode is invalid type
     else {
@@ -145,15 +148,12 @@ $scope.focused = false;
       }, 2000);
     }
   }
-$scope.refocus = function() {
-$scope.$broadcast('refocus');
-}
-  $scope.removeScan = function(bin){    //bin object
-    var index =  $scope.binData.indexOf(bin);
-    if (index > -1) {
-      $scope.binData.splice(index, 1);
-    }
-$scope.refocus();
+  $scope.refocus = function() {
+    $scope.$broadcast('refocus');
+  }
+  $scope.removeScan = function(index){    //bin object
+    $scope.binData.splice(index, 1);
+    $scope.refocus();
   }
 
   $scope.submitLoad = function(){
@@ -162,8 +162,8 @@ $scope.refocus();
       $scope.loadId = data.loadId;
       var loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
       for (var i=0; i<$scope.binData.length; i++) {
-$scope.binData[i].pickDate = moment($scope.binData[i].pickDate).format('YYYY-MM-DD');
-}
+        $scope.binData[i].pickDate = moment($scope.binData[i].pickDate).format('YYYY-MM-DD');
+      }
       var load = {
         loadData: {
           loadType: 'or',
@@ -250,8 +250,4 @@ $scope.binData[i].pickDate = moment($scope.binData[i].pickDate).format('YYYY-MM-
   };
 
   $scope.popup = {};
-  //
-  // $scope.popupPick = {
-  //   opened: false
-  // };
 }]);

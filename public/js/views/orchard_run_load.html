@@ -43,7 +43,7 @@
       <!-- <div class="input-group"> -->
       <div class="form-group has-feedback" ng-class="{'has-success':focused, 'has-error':!focused}">
         <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-enter="addScan()" type="text" ng-blur="focused=false" ng-focus="focused=true">
-        <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':focused, 'glyphicon-warning-sign':!focused}"></span>
+        <!-- <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':focused, 'glyphicon-warning-sign':!focused}"></span> -->
       </div>
       <!-- <div class="input-group-btn">
       <button type="button" class="btn btn-default btn-lg" ng-click="addScan()">Add Barcode</button>
@@ -96,7 +96,7 @@
   </div>
 </div>
 </div>
-</br>
+
 <div class="row">
   <div class="sm-col-12">
     <div class="alert alert-{{errorColor}} alert-dismissable" ng-if="error">
@@ -162,7 +162,7 @@
                   <span class='glyphicon glyphicon-pencil' ng-if="!showBoolean"></span>
                   <span class='glyphicon glyphicon-ok' ng-if="showBoolean"></span>
                 </button>
-                <button type="button" ng-click="removeScan(bin)">
+                <button type="button" ng-click="removeScan($index)">
                   <span class='glyphicon glyphicon-trash'></span>
                 </button>
               </div>
