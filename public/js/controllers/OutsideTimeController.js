@@ -116,7 +116,7 @@ var data = {};
        data = {
         employeeIds: $scope.retrievedData.filter(a => a.selected).map(b => b.employeeId),
         shiftIn: false,
-        time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
+        time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss')
       };
     }
     timeFormService.submitOutsideRecords(data, function() {

@@ -1,27 +1,53 @@
-<h3> Time Form </h3></br>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3">
+      <button type="button" class="btn btn-danger btn-lg" ng-click="startOver()">Cancel</button>
+    </div>
+    <div class="col-sm-6">
+      <p><strong><h2>Time Form</h2></strong></p>
+    </div>
+    <div class="col-sm-3"></div>
+  </div>
 
-<div id="alert_placeholder"></div>
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+      <label>Employee ID:</label>
+      <input class="form-control input-lg" type="text" autofocus placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-enter="selectShiftOptions()" type="text" ng-blur="focused=false" ng-focus="focused=true">
+    </br>
+    <div ng-if="showEmployeeName">
+      <label>Employee Name:</label>
+      <input class="form-control input-lg" ng-model="employeeName">
+    </br>
+  </br>
+  <label>Shift Status:</label>
+</br>
+</br>
 <div class="row">
-  <div class="col-sm-3">
-
+  <div class="col-sm-6">
+    <button type="button" class="btn btn-success btn-lg" ng-click="clockIn()">Clock In &nbsp;<span class="glyphicon glyphicon-play"></span></button>
+  </div>
+  <div class="col-sm-6" ng-if="!shiftStatus">
+    <button type="button" class="btn btn-danger btn-lg" ng-click="clockOut()">Clock Out &nbsp;<span class="glyphicon glyphicon-stop"></span></button>
+  </div>
+</div>
+</br>
+</br>
+<div ng-if="showClockInOptions">
+  <label>Job ID:</label>
+</br>
+</br>
+<div class="row">
+  <div class="col-sm-6">
+    <button type="button" class="btn btn-primary btn-lg" ng-click="startPacking()">Start Packing &nbsp;<span class="glyphicon glyphicon-apple"></span></button>
   </div>
   <div class="col-sm-6">
-    <label for="inputlg">Shift Status:</label>
-    <select class="form-control input-lg" type="text" ng-model="shiftStatus" ng-options="status.name for status in shiftStatusOptions">
-</select>
-    <br/>
-<label for="inputlg">Job ID:</label>
-    <input class="form-control input-lg" type="text" ng-model="jobId">
-    <br/>
-    <label for="truck_driver">Employee:</label>
-    <select class="form-control input-lg" ng-model="employee" ng-options="employees.name for employees in employeeList">
-    </select>
-    <br/>
-
-    <button type="button" class="btn btn-primary" ng-click="submit()">Submit Data</button>
-
+    <button type="button" class="btn btn-warning btn-lg" ng-click="startCleaning()">Start Cleaning &nbsp;<span class="glyphicon glyphicon-cog"></span></button>
   </div>
-  <div class="col-sm-3">
-
-  </div>
+</div>
+</div>
+</div>
+</div>
+<div class="col-sm-3"></div>
+</div>
 </div>

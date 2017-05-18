@@ -3,12 +3,12 @@
 var db = require("./DatabaseManager");
 var decode = require("./BarcodeDecodingManager");
 var async = require("async");
-var properties = ['block', 'variety', 'strain', 'bearing', 'treatment', 'pick', 'job'];   //order is important here
+var properties = ['block', 'variety', 'strain', 'bearing', 'treatment', 'pick', 'job'];   //order must match idArray from BarcodeDecodingManager
 
 module.exports = {
   GetBarcodeProperties: function (req,res) {
     // var t0 = now();
-    var object={error: false, errorProp: null};
+    var object={};
     var idValues = decode.decodeBarcode(req.body.barCode);
     //employee barcode
     if (idValues.typeBarcode == 'emp') {

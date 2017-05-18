@@ -4,8 +4,10 @@ angular.module('crist_farms')
 .service('TimeFormService', ['$http', function ($http) {
   // this service handles retrieving the truck drivers data from API
   var service = {};
-  service.submitTimeRecord = function(data) {
-    $http.post("/api/timeForm", data ).then(function (result) { console.log(result); });
+  service.submitTimeRecord = function(data, callback) {
+    $http.post("/api/timeForm", data).then(function (response) {
+      callback(response.data)
+    });
   };
 
   service.getOutsideRecords = function(data, callback) {
@@ -15,8 +17,8 @@ angular.module('crist_farms')
 
     service.submitOutsideRecords = function(data, callback) {
       $http.post("/api/outsidetime", data).then(function(response) {
-callback()
-});
+        callback()
+      });
     }
   };
   return service;

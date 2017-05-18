@@ -2,34 +2,77 @@
 
 angular.module('crist_farms')
 
-.controller('TimeFormController', ['$scope', '$location', 'EmployeeService', 'TimeFormService', function ($scope, $location, employeeService, timeFormService) {
-  employeeService.GetEmployees(function (data) {
-    $scope.employeeList = data;
-    $scope.employee = $scope.employeeList[0];
-  });
-  $scope.jobId = 'h001';
-  $scope.shiftStatusOptions = [{boolean:null, name:'Please Select!'}, {boolean:true, name:'Shift In'}, {boolean:false, name:'Shift End'}];
-  $scope.shiftStatus = $scope.shiftStatusOptions[0];      //true for shifting in, false for shifting out
+.controller('TimeFormController', ['$scope', '$location', '$timeout', '$uibModal', 'OrchardRunService', 'TimeFormService', function ($scope, $location, $timeout, $uibModal, orchardRunService, timeFormService) {
+  // employeeService.GetEmployees(function (data) {
+  //   $scope.employeeList = data;
+  //   $scope.employee = $scope.employeeList[0];
+  // });
+  $scope.jobOptions = 'h001';
   $scope.submit = function() {
-    if ($scope.shiftStatus.boolean != null) {
-      var data = {
-        employeeId: $scope.employee.id,
-        shiftIn: $scope.shiftStatus.boolean,
-        jobId: $scope.jobId,
-        managerId: '000'
-      }
-      console.log(data);
-      timeFormService.submitTimeRecord(data);
-
-      $('#alert_placeholder').html('<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>Time Record Submitted!</span></div>')
-      setTimeout(function () {
-        $("div.alert").remove();
-      }, 2000);
-      $location.url('/time_form')
+    var data = {
+      employeeId: $scope.scan,
+      shiftIn: $scope.shiftStatus,
+      jobId: $scope.jobId,
+      managerId: '001'
     }
+    timeFormService.submitTimeRecord(data, function(object) {
+      $scope.modal(object, 750);
+      $scope.startOver();
+    });
+  }
 
-    else {
-      console.log('NULLNULLNULL');
+  $scope.refocus = function() {
+    $scope.$broadcast('refocus');
+  }
+  $scope.selectShiftOptions = function() {
+    orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
+      $scope.employeeName = decodedData.employeeName;
+      $scope.showEmployeeName = true;
+    });
+  }
+
+  $scope.clockIn = function() {
+    $scope.shiftStatus = true;      //true for shifting in, false for shifting out
+    $scope.showClockInOptions = true;
+  }
+  $scope.clockOut = function() {
+    $scope.shiftStatus = false;
+    $scope.submit();
+  }
+  $scope.startPacking = function() {
+    $scope.jobId = 'h005'
+    $scope.submit();
+    //$scope.playAudio();
+  }
+  $scope.startCleaning = function() {
+    $scope.jobId = 'h006'
+    $scope.submit();
+  }
+  $scope.startOver = function() {
+    $scope.showEmployeeName = false;
+    $scope.showClockInOptions = false;
+    $scope.shiftStatus = false;
+    $scope.scan = null;
+    $scope.refocus();
+  }
+  $scope.modal = function (object, time) {
+        var soundSuccess = new Audio('http://www.soundjay.com/button/beep-07.wav');
+        var soundFailure = new Audio('http://www.soundjay.com/button/beep-10.wav');
+        object.error? soundFailure.play() : soundSuccess.play();
+
+    var modalInstance = $uibModal.open({
+      templateUrl: 'js/views/alert_modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: function($scope) {
+        $scope.message = object.message;
+        $scope.color = object.error? 'btn-danger' : 'btn-success';
+      }
+    });
+    if (!object.error) {
+      $timeout(function() {
+        modalInstance.close(1);
+      }, time);
     }
   }
 }]);

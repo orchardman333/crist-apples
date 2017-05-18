@@ -181,12 +181,12 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTran
       orchardRunService.SubmitLoad(load);
       $location.url('/orchard_run_report');
     });
-  };
+  }
 
   $scope.clearScan = function(){
     $scope.scan=null;
     $scope.refocus();
-  };
+  }
 
   $scope.clearLoad = function(){
     $scope.error = true;
@@ -198,7 +198,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTran
     $scope.binData = [];
     $scope.scan = null;
     $scope.refocus();
-  };
+  }
 
   //Confirmation modals
   $scope.submitLoadButton = function () {
@@ -217,7 +217,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTran
         $scope.submitLoad();
       }
     });
-  };
+  }
 
   $scope.clearLoadButton = function () {
     var modalInstance = $uibModal.open({
@@ -235,7 +235,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTran
         $scope.clearLoad();
       }
     });
-  };
+  }
 
   //Datepickers
   $scope.dateOptions = {
@@ -247,7 +247,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTran
 
   $scope.openDate = function(property) {
     $scope.popup[property] = true;
-  };
+  }
 
   $scope.popup = {};
 }]);
