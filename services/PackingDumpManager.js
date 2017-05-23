@@ -4,7 +4,7 @@
 // h01mcldbu1p10010000
 // ========
 var db = require("./DatabaseManager");
-var decode = require("./BarcodeDecodingManager");
+//var decode = require("./BarcodeDecodingManager");
 var now = require("performance-now");
 
 //Take entire list of barcode scans (including form data like storage, truck driver, etc.) from Angular

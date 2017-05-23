@@ -2,7 +2,7 @@
 
 angular.module('crist_farms')
 
-.controller('TimeFormController', ['$scope', '$location', '$timeout', '$uibModal', 'OrchardRunService', 'TimeFormService', function ($scope, $location, $timeout, $uibModal, orchardRunService, timeFormService) {
+.controller('TimeFormController', ['$scope', '$location', '$timeout', '$uibModal', 'EmployeeService', 'TimeFormService', function ($scope, $location, $timeout, $uibModal, employeeService, timeFormService) {
   // employeeService.GetEmployees(function (data) {
   //   $scope.employeeList = data;
   //   $scope.employee = $scope.employeeList[0];
@@ -13,7 +13,7 @@ angular.module('crist_farms')
       employeeId: $scope.scan,
       shiftIn: $scope.shiftStatus,
       jobId: $scope.jobId,
-      managerId: '001'
+      managerId: null
     }
     timeFormService.submitTimeRecord(data, function(object) {
       $scope.modal(object, 750);
@@ -25,7 +25,7 @@ angular.module('crist_farms')
     $scope.$broadcast('refocus');
   }
   $scope.selectShiftOptions = function() {
-    orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
+    employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
       $scope.employeeName = decodedData.employeeName;
       $scope.showEmployeeName = true;
     });

@@ -1,7 +1,7 @@
 // StorageTransferManager.js
 // ========
 var db = require("./DatabaseManager");
-var decode = require("./BarcodeDecodingManager");
+//var decode = require("./BarcodeDecodingManager");
 
 //Take entire list of barcode scans (including form data like storage, truck driver, etc.) from Angular
 //Then sort and INSERT them into db

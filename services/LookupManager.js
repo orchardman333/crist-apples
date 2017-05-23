@@ -1,67 +1,53 @@
 // Returns a single [bin's properties or employee's name] from its full tag
 'use strict'
 var db = require("./DatabaseManager");
-var decode = require("./BarcodeDecodingManager");
-var async = require("async");
-var properties = ['block', 'variety', 'strain', 'bearing', 'treatment', 'pick', 'job'];   //order must match idArray from BarcodeDecodingManager
+var asynch = require("async");
+//var properties = ['blockId', 'varietyId', 'strainId', 'bearingId', 'treatmentId', 'pickId', 'jobId'];   //order must match idArray from decodeBarcode
 
 module.exports = {
-  GetBarcodeProperties: function (req,res) {
-    // var t0 = now();
+  BinLookup: function (req,res) {
+    //if (req.body.barcode.length == 19) {
     var object={};
-    var idValues = decode.decodeBarcode(req.body.barCode);
-    //employee barcode
-    if (idValues.typeBarcode == 'emp') {
-      var name = '';
-      db.getConnection(function(err, connection) {
-        var query = connection.query('SELECT `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Employee ID` = ?', [idValues.empId], function(error, results, fields) {
+    db.getConnection(function(err, connection) {
+      var idObject = module.exports.decodeBarcode(req.body.barcode, false);
+      asynch.eachOf(idObject, function(value, property, callback) {
+        property = property.slice(0,-2)
+        var query = connection.query('SELECT `'+ property +' Name` AS prop FROM `'+ property +'_table` WHERE `'+ property + ' ID` = ?', [value], function(error, results, fields) {
           try {
-            object['employeeName'] = results[0].firstName + ' ' + results[0].lastName;
+            object[property + 'Name'] = results[0].prop;
           }
           catch (err) {
-            object['employeeName']='ERROR!';
+            object[property + 'Name']='ERROR!';
             object['error'] = true;
-            object['errorProp'] = 'EMPLOYEE';
+            object['errorProp'] = property.toUpperCase();
           }
-          res.json(object);
-          connection.release();
+          callback();
         });
         console.log(query.sql);
-      });
-    }
-    //bin barcode
-    else if (idValues.typeBarcode == 'bin') {
-      db.getConnection(function(err, connection) {
-        async.eachOf(properties, function(property, index, callback) {
-          // console.log(now()-t0);
-          var query = connection.query('SELECT `'+ property +' Name` AS prop FROM `'+ property +'_table` WHERE `'+ property + ' ID` = ?', [idValues.idArray[index]], function(error, results, fields) {
+      },
+      function(err) {
+        if (err) throw err;
+        res.json(object);
+        connection.release();
+      }
+    );
+  });
+},
 
-            // if (error) throw error
-            // {object['sqlerror']=error;}
-            //             else
-            try {
-              object[property + 'Name'] = results[0].prop;
-            }
-            catch (err) {
-              object[property + 'Name']='ERROR!';
-              object['error'] = true;
-              object['errorProp'] = property.toUpperCase();
-            }
-            // console.log(now()-t0);
-            callback();
-          });
-          console.log(query.sql);
-        },
-        function(err) {
-          if (err) throw err;
-          res.json(object);
-          connection.release();
-          // console.log(now()-t0);
-        }
-      );
-    });
-  }
+decodeBarcode : function(barcode, boolean) {
+  var values = {
+    blockId: barcode.substring(0, 3),
+    varietyId: barcode.substring(3, 5),
+    strainId: barcode.substring(5, 7),
+    bearingId: barcode.substring(7, 8),
+    treatmentId: barcode.substring(8, 9),
+    pickId: barcode.substring(9, 10),
+    jobId: barcode.substring(10, 14)
+  };
+  if (boolean) values.binId = barcode.substring(14, 19)
+  return values;
 }
+
 }
 
 // recursive algorithm

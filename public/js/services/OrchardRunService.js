@@ -21,8 +21,8 @@ angular.module('crist_farms')
     });
   };
 
-  service.DecodeBarcode = function(data, callback) {
-    $http.post("/api/LookupManager/", data).then(function(response) {
+  service.LookupBin = function(data, callback) {
+    $http.post("/api/BinLookup/", data).then(function(response) {
       callback(response.data);
     });
   };

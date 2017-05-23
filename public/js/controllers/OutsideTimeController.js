@@ -2,7 +2,7 @@
 
 angular.module('crist_farms')
 
-.controller('OutsideTimeController', ['$scope', '$location', '$timeout', 'EmployeeService', 'TimeFormService', 'OrchardRunService', function ($scope, $location, $timeout, employeeService, timeFormService, orchardRunService) {
+.controller('OutsideTimeController', ['$scope', '$location', '$timeout', 'EmployeeService', 'TimeFormService', function ($scope, $location, $timeout, employeeService, timeFormService) {
 
   employeeService.GetManagers(function(data) {
     $scope.managerList=data;
@@ -34,10 +34,10 @@ angular.module('crist_farms')
       }, 2000);
     }
     //scanned barcode is a picker's barcode
-    else if ($scope.scan.length == 3) {
+    else if ($scope.scan.length == 6) {
       //check if duplicate picker ID has been scanned already
       if ($scope.workingData.map(a => a.employeeId).indexOf($scope.scan) == -1) {
-        orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
+        employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
           //error in lookupManager
           if (decodedData.error) {
             $scope.error = true;

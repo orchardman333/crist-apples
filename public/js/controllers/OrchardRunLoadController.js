@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('crist_farms')
-.controller('OrchardRunLoadController', ['$scope', '$location', '$timeout', '$uibModal', 'OrchardRunService', 'StorageTransferService', 'TruckService',
-function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTransferService, truckService) {
+.controller('OrchardRunLoadController', ['$scope', '$location', '$timeout', '$uibModal', 'OrchardRunService', 'EmployeeService', 'StorageTransferService', 'TruckService',
+function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeService, storageTransferService, truckService) {
 
   //Date and Time variable initializing
   var currentDateTime = new Date(Date.now());
@@ -48,7 +48,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTran
     else if ($scope.scan.length == 19) {
       //check if duplicate bin ID has been scanned already
       if ($scope.binData.map(a => a.barcode).map(b => b.slice(-5)).indexOf($scope.scan.slice(-5)) == -1) {
-        orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
+        orchardRunService.LookupBin({barcode: $scope.scan}, function(decodedData) {
           //error in lookupManager
           if (decodedData.error) {
             $scope.error = true;
@@ -95,7 +95,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTran
     }
 
     //scanned barcode is a picker's barcode
-    else if ($scope.scan.length == 3) {
+    else if ($scope.scan.length == 6) {
       //check to make sure at least one bin is present
       if ($scope.binData.length <= 0) {
         $scope.error = true;
@@ -108,7 +108,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, storageTran
       }
       //check if duplicate picker ID has been scanned already
       else if ($scope.binData[$scope.binData.length - 1].pickerIds.indexOf($scope.scan) == -1) {
-        orchardRunService.DecodeBarcode({barCode: $scope.scan}, function(decodedData) {
+        employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
           //error in lookupManager
           if (decodedData.error) {
             $scope.error = true;
