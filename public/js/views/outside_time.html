@@ -1,11 +1,13 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sm-3"></div>
+    <div class="col-sm-3">
+      <button type="button" class="btn btn-lg btn-danger" ng-click="cancel()">Cancel</button>
+    </div>
     <div class="col-sm-6">
       <p><strong><h2>Outside Time Form</h2></strong></p>
     </div>
     <div class="col-sm-3">
-      <button type="button" class="btn btn-primary" ng-click="submitRecords()" >Submit Data</button>
+      <button type="button" class="btn btn-lg btn-success" ng-click="submitRecords()">{{shiftStatus.boolean? 'Clock-in':'Clock-out'}}</button>
     </div>
   </div>
 
@@ -15,13 +17,13 @@
       <select class="form-control" ng-model="manager" ng-options="managers.name for managers in managerList" ng-change="retrieveRecords()">
       </select>
     </br>
-    <label for="inputlg">Job ID:</label>
-    <select class="form-control" type="text" ng-model="jobId" ng-options="jobs for jobs in ['p100','p125','p200','h001']" ng-init="jobId='p100'" ng-disabled="!shiftStatus.boolean">
+    <label for="inputlg">Job:</label>
+    <select class="form-control" ng-model="job" ng-options="jobs.name for jobs in jobList" ng-disabled="!shiftStatus.boolean">
     </select>
   </div>
   <div class="col-sm-6">
     <label for="inputlg">Shift Status:</label>
-    <select class="form-control" type="text" ng-model="shiftStatus" ng-options="status.name for status in shiftStatusOptions">
+    <select class="form-control" ng-model="shiftStatus" ng-options="status.name for status in shiftStatusOptions">
     </select>
     <br/>
     <label for="Time">Time:</label>
@@ -37,7 +39,6 @@
     </div>
   </div>
 </div>
-
 <div class="row">
   <div class="col-sm-3"></div>
   <div class="col-sm-6">

@@ -3,11 +3,9 @@
 angular.module('crist_farms')
 
 .controller('TimeFormController', ['$scope', '$location', '$timeout', '$uibModal', 'EmployeeService', 'TimeFormService', function ($scope, $location, $timeout, $uibModal, employeeService, timeFormService) {
-  // employeeService.GetEmployees(function (data) {
-  //   $scope.employeeList = data;
-  //   $scope.employee = $scope.employeeList[0];
-  // });
-  $scope.jobOptions = 'h001';
+  var soundSuccess = new Audio('http://www.soundjay.com/button/beep-07.wav');
+  var soundFailure = new Audio('http://www.soundjay.com/button/beep-10.wav');
+
   $scope.submit = function() {
     var data = {
       employeeId: $scope.scan,
@@ -24,6 +22,7 @@ angular.module('crist_farms')
   $scope.refocus = function() {
     $scope.$broadcast('refocus');
   }
+
   $scope.selectShiftOptions = function() {
     employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
       $scope.employeeName = decodedData.employeeName;
@@ -56,10 +55,7 @@ angular.module('crist_farms')
     $scope.refocus();
   }
   $scope.modal = function (object, time) {
-        var soundSuccess = new Audio('http://www.soundjay.com/button/beep-07.wav');
-        var soundFailure = new Audio('http://www.soundjay.com/button/beep-10.wav');
-        object.error? soundFailure.play() : soundSuccess.play();
-
+    object.error? soundFailure.play() : soundSuccess.play();
     var modalInstance = $uibModal.open({
       templateUrl: 'js/views/alert_modal.html',
       backdrop: 'static',

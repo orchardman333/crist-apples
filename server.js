@@ -24,6 +24,7 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(methodOverride());
 
 // REST API -------------------------------------------------------------
+// People and Trucks
 app.get('/api/trucks', function(req, res) {
   truckManager.GetTrucks(res);
 });
@@ -43,11 +44,25 @@ app.get('/api/managers', function(req, res) {
 app.post('/api/employeeLookup', function(req, res) {
   employeeManager.EmployeeLookup(req, res);
 });
-
+//-------------------------------------------------------
+// Bins and Orchard Run
 app.post('/api/binLookup', function(req, res) {
   lookupManager.BinLookup(req, res);
 });
 
+app.post('/api/orchardRunManager', function(req, res) {
+  orchardRunManager.LoadBins(req, res);
+});
+
+app.post('/api/loadId', function(req, res) {
+  loadSeqManager.GetLoadId(req, res);
+});
+
+app.get('/api/jobs', function(req, res) {
+  lookupManager.GetJobs(res);
+});
+//-------------------------------------------------------
+// Storages and Transfers
 app.get('/api/storage', function(req, res) {
   storageManager.GetStorageList(res);
 });
@@ -59,15 +74,8 @@ app.post('/api/storageTransferManager', function(req, res) {
 app.post('/api/PackingDumpManager', function(req, res) {
   packingDumpManager.DumpBins(req, res);
 });
-
-app.post('/api/orchardRunManager', function(req, res) {
-  orchardRunManager.LoadBins(req, res);
-});
-
-app.post('/api/loadId', function(req, res) {
-  loadSeqManager.GetLoadId(req, res);
-});
-
+//-------------------------------------------------------
+// Time Clock
 app.post('/api/outsideTime', function(req,res) {
   outsideTimeManager.DoWork(req,res);
 });

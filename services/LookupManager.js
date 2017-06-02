@@ -2,7 +2,6 @@
 'use strict'
 var db = require("./DatabaseManager");
 var asynch = require("async");
-//var properties = ['blockId', 'varietyId', 'strainId', 'bearingId', 'treatmentId', 'pickId', 'jobId'];   //order must match idArray from decodeBarcode
 
 module.exports = {
   BinLookup: function (req,res) {
@@ -11,7 +10,7 @@ module.exports = {
     db.getConnection(function(err, connection) {
       var idObject = module.exports.decodeBarcode(req.body.barcode, false);
       asynch.eachOf(idObject, function(value, property, callback) {
-        property = property.slice(0,-2)
+        property = property.slice(0,-2);
         var query = connection.query('SELECT `'+ property +' Name` AS prop FROM `'+ property +'_table` WHERE `'+ property + ' ID` = ?', [value], function(error, results, fields) {
           try {
             object[property + 'Name'] = results[0].prop;
@@ -46,6 +45,23 @@ decodeBarcode : function(barcode, boolean) {
   };
   if (boolean) values.binId = barcode.substring(14, 19)
   return values;
+},
+
+GetJobs: function (res) {
+  var jobList = [];
+  db.getConnection(function(err, connection) {
+    var query = connection.query('SELECT `Job ID` AS id, `Job Name` AS name FROM job_table', function(error, results, fields) {
+      connection.release();
+      for (var i=0; i<results.length; i++) {
+        jobList.push({
+          id: results[i].id,
+          name: results[i].name
+        });
+      }
+      res.json(jobList);
+    });
+    console.log(query.sql);
+  });
 }
 
 }

@@ -3,10 +3,15 @@
 angular.module('crist_farms')
 
 .controller('OutsideTimeController', ['$scope', '$location', '$timeout', 'EmployeeService', 'TimeFormService', function ($scope, $location, $timeout, employeeService, timeFormService) {
+  timeFormService.GetJobs(function(data) {
+    $scope.jobList=data;
+    $scope.job=$scope.jobList[0];
+  });
 
   employeeService.GetManagers(function(data) {
     $scope.managerList=data;
     $scope.manager=$scope.managerList[0];
+    $scope.retrieveRecords();
   });
 
   $scope.shiftStatusOptions = [{boolean:true, name:'Shift In'}, {boolean:false, name:'Shift End'}];
@@ -35,10 +40,20 @@ angular.module('crist_farms')
     }
     //scanned barcode is a picker's barcode
     else if ($scope.scan.length == 6) {
-      //check if duplicate picker ID has been scanned already
-      if ($scope.workingData.map(a => a.employeeId).indexOf($scope.scan) == -1) {
+      //check if picker ID has been clocked-in but not clocked-out
+      if ($scope.retrievedData.map(a => a.employeeId).indexOf($scope.scan) >= 0) {
+        $scope.error = true;
+        $scope.errorColor = 'danger';
+        $scope.errorMessage = 'Employee not clocked-out yet!';
+        $timeout(function() {
+          $scope.error = false;
+          $scope.scan = null;
+        }, 2000);
+      }
+
+      else if ($scope.workingData.map(a => a.employeeId).indexOf($scope.scan) == -1) {
         employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
-          //error in lookupManager
+          //error in employeeLookup
           if (decodedData.error) {
             $scope.error = true;
             $scope.errorColor = 'danger';
@@ -50,7 +65,6 @@ angular.module('crist_farms')
           }
           //good scan
           else {
-
             $scope.workingData.push({employeeId:$scope.scan, employeeName: decodedData.employeeName});
             $scope.scan = null;
           }
@@ -99,7 +113,7 @@ angular.module('crist_farms')
   }
 
   $scope.submitRecords = function() {
-var data = {};
+    var data = {};
     var dateTime = new Date($scope.time.getFullYear(),$scope.time.getMonth(),$scope.time.getDate(),$scope.timeHours, $scope.timeMinutes, 0, 0);
     //shifting in
     if ($scope.shiftStatus.boolean) {
@@ -107,13 +121,13 @@ var data = {};
         employeeIds: $scope.workingData.map(a => a.employeeId),
         shiftIn: true,
         time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
-        jobId: $scope.jobId,
+        jobId: $scope.job.id,
         managerId: $scope.manager.id
       };
     }
     //shifting out
     else {
-       data = {
+      data = {
         employeeIds: $scope.retrievedData.filter(a => a.selected).map(b => b.employeeId),
         shiftIn: false,
         time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss')
@@ -123,6 +137,11 @@ var data = {};
       $scope.workingData = [];
       $scope.retrieveRecords();
     });
+  }
+
+  $scope.cancel = function() {
+    $scope.workingData = [];
+    $scope.retrieveRecords();
   }
 
   $scope.removeFromWorkingChanges = function(index) {
