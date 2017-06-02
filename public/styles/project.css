@@ -9,7 +9,7 @@ th, tr, td {
 font-size: 8pt;
 }
 }
-.form-control, .modal-header, .modal-body, .model-footer, #pick-date, #load-date {
+.form-control, .modal-header, .modal-body, .model-footer, #pick-date, #load-date, #work-date {
 color: black;
 }
 
