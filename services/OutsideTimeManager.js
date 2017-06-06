@@ -7,7 +7,7 @@ module.exports = {
       timeData: []
     };
     db.getConnection(function (err, connection){
-      var query = connection.query('SELECT sub1.*, `time_table`.`Time Out` AS timeOut, `time_table`.`Job ID` AS jobId FROM (SELECT `time_table`.`Employee ID` AS employeeId, `employee_table`.`Employee First Name` AS firstName, `employee_table`.`Employee Last Name` AS lastName, MAX(`time_table`.`Time In`) AS timeIn, `time_table`.`Manager ID` AS managerId FROM `time_table` JOIN `employee_table` ON `employee_table`.`Employee ID` = `time_table`.`Employee ID` WHERE `Manager ID`= ? AND (DATE(`Time In`)=?) GROUP BY employeeId) sub1 JOIN `time_table` ON `time_table`.`time In`=sub1.timeIn AND `time_table`.`Employee ID`=sub1.employeeid WHERE ISNULL(`time_table`.`Time Out`)', [req.body.managerId, req.body.dateSelect], function (error, results, fields) {
+      var query = connection.query('SELECT subquery.*, `time_table`.`Time Out` AS timeOut, `time_table`.`Job ID` AS jobId FROM (SELECT `time_table`.`Employee ID` AS employeeId, `employee_table`.`Employee First Name` AS firstName, `employee_table`.`Employee Last Name` AS lastName, MAX(`time_table`.`Time In`) AS timeIn, `time_table`.`Manager ID` AS managerId FROM `time_table` JOIN `employee_table` ON `employee_table`.`Employee ID` = `time_table`.`Employee ID` WHERE `Manager ID`= ? AND (DATE(`Time In`)=?) GROUP BY employeeId) subquery JOIN `time_table` ON `time_table`.`time In`=subquery.timeIn AND `time_table`.`Employee ID`=subquery.employeeid WHERE ISNULL(`time_table`.`Time Out`)', [req.body.managerId, req.body.dateSelect], function (error, results, fields) {
         if (error) throw error;
         if (results.length == 0) {
           console.log('no clock-in records');
@@ -26,7 +26,7 @@ module.exports = {
 
   DoWork: function(req,res) {
     var sqlValues = [];
-    if (req.body.shiftIn) {   //employees beginning shift
+    if (req.body.shiftIn && req.body.employeeIds.length > 0) {   //employees beginning shift
       for (var i=0; i < req.body.employeeIds.length; i++) {
         //INSERT new records
         sqlValues.push([req.body.employeeIds[i], req.body.time, null, req.body.jobId, req.body.managerId, null]);
@@ -68,9 +68,9 @@ module.exports = {
         }, function (err) {
           if (err) throw err;
           connection.release();
+          res.json({message: 'SUCCESS!'});
         });
       });
     }
-    res.json({message: 'SUCCESS!'});
   }
 }

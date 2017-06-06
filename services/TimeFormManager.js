@@ -34,7 +34,8 @@ module.exports = {
                 if (error) throw error;
                 connection.release();
                 resObject.message = 'Hooray! Clock-out successful';
-          res.json(resObject);
+                resObject.error = false;
+                res.json(resObject);
               });
               console.log(query.sql);
             }

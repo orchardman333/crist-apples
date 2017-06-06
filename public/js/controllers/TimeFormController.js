@@ -24,10 +24,44 @@ angular.module('crist_farms')
   }
 
   $scope.selectShiftOptions = function() {
-    employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
-      $scope.employeeName = decodedData.employeeName;
-      $scope.showEmployeeName = true;
-    });
+    if ($scope.scan == null) {
+      $scope.error = true;
+      $scope.errorColor = 'danger';
+      $scope.errorMessage = 'Empty Barcode. Please Scan Again!';
+      $timeout(function() {
+        $scope.error = false;
+        $scope.scan = null;
+      $scope.refocus();
+      }, 1000);
+    }
+    else if ($scope.scan.length == 6) {
+      employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
+        if (decodedData.error) {
+          $scope.error = true;
+          $scope.errorColor = 'danger';
+          $scope.errorMessage = 'Employee not found!';
+          $timeout(function() {
+            $scope.error = false;
+            $scope.scan = null;
+          }, 1000);
+        }
+
+        else {
+
+          $scope.employeeName = decodedData.employeeName;
+          $scope.showEmployeeName = true;
+        }
+      });
+    }
+    else {
+      $scope.error = true;
+      $scope.errorColor = 'danger';
+      $scope.errorMessage = 'Incorrect Barcode Type. Please Scan Again!';
+      $timeout(function() {
+        $scope.error = false;
+        $scope.scan = null;
+      }, 1000);
+    }
   }
 
   $scope.clockIn = function() {

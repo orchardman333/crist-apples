@@ -40,20 +40,20 @@
     </div>
     <div class="col-sm-8">
       <label for="Scan Barcode"></label>
-      <!-- <div class="input-group"> -->
+      <div class="input-group">
       <div class="form-group has-feedback" ng-class="{'has-success':focused, 'has-error':!focused}">
         <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-enter="addScan()" type="text" ng-blur="focused=false" ng-focus="focused=true">
-        <!-- <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':focused, 'glyphicon-warning-sign':!focused}"></span> -->
       </div>
-      <!-- <div class="input-group-btn">
+      <div class="input-group-btn">
       <button type="button" class="btn btn-default btn-lg" ng-click="addScan()">Add Barcode</button>
       <button type="button" class="btn btn-default btn-lg" ng-click="clearScan()">&times;</button>
-    </div> -->
-    <!-- </div> -->
+    </div>
+    </div>
   </div>
   <div class="col-sm-2">
   </div>
 </div>
+<br/>
 <div class="" ng-if="scan.substring(0,3)=='xxx'">
   <div class="row" >
     <div class="col-sm-4">

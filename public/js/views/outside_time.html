@@ -19,7 +19,7 @@
       <br/>
       <label for="Date">Date:</label>
       <div class="input-group" id="work-date">
-        <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="time" show-button-bar="false" is-open="popup.selectedDate" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+        <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="time" ng-change="retrieveRecords()" show-button-bar="false" is-open="popup.selectedDate" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
         <span class="input-group-btn">
           <button type="button" class="btn btn-default" ng-click="openDate('selectedDate')"><i class="glyphicon glyphicon-calendar"></i></button>
         </span>

@@ -38,23 +38,21 @@ module.exports = {
   },
 
   EmployeeLookup: function (req, res) {
-    if (req.body.barcode.length == 6) {
-      var object = {};
-      db.getConnection(function(err, connection) {
-        var query = connection.query('SELECT `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Employee ID` = ?', [req.body.barcode], function(error, results, fields) {
-          try {
-            object['employeeName'] = results[0].firstName + ' ' + results[0].lastName;
-          }
-          catch (err) {
-            object['employeeName']='ERROR!';
-            object['error'] = true;
-            object['errorProp'] = 'EMPLOYEE';
-          }
-          res.json(object);
-          connection.release();
-        });
-        console.log(query.sql);
+    var object = {};
+    db.getConnection(function(err, connection) {
+      var query = connection.query('SELECT `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Employee ID` = ?', [req.body.barcode], function(error, results, fields) {
+        try {
+          object['employeeName'] = results[0].firstName + ' ' + results[0].lastName;
+        }
+        catch (err) {
+          object['employeeName']='ERROR!';
+          object['error'] = true;
+          object['errorProp'] = 'EMPLOYEE';
+        }
+        res.json(object);
+        connection.release();
       });
-    }
+      console.log(query.sql);
+    });
   }
 };

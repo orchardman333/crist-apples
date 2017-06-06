@@ -157,7 +157,6 @@ angular.module('crist_farms')
   }
 
   $scope.retrieveRecords = function() {
-$scope.retrievedData = [];
     timeFormService.getOutsideRecords({managerId:$scope.manager.id, dateSelect: moment($scope.time).format('YYYY-MM-DD')}, function(data) {
       $scope.retrievedData = data.timeData;
     })
