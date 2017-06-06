@@ -26,14 +26,14 @@ angular.module('crist_farms')
     $scope.timeHours = $scope.time.getHours();
   }
   $scope.hourOptions = [{name: 'Midnight', value: 0},{name: '12 PM', value: 12},{name: '1 AM', value: 1},{name: '1 PM', value: 13}];
-$scope.minuteOptions = [{name:'00',value:0}];
-for (var i=2; i<12; i++) {
-$scope.hourOptions.push({name: i + ' AM', value: i},{name: i + ' PM', value: i+12});
-$scope.minuteOptions.push({name:(5*i)+'',value:5*i});
-}
-$scope.hourOptions.sort(function(obj1,obj2){return obj1.value-obj2.value})
-  //,{name:'05',value:5},{name:'10',value:10},{name:'15',value:15},{name:'20',value:20},{name:'25',value:25},{name:'30',value:30},{name:'35',value:35},{name:'40',value:40},{name:'45',value:45},{name:'50',value:50},{name:'55',value:55}];
+  $scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5}];
+  for (var i=2; i<12; i++) {
+    $scope.hourOptions.push({name: i + ' AM', value: i},{name: i + ' PM', value: i+12});
+    $scope.minuteOptions.push({name:(''+5*i)+'',value:5*i});
+  }
+  $scope.hourOptions.sort(function(obj1,obj2){return obj1.value-obj2.value})
   $scope.workingData = [];
+
   $scope.addToWorkingChanges = function() {
     //blank scan
     if ($scope.scan === null) {
@@ -136,7 +136,8 @@ $scope.hourOptions.sort(function(obj1,obj2){return obj1.value-obj2.value})
       data = {
         employeeIds: $scope.retrievedData.filter(a => a.selected).map(b => b.employeeId),
         shiftIn: false,
-        time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss')
+        time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
+        dateSelect: moment($scope.time).format('YYYY-MM-DD')
       };
     }
     timeFormService.submitOutsideRecords(data, function() {
@@ -156,7 +157,8 @@ $scope.hourOptions.sort(function(obj1,obj2){return obj1.value-obj2.value})
   }
 
   $scope.retrieveRecords = function() {
-    timeFormService.getOutsideRecords({managerId:$scope.manager.id}, function(data) {
+$scope.retrievedData = [];
+    timeFormService.getOutsideRecords({managerId:$scope.manager.id, dateSelect: moment($scope.time).format('YYYY-MM-DD')}, function(data) {
       $scope.retrievedData = data.timeData;
     })
   }
