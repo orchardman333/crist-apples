@@ -2,7 +2,7 @@
 
 angular.module('crist_farms')
 
-.controller('OutsideTimeController', ['$scope', '$location', '$timeout', 'EmployeeService', 'TimeFormService', function ($scope, $location, $timeout, employeeService, timeFormService) {
+.controller('OutsideTimeController', ['$scope', '$location', '$timeout', '$uibModal', 'EmployeeService', 'TimeFormService', function ($scope, $location, $timeout, $uibModal, employeeService, timeFormService) {
   timeFormService.GetJobs(function(data) {
     $scope.jobList=data;
     $scope.job=$scope.jobList[0];
@@ -140,9 +140,12 @@ angular.module('crist_farms')
         dateSelect: moment($scope.time).format('YYYY-MM-DD')
       };
     }
-    timeFormService.submitOutsideRecords(data, function() {
-      $scope.workingData = [];
-      $scope.retrieveRecords();
+    timeFormService.submitOutsideRecords(data, function(resObj) {
+      $scope.modal(resObj, 1000)
+      if (!resObj.error) {
+        $scope.workingData = [];
+        $scope.retrieveRecords();
+      }
     });
   }
 
@@ -174,4 +177,21 @@ angular.module('crist_farms')
   }
 
   $scope.popup = {};
+
+  $scope.modal = function (object, time) {
+    var modalInstance = $uibModal.open({
+      templateUrl: 'js/views/alert_modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: function($scope) {
+        $scope.message = object.message;
+        $scope.color = object.error? 'btn-danger' : 'btn-success';
+      }
+    });
+    if (!object.error) {
+      $timeout(function() {
+        modalInstance.close(1);
+      }, time);
+    }
+  }
 }]);

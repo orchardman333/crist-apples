@@ -8,15 +8,15 @@ module.exports = {
     };
     db.getConnection(function (err, connection){
       var query = connection.query('SELECT subquery.*, `time_table`.`Time Out` AS timeOut, `time_table`.`Job ID` AS jobId FROM (SELECT `time_table`.`Employee ID` AS employeeId, `employee_table`.`Employee First Name` AS firstName, `employee_table`.`Employee Last Name` AS lastName, MAX(`time_table`.`Time In`) AS timeIn, `time_table`.`Manager ID` AS managerId FROM `time_table` JOIN `employee_table` ON `employee_table`.`Employee ID` = `time_table`.`Employee ID` WHERE `Manager ID`= ? AND (DATE(`Time In`)=?) GROUP BY employeeId) subquery JOIN `time_table` ON `time_table`.`time In`=subquery.timeIn AND `time_table`.`Employee ID`=subquery.employeeid WHERE ISNULL(`time_table`.`Time Out`)', [req.body.managerId, req.body.dateSelect], function (error, results, fields) {
-        if (error) throw error;
-        if (results.length == 0) {
-          console.log('no clock-in records');
+        if (error) console.log(error.message);
+        // if (results.length == 0) {
+        //   console.log('No clock-in records');
+        // }
+        // else {
+        for (var i=0; i<results.length; i++) {
+          object.timeData.push({employeeId: results[i].employeeId, employeeName: results[i].firstName+' '+results[i].lastName, timeIn: results[i].timeIn, managerId: results[i].managerId, jobId: results[i].jobId })
         }
-        else {
-          for (var i=0; i<results.length; i++) {
-            object.timeData.push({employeeId: results[i].employeeId, employeeName: results[i].firstName+' '+results[i].lastName, timeIn: results[i].timeIn, managerId: results[i].managerId, jobId: results[i].jobId })
-          }
-        }
+        // }
         connection.release();
         res.json(object);
       });
@@ -32,8 +32,14 @@ module.exports = {
         sqlValues.push([req.body.employeeIds[i], req.body.time, null, req.body.jobId, req.body.managerId, null]);
       }
       db.getConnection(function (err, connection){
-        var query = connection.query('INSERT INTO time_table VALUES ?', [sqlValues], function (error, results, fields) {
-          if (error) throw error;
+        var query = connection.query('INSERT IGNORE INTO time_table VALUES ?', [sqlValues], function (error, results, fields) {
+          if (error) {
+            console.log(error.message);
+            res.json({message: error.message, error:true});
+          }
+          else {
+            res.json({message: 'DB Success!', error:false});
+          }
           connection.release();
         });
         console.log(query.sql);
@@ -43,20 +49,26 @@ module.exports = {
       db.getConnection(function (err, connection){
         asynch.each(req.body.employeeIds, function(employeeId, callback) {
           var query = connection.query('SELECT `Time In` AS timeIn, `Time Out` AS timeOut FROM time_table WHERE `Employee ID`= ? AND (DATE(`Time In`)=?) ORDER BY timeIn DESC LIMIT 1', [employeeId, req.body.dateSelect], function (error, results, fields) {
-            if (error) throw error;
+            if (error) {
+              console.log(error.message);
+              res.json({message: error.message, error:true});
+            }
             if (results.length == 0) {
-              console.log('no clock-in records');
+              console.log('No expected clock-in records found for ' + employeeId);
             }
             else if (results.length == 1) {
               if (results[0].timeOut == null) {
                 sqlValues = [req.body.time, employeeId, results[0].timeIn];
                 var query = connection.query('UPDATE time_table SET `Time Out` = ? WHERE `Employee ID`= ? AND `Time In`= ?', sqlValues, function (error, results, fields) {
-                  if (error) throw error;
+                  if (error) {
+                    console.log(error.message);
+                    res.json({message: error.message, error:true});
+                  }
                 });
                 console.log(query.sql);
               }
               else {
-                console.log('most recent record already clocked out');
+                console.log('Most recent record already clocked out for ' + employeeId);
               }
             }
             else {
@@ -65,10 +77,15 @@ module.exports = {
             callback();
           });
           console.log(query.sql);
-        }, function (err) {
-          if (err) throw err;
+        }, function (error) {
+          if (error) {
+            console.log(error.message);
+            res.json({message: error.message, error:true});
+          }
+          else {
+            res.json({message: 'DB Success!', error:false});
+          }
           connection.release();
-          res.json({message: 'SUCCESS!'});
         });
       });
     }

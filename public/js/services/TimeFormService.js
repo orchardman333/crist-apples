@@ -17,7 +17,7 @@ angular.module('crist_farms')
   }
   service.submitOutsideRecords = function(data, callback) {
     $http.post("/api/outsidetime", data).then(function(response) {
-      callback();
+      callback(response.data);
     });
   }
   service.GetJobs = function(callback) {
