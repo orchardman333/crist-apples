@@ -118,7 +118,7 @@ angular.module('crist_farms')
     $scope.$broadcast('refocus');
   }
 
-  $scope.submitRecords = function() {
+  $scope.submitButton = function() {
     var data = {};
     var dateTime = new Date($scope.time.getFullYear(),$scope.time.getMonth(),$scope.time.getDate(),$scope.timeHours, $scope.timeMinutes, 0, 0);
     //shifting in
@@ -130,25 +130,32 @@ angular.module('crist_farms')
         jobId: $scope.job.id,
         managerId: $scope.manager.id
       };
+      $scope.submitRecords(data);
     }
     //shifting out
     else {
-      data = {
-        employeeIds: $scope.retrievedData.filter(a => a.selected).map(b => b.employeeId),
-        shiftIn: false,
-        time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
-        dateSelect: moment($scope.time).format('YYYY-MM-DD')
-      };
+        data = {
+          employeeIds: $scope.retrievedData.filter(a => a.selected).map(b => b.employeeId),
+          shiftIn: false,
+          time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
+          date: moment($scope.time).format('YYYY-MM-DD')
+        };
+        $scope.lunchModal(data);
     }
+  }
+
+  $scope.submitRecords = function(data) {
     timeFormService.submitOutsideRecords(data, function(resObj) {
-      $scope.modal(resObj, 1000)
+      $scope.modal(resObj, 1000);
       if (!resObj.error) {
         $scope.workingData = [];
-        $scope.retrieveRecords();
+        //Allow db to finish clock-out updates before pulling
+        $timeout(function() {
+          $scope.retrieveRecords();
+        }, 500)
       }
     });
   }
-
   $scope.cancel = function() {
     $scope.workingData = [];
     $scope.retrieveRecords();
@@ -160,8 +167,13 @@ angular.module('crist_farms')
   }
 
   $scope.retrieveRecords = function() {
-    timeFormService.getOutsideRecords({managerId:$scope.manager.id, dateSelect: moment($scope.time).format('YYYY-MM-DD')}, function(data) {
+    timeFormService.getOutsideRecords({managerId:$scope.manager.id, date: moment($scope.time).format('YYYY-MM-DD')}, function(data) {
       $scope.retrievedData = data.timeData;
+      $scope.crew = data.crew;
+      console.log(data.crew);
+      if (data.error) {
+        $scope.modal(data, 1000)
+      }
     })
   }
   //Datepickers
@@ -193,5 +205,27 @@ angular.module('crist_farms')
         modalInstance.close(1);
       }, time);
     }
+  }
+  $scope.lunchModal = function (data) {
+    var modalInstance = $uibModal.open({
+      templateUrl: 'js/views/modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: function($scope) {
+        $scope.message = 'Add Lunch Break?';
+        $scope.confirmColor = 'btn-primary';
+        $scope.dismissColor = 'btn-warning';
+      }
+    });
+    modalInstance.result.then(function(confirmation) {
+      if (confirmation){
+        data.lunch=true;
+        var dateTime = new Date($scope.time.getFullYear(),$scope.time.getMonth(),$scope.time.getDate(), 12, 0, 0, 0);
+        data.lunchStart= moment(dateTime).format('YYYY-MM-DD kk:mm:ss');
+        dateTime = new Date($scope.time.getFullYear(),$scope.time.getMonth(),$scope.time.getDate(), 12, 30, 0, 0);
+        data.lunchEnd= moment(dateTime).format('YYYY-MM-DD kk:mm:ss');
+      }
+      $scope.submitRecords(data);
+    });
   }
 }]);

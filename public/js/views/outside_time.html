@@ -7,7 +7,7 @@
       <p><strong><h2>Outside Time Form</h2></strong></p>
     </div>
     <div class="col-sm-3">
-      <button type="button" class="btn btn-lg btn-success" ng-click="submitRecords()">{{shiftStatus.boolean? 'Clock-in':'Clock-out'}}</button>
+      <button type="button" class="btn btn-lg btn-success" ng-click="submitButton()">{{shiftStatus.boolean? 'Clock-in':'Clock-out'}}</button>
     </div>
   </div>
 
@@ -112,6 +112,40 @@
               <div class="panel-body" style="color:black;">
                 <h4><span class="label label-danger">{{record.timeIn | date: 'shortTime'}}</span></h4>
                 <h4><span class="label label-success">{{record.jobId}}</span></h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="well">
+      <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+          <p><strong><h3>{{shiftStatus.boolean? 'Current Shifts:' : 'Clock-out Employees:'}}</h3></strong></p>
+        </div>
+        <div class="col-sm-3">
+          <div class="" ng-if="!shiftStatus.boolean">
+            <h5>Select All</h5>&nbsp;<input type="checkbox" ng-model="toggleAll" ng-change="toggle()">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div ng-repeat="record in crew track by $index">
+          <div class="col-sm-6">
+            <div class="panel panel-default">
+              <div class="panel-heading row" ng-class="{'panel-heading-blue':(crew.length-$index)%2==1, 'panel-heading-teal':(crew.length-$index)%2==0}">
+                <div class="col-sm-1" style="text-align:left;">
+                  <h4><strong>{{record.employeeId}}</strong></h4>
+                </div>
+                <div class="col-sm-9"><h4><strong>{{record.firstName}}</strong></h4></div>
+                <div class="col-sm-1" style="color:black;">
+                  <input type="checkbox" ng-model="record.selected" ng-if="!shiftStatus.boolean">
+                </div>
+              </div>
+              <div class="panel-body" style="color:black;">
+                <!-- <h4><span class="label label-danger">{{record.timeIn | date: 'shortTime'}}</span></h4>
+                <h4><span class="label label-success">{{record.jobId}}</span></h4> -->
               </div>
             </div>
           </div>
