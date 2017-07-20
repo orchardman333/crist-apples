@@ -14,7 +14,7 @@
   <div class="row">
     <div class="col-sm-4">
       <label for="Truck Driver">Manager:</label>
-      <select class="form-control" ng-model="manager" ng-options="managers.name for managers in managerList" ng-change="retrieveRecords()">
+      <select class="form-control" ng-model="manager" ng-options="(managers.firstName+' '+managers.lastName) for managers in managerList" ng-change="retrieveRecords()">
       </select>
       <br/>
       <label for="Date">Date:</label>
@@ -71,7 +71,7 @@
                 <div class="col-sm-1" style="text-align:left;">
                   <h4><strong>{{person.employeeId}}</strong></h4>
                 </div>
-                <div class="col-sm-9"><h4><strong>{{person.employeeName}}</strong></h4></div>
+                <div class="col-sm-9"><h4><strong>{{person.firstName + ' ' + person.lastName}}</strong></h4></div>
                 <div class="col-sm-1" style="color:black;">
                   <button type="button" ng-click="removeFromWorkingChanges($index)">
                     <span class='glyphicon glyphicon-trash'></span>
@@ -104,7 +104,7 @@
                 <div class="col-sm-1" style="text-align:left;">
                   <h4><strong>{{record.employeeId}}</strong></h4>
                 </div>
-                <div class="col-sm-9"><h4><strong>{{record.employeeName}}</strong></h4></div>
+                <div class="col-sm-9"><h4><strong>{{record.firstName + ' ' + record.lastName}}</strong></h4></div>
                 <div class="col-sm-1" style="color:black;">
                   <input type="checkbox" ng-model="record.selected" ng-if="!shiftStatus.boolean">
                 </div>
@@ -118,16 +118,17 @@
         </div>
       </div>
     </div>
-    <div class="well">
+    <div class="well" ng-if="shiftStatus.boolean">
       <div class="row">
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
-          <p><strong><h3>{{shiftStatus.boolean? 'Current Shifts:' : 'Clock-out Employees:'}}</h3></strong></p>
+          <p><strong><h3>Today's Crew:</h3></strong></p>
         </div>
         <div class="col-sm-3">
-          <div class="" ng-if="!shiftStatus.boolean">
-            <h5>Select All</h5>&nbsp;<input type="checkbox" ng-model="toggleAll" ng-change="toggle()">
-          </div>
+            <h5>Select All</h5>&nbsp;<button type="button" ng-click="addAllTodayCrewToWorking()">
+              <span class='glyphicon glyphicon-ok' style="color:black;"></span>
+            </button>
+
         </div>
       </div>
       <div class="row">
@@ -138,15 +139,17 @@
                 <div class="col-sm-1" style="text-align:left;">
                   <h4><strong>{{record.employeeId}}</strong></h4>
                 </div>
-                <div class="col-sm-9"><h4><strong>{{record.firstName}}</strong></h4></div>
+                <div class="col-sm-9"><h4><strong>{{record.firstName + ' ' + record.lastName}}</strong></h4></div>
                 <div class="col-sm-1" style="color:black;">
-                  <input type="checkbox" ng-model="record.selected" ng-if="!shiftStatus.boolean">
+                  <button type="button" ng-click="addTodayCrewToWorking($index)">
+                    <span class='glyphicon glyphicon-ok'></span>
+                  </button>
                 </div>
               </div>
-              <div class="panel-body" style="color:black;">
-                <!-- <h4><span class="label label-danger">{{record.timeIn | date: 'shortTime'}}</span></h4>
-                <h4><span class="label label-success">{{record.jobId}}</span></h4> -->
-              </div>
+              <!-- <div class="panel-body" style="color:black;">
+                <h4><span class="label label-danger">{{record.timeIn | date: 'shortTime'}}</span></h4>
+                <h4><span class="label label-success">{{record.jobId}}</span></h4>
+              </div> -->
             </div>
           </div>
         </div>

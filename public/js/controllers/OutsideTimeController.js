@@ -71,7 +71,8 @@ angular.module('crist_farms')
           }
           //good scan
           else {
-            $scope.workingData.push({employeeId:$scope.scan, employeeName: decodedData.employeeName});
+            decodedData.employeeId = $scope.scan;
+            $scope.workingData.push(decodedData);
             $scope.scan = null;
           }
         });
@@ -166,11 +167,20 @@ angular.module('crist_farms')
     $scope.refocus();
   }
 
+$scope.addTodayCrewToWorking = function(index) {
+  $scope.workingData.push($scope.crew[index])
+  $scope.crew.splice(index,1)
+}
+
+$scope.addAllTodayCrewToWorking = function() {
+  $scope.workingData = $scope.workingData.concat($scope.crew)
+  $scope.crew = [];
+}
+
   $scope.retrieveRecords = function() {
     timeFormService.getOutsideRecords({managerId:$scope.manager.id, date: moment($scope.time).format('YYYY-MM-DD')}, function(data) {
       $scope.retrievedData = data.timeData;
       $scope.crew = data.crew;
-      console.log(data.crew);
       if (data.error) {
         $scope.modal(data, 1000)
       }

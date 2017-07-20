@@ -8,13 +8,13 @@ module.exports = {
     db.getConnection(function(err, connection) {
       var query = connection.query('SELECT `Employee ID` AS id, `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table', function(error, results, fields) {
         connection.release();
-        for (var i=0; i<results.length; i++) {
-          employeeList.push({
-            id: results[i].id,
-            name: results[i].firstName + ' ' + results[i].lastName
-          });
-        }
-        res.json(employeeList);
+        // for (var i=0; i<results.length; i++) {
+        //   employeeList.push({
+        //     id: results[i].id,
+        //     name: results[i].firstName + ' ' + results[i].lastName
+        //   });
+        // }
+        res.json(results);
       });
       console.log(query.sql);
     });
@@ -25,13 +25,13 @@ module.exports = {
     db.getConnection(function(err, connection) {
       var query = connection.query('SELECT `Employee ID` AS id, `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Manager`', function(error, results, fields) {
         connection.release();
-        for (var i=0; i<results.length; i++) {
-          managerList.push({
-            id: results[i].id,
-            name: results[i].firstName + ' ' + results[i].lastName
-          });
-        }
-        res.json(managerList);
+        // for (var i=0; i<results.length; i++) {
+        //   managerList.push({
+        //     id: results[i].id,
+        //     name: results[i].firstName + ' ' + results[i].lastName
+        //   });
+        // }
+        res.json(results);
       });
       console.log(query.sql);
     });
@@ -42,10 +42,9 @@ module.exports = {
     db.getConnection(function(err, connection) {
       var query = connection.query('SELECT `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Employee ID` = ?', [req.body.barcode], function(error, results, fields) {
         try {
-          object['employeeName'] = results[0].firstName + ' ' + results[0].lastName;
+          object = results[0];
         }
         catch (err) {
-          object['employeeName']='ERROR!';
           object['error'] = true;
           object['errorProp'] = 'EMPLOYEE';
         }

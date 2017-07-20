@@ -19,17 +19,14 @@ module.exports = {
           console.log(error.message);
           res.json({message:error.message, error:true});
         }
-        // for (var i=0; i<results.length; i++) {
-        //   resObject.timeData.push({employeeId: results[i].employeeId, employeeName: results[i].firstName+' '+results[i].lastName, timeIn: results[i].timeIn, managerId: results[i].managerId, jobId: results[i].jobId })
-        // }
-        resObject.timeData=results;
+
+        resObject.timeData = results;
         var query = connection.query('SELECT `time_table`.`Employee ID` AS employeeId, `employee_table`.`Employee First Name` AS firstName, `employee_table`.`Employee Last Name` AS lastName, `time_table`.`Manager ID` AS managerId FROM `time_table` JOIN `employee_table` ON `employee_table`.`Employee ID` = `time_table`.`Employee ID` WHERE `Manager ID`= ? AND (DATE(`Time In`)=?) GROUP BY employeeId', [req.body.managerId, req.body.date], function (error, results, fields) {
-resObject.crew = results;
-console.log(results);
-connection.release();
-res.json(resObject);
-});
-console.log(query.sql);
+          resObject.crew = results;
+          connection.release();
+          res.json(resObject);
+        });
+        console.log(query.sql);
       });
       console.log(query.sql);
     });
@@ -95,18 +92,18 @@ console.log(query.sql);
                   });
                   console.log(query.sql);
                 }
-              //no lunch break
-              else {
-                sqlValues = [req.body.time, employeeId, results[0].timeIn];
-                var query = connection.query('UPDATE time_table SET `Time Out` = ? WHERE `Employee ID`= ? AND `Time In`= ?', sqlValues, function (error, results, fields) {
-                  // if (error) {
-                  //   console.log(error.message);
-                  //   res.json({message: error.message, error:true});
-                  // }
-                });
-                console.log(query.sql);
+                //no lunch break
+                else {
+                  sqlValues = [req.body.time, employeeId, results[0].timeIn];
+                  var query = connection.query('UPDATE time_table SET `Time Out` = ? WHERE `Employee ID`= ? AND `Time In`= ?', sqlValues, function (error, results, fields) {
+                    // if (error) {
+                    //   console.log(error.message);
+                    //   res.json({message: error.message, error:true});
+                    // }
+                  });
+                  console.log(query.sql);
+                }
               }
-}
               else {
                 console.log('Most recent record already clocked out for ' + employeeId);
               }
