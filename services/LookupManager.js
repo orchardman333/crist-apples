@@ -4,21 +4,40 @@ var db = require("./DatabaseManager");
 var asynch = require("async");
 
 module.exports = {
-  BinLookup: function (req,res) {
-    //if (req.body.barcode.length == 19) {
+  //Check if bin has entered db
+  BinCheck: function(req,res) {
+    var object={};
+    db.getConnection(function(err, connection) {
+        var query = connection.query('SELECT * FROM bin_table` WHERE `Bin ID` = ?', [req.body.binId], function(error, results, fields) {
+          try {
+            object.exists = results[0]['Bin ID'] != null;
+          }
+          catch (e) {
+            object.exists = false;
+          }
+          res.json(object);
+          connection.release();
+        });
+        console.log(query.sql);
+      });
+  },
+
+  //Take bin's IDs and return full names to frontend
+  BinLookup: function(req,res) {
     var object={};
     db.getConnection(function(err, connection) {
       var idObject = module.exports.decodeBarcode(req.body.barcode, false);
       asynch.eachOf(idObject, function(value, property, callback) {
         property = property.slice(0,-2);
+        //SELECT `block name` AS prop FROM `block_table` WHERE `block ID` = [yourBlockId]
         var query = connection.query('SELECT `'+ property +' Name` AS prop FROM `'+ property +'_table` WHERE `'+ property + ' ID` = ?', [value], function(error, results, fields) {
           try {
             object[property + 'Name'] = results[0].prop;
           }
-          catch (err) {
+          catch (e) {
             object[property + 'Name']='ERROR!';
-            object['error'] = true;
-            object['errorProp'] = property.toUpperCase();
+            object.error = true;
+            object.errorProp = property.toUpperCase();
           }
           callback();
         });

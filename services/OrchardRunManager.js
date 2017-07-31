@@ -15,11 +15,11 @@ module.exports = {
     var barcodeProperties = {};
     var binValues = [];
     var boxesValues = [];
-    var loadHeadingValues = [];
+    //var loadHeadingValues = [];
     var loadValues = [];
 
     //load_heading_table INSERT
-    insertIntoLoadHeadingArray(loadHeadingValues, req.body.loadData);
+    var loadHeadingValues = insertIntoLoadHeadingArray(req.body.loadData);
 
     //Iterate through list of bins
     for (var i=0; i < req.body.binData.length; i++) {
@@ -27,7 +27,7 @@ module.exports = {
 
       //bin_table & load_table INSERTs
       insertIntoBinArray(binValues, barcodeProperties, req.body.binData[i]);
-      insertIntoLoadArray(loadValues, barcodeProperties.binId, req.body.binData[i].storage.id, req.body.loadData.loadId);
+      insertIntoLoadArray(loadValues, barcodeProperties.binId, req.body.binData[i].storage.id, req.body.loadData.load.id);
 
       //Pickers
       for (var j=0; j < req.body.binData[i].pickerIds.length; j++) {
@@ -81,15 +81,13 @@ function insertIntoBinArray(binValues, barcodeProperties, binData) {
   ]);
 };
 
-function insertIntoLoadHeadingArray(loadHeadingValues, loadData) {
-  loadHeadingValues.push([
-    loadData.loadType,
-    loadData.loadId,
-    loadData.truckDriverId,
-    loadData.loadDateTime,
-    loadData.truckId,
-    loadData.loadComments]
-  );
+function insertIntoLoadHeadingArray(loadData) {
+  return [loadData.load.type,
+          loadData.load.id,
+          loadData.truckDriver.id,
+          loadData.loadDateTime,
+          loadData.truck.id,
+          loadData.loadComments];
 };
 
 function insertIntoLoadArray(loadValues, binId, storageId, loadId) {

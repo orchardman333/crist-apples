@@ -1,17 +1,33 @@
 'use strict';
 
 angular.module('crist_farms')
-.controller('OrchardRunLoadController', ['$scope', '$location', '$timeout', '$uibModal', 'OrchardRunService', 'EmployeeService', 'StorageTransferService', 'TruckService',
-function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeService, storageTransferService, truckService) {
+.controller('OrchardRunLoadController', ['$scope', '$location', '$timeout', '$uibModal', 'OrchardRunService', 'EmployeeService', 'StorageService', 'TruckService',
+function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeService, storageService, truckService) {
 
   //Date and Time variable initializing
   var currentDateTime = new Date(Date.now());
   $scope.pickDate = currentDateTime;
   $scope.loadDate = currentDateTime;
-  $scope.loadTimeHour = currentDateTime.getHours();
-  $scope.hourOptions = [{name:'8 (AM)',value:8},{name:'9 (AM)',value:9},{name:'10 (AM)',value:10},{name:'11 (AM)',value:11},{name:'12 (PM)',value:12},{name:'1 (PM)',value:13},{name:'2 (PM)',value:14},{name:'3 (PM)',value:15},{name:'4 (PM)',value:16},{name:'5 (PM)',value:17},{name:'6 (PM)',value:18},{name:'7 (PM)',value:19}];
-  $scope.loadTimeMinute = Math.floor(currentDateTime.getMinutes()/5)*5;
-  $scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5},{name:'10',value:10},{name:'15',value:15},{name:'20',value:20},{name:'25',value:25},{name:'30',value:30},{name:'35',value:35},{name:'40',value:40},{name:'45',value:45},{name:'50',value:50},{name:'55',value:55}];
+  //$scope.loadTimeHour = currentDateTime.getHours();
+  //$scope.loadTimeMinute = Math.floor(currentDateTime.getMinutes()/5)*5;
+  //$scope.hourOptions = [{name:'8 (AM)',value:8},{name:'9 (AM)',value:9},{name:'10 (AM)',value:10},{name:'11 (AM)',value:11},{name:'12 (PM)',value:12},{name:'1 (PM)',value:13},{name:'2 (PM)',value:14},{name:'3 (PM)',value:15},{name:'4 (PM)',value:16},{name:'5 (PM)',value:17},{name:'6 (PM)',value:18},{name:'7 (PM)',value:19}];
+  //$scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5},{name:'10',value:10},{name:'15',value:15},{name:'20',value:20},{name:'25',value:25},{name:'30',value:30},{name:'35',value:35},{name:'40',value:40},{name:'45',value:45},{name:'50',value:50},{name:'55',value:55}];
+  if ($scope.loadDate.getMinutes()>55) {
+    $scope.loadTimeMinute = 0;
+    $scope.loadTimeHour = $scope.loadDate.getHours()+1;
+  }
+  else {
+    $scope.loadTimeMinute = Math.ceil($scope.loadDate.getMinutes()/5)*5;
+    $scope.loadTimeHour = $scope.loadDate.getHours();
+  }
+  $scope.hourOptions = [{name: 'Midnight', value: 0},{name: '12 PM', value: 12},{name: '1 AM', value: 1},{name: '1 PM', value: 13}];
+  $scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5}];
+  for (var i=2; i<12; i++) {
+    $scope.hourOptions.push({name: i + ' AM', value: i},{name: i + ' PM', value: i+12});
+    $scope.minuteOptions.push({name:(''+5*i)+'',value:5*i});
+  }
+  $scope.hourOptions.sort(function(obj1,obj2){return obj1.value-obj2.value})
+
   $scope.focused = false;
   $scope.scan = null;
   $scope.boxesCount = 20;
@@ -29,7 +45,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.truckDriver=$scope.truckDriverList[0];
   });
 
-  storageTransferService.GetStorageList(function(data) {
+  storageService.GetStorageList(function(data) {
     $scope.storageList = data;
     $scope.storage=$scope.storageList[0];
   });
@@ -48,7 +64,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     else if ($scope.scan.length == 19) {
       //check if duplicate bin ID has been scanned already
       if ($scope.binData.map(a => a.barcode).map(b => b.slice(-5)).indexOf($scope.scan.slice(-5)) == -1) {
-        orchardRunService.LookupBin({barcode: $scope.scan}, function(decodedData) {
+        orchardRunService.BinLookup({barcode: $scope.scan}, function(decodedData) {
           //error in lookupManager
           if (decodedData.error) {
             $scope.error = true;
@@ -166,13 +182,10 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       }
       var load = {
         loadData: {
-          loadType: 'or',
-          loadId: $scope.loadId,
-          truckDriverId: $scope.truckDriver.id,
-          truckDriverName: $scope.truckDriver.name,
+          load: {type:'or', id: $scope.loadId},
+          truckDriver: $scope.truckDriver,      //object
           loadDateTime: moment(loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
-          truckId: $scope.truck.id,
-          truckName: $scope.truck.name,
+          truck: $scope.truck,                //object
           loadComments: $scope.loadComments
         },
         binData: $scope.binData

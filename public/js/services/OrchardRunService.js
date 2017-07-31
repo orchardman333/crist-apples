@@ -1,7 +1,6 @@
 'use strict';
 
-angular.module('crist_farms')
-.service('OrchardRunService', ['$http', function($http) {
+angular.module('crist_farms').service('OrchardRunService', ['$http', function($http) {
   var thisData = [];
   var service = {};
 
@@ -21,8 +20,14 @@ angular.module('crist_farms')
     });
   };
 
-  service.LookupBin = function(data, callback) {
+  service.BinLookup = function(data, callback) {
     $http.post("/api/BinLookup/", data).then(function(response) {
+      callback(response.data);
+    });
+  };
+
+  service.BinCheck = function(data, callback) {
+    $http.post("/api/BinCheck/", data).then(function(response) {
       callback(response.data);
     });
   };

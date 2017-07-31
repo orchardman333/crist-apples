@@ -50,6 +50,10 @@ app.post('/api/binLookup', function(req, res) {
   lookupManager.BinLookup(req, res);
 });
 
+app.post('/api/binCheck', function(req, res) {
+  lookupManager.BinCheck(req, res);
+});
+
 app.post('/api/orchardRunManager', function(req, res) {
   orchardRunManager.LoadBins(req, res);
 });
@@ -67,7 +71,7 @@ app.get('/api/storage', function(req, res) {
   storageManager.GetStorageList(res);
 });
 
-app.post('/api/storageTransferManager', function(req, res) {
+app.post('/api/storageTransfer', function(req, res) {
   storageTransferManager.TransferBins(req, res);
 });
 
