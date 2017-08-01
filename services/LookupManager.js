@@ -8,7 +8,7 @@ module.exports = {
   BinCheck: function(req,res) {
     var object={};
     db.getConnection(function(err, connection) {
-        var query = connection.query('SELECT * FROM bin_table` WHERE `Bin ID` = ?', [req.body.binId], function(error, results, fields) {
+        var query = connection.query('SELECT * FROM bin_table WHERE `Bin ID` = ?', [req.body.binId], function(error, results, fields) {
           try {
             object.exists = results[0]['Bin ID'] != null;
           }

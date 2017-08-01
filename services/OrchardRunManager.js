@@ -19,7 +19,7 @@ module.exports = {
     var loadValues = [];
 
     //load_heading_table INSERT
-    var loadHeadingValues = insertIntoLoadHeadingArray(req.body.loadData);
+    var loadHeadingValues = [insertIntoLoadHeadingArray(req.body.loadData)];
 
     //Iterate through list of bins
     for (var i=0; i < req.body.binData.length; i++) {

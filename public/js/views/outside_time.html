@@ -62,7 +62,7 @@
       <strong>{{errorMessage}}</strong>
     </div>
     <div class="well" ng-if="shiftStatus.boolean">
-      <p><strong><h3>Clock-in Employees:</h3></strong></p>
+      <p><strong><h3>Clock-in Employees: {{workingData.length}}</h3></strong></p>
       <div class="row">
         <div ng-repeat="person in workingData track by $index">
           <div class="col-sm-6">
@@ -88,7 +88,7 @@
       <div class="row">
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
-          <p><strong><h3>{{shiftStatus.boolean? 'Current Shifts:' : 'Clock-out Employees:'}}</h3></strong></p>
+          <p><strong><h3>{{(shiftStatus.boolean? 'Current Shifts: ' : 'Clock-out Employees: ') + retrievedData.length}}</h3></strong></p>
         </div>
         <div class="col-sm-3">
           <div class="" ng-if="!shiftStatus.boolean">
@@ -122,7 +122,7 @@
       <div class="row">
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
-          <p><strong><h3>Today's Crew:</h3></strong></p>
+          <p><strong><h3>Today's Crew: {{crew.length}}</h3></strong></p>
         </div>
         <div class="col-sm-3">
             <h5>Select All</h5>&nbsp;<button type="button" ng-click="addAllTodayCrewToWorking()">

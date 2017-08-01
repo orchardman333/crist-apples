@@ -1,123 +1,217 @@
 'use strict';
 
 angular.module('crist_farms')
+.controller('PackDumpLoadController', ['$scope', '$location', '$timeout', '$uibModal', 'OrchardRunService', 'EmployeeService', 'StorageService', 'TruckService',
+function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeService, storageService, truckService) {
 
-.controller('PackDumpLoadController', ['$scope', 'LoadRunService', 'StorageService', 'EmployeeService',
- function ($scope, loadRunService, storageService, employeeService) {
+  //Date and Time variable initializing
+  $scope.loadDate = new Date(Date.now());
+  if ($scope.loadDate.getMinutes()>55) {
+    $scope.loadTimeMinute = 0;
+    $scope.loadTimeHour = $scope.loadDate.getHours()+1;
+  }
+  else {
+    $scope.loadTimeMinute = Math.ceil($scope.loadDate.getMinutes()/5)*5;
+    $scope.loadTimeHour = $scope.loadDate.getHours();
+  }
+  $scope.hourOptions = [{name: 'Midnight', value: 0},{name: '12 PM', value: 12},{name: '1 AM', value: 1},{name: '1 PM', value: 13}];
+  $scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5}];
+  for (var i=2; i<12; i++) {
+    $scope.hourOptions.push({name: i + ' AM', value: i},{name: i + ' PM', value: i+12});
+    $scope.minuteOptions.push({name:(''+5*i)+'',value:5*i});
+  }
+  $scope.hourOptions.sort((a,b) => a.value-b.value)
 
-   $scope.barCodes = [];
-   $scope.displayBarCodes = $scope.barCodes.slice().reverse();
-   $scope.truckDrivers = [];
-   $scope.storageList = [];
-   $scope.truckList = [];
-   $scope.default_truck={id:''};
-   $scope.comments = '';
-   $scope.nr_boxes = 0;
+  $scope.focused = false;
+  $scope.scan = null;
+  $scope.loadComments = null;
+  $scope.binData = [];
 
-    var d = new Date(Date.now()),
-           month = '' + (d.getMonth() + 1),
-           day = '' + d.getDate(),
-           year = d.getFullYear();
+  truckService.GetTruckDrivers(function(data) {
+    $scope.truckDriverList=data;
+    $scope.truckDriver=$scope.truckDriverList.filter(a => a.id === 'GONARM')[0];
+  });
 
-   if (month.length < 2) month = '0' + month;
-   if (day.length < 2) day = '0' + day;
-
-   $scope.date = [year, month, day].join('-');
-
-   employeeService.GetTrucks(function (data) {
-     $scope.truckList=data;
-   });
-
-   employeeService.GetTruckDrivers(function (data) {
-     $scope.truckDrivers=data;
-   });
-
-   storageService.GetStorageList(function (data) {
-      $scope.storageList =data;
-   });
-
-   loadRunService.GetLoadSequenceId(function(data){
-     $scope.loadSeqId = data.id;
-   });
-
-   $scope.removeBarCode = function(barcode){
-    var index =  $scope.barCodes.indexOf(barcode);
-     if (index > -1) {
-          $scope.barCodes.splice(index, 1);
-      }
-      $scope.displayBarCodes = $scope.barCodes.slice().reverse();
-   };
-
-   $scope.clearData = function(){
-     $scope.barCodes = [];
-     $scope.scan="";
-     $scope.$broadcast('newItemAdded');
-     $scope.displayBarCodes = $scope.barCodes.slice().reverse();
-   };
-
-   //console.log($scope.storageList);
-   $scope.add_barcode = function(){
-     if (angular.isUndefined($scope.scan) || $scope.scan === null  ){
-       $('#alert_placeholder').html('<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>No Barcode entered!</span></div>')
-              setTimeout(function () {
-                  $("div.alert").remove();
-              }, 2000);
-      $scope.clearData();
-     }
-     else{
-       var callback = function(decodeData){
-         var binId = '';
-         if ($scope.scan.length == 17){
-          binId = $scope.scan.substring(12, 17);
-         }
-         else {
-           binId = $scope.scan.substring(10, 15);
-         }
-         var value = {
-           barcode: $scope.scan,
-           storage: {id: 'Pack'},
-           truck_driver: {id: 'Forklift', name: 'Forklift'},
-           variety: decodeData.varietyName,
-           strainName: decodeData.strainName,
-           blockName: decodeData.blockName,
-           nr_boxes: $scope.nr_boxes,
-           comments: $scope.comments,
-           truck_id: 'Forklift',
-           load_seq_id: $scope.loadSeqId,
-           bin_id: binId,
-           date : $scope.date,
-           packout_id: $scope.packout_id
-         }
-         console.log($scope.default_truck.id);
-
-         $scope.barCodes.push(value);
-         $scope.scan = "";
-         $scope.$broadcast('newItemAdded');
-         $scope.displayBarCodes = $scope.barCodes.slice().reverse();
-       };
-
-       loadRunService.DecodeBarCode({barCode: $scope.scan}, callback);
-     }
-   };
-
-   $scope.submit = function(){
-      var data = {
-        barCodes: $scope.barCodes
-      };
-
-      console.log(data);
-      loadRunService.SubmitLoadRun(data);
-      loadRunService.SaveData(data);
-      window.location = "#/lr";
-   };
-
-   $scope.cancel = function(){
-     $('#alert_placeholder').html('<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>Load Cancelled</span></div>')
-            setTimeout(function () {
-                $("div.alert").remove();
+  $scope.addScan = function() {
+    //blank scan
+    if ($scope.scan === null) {
+      $scope.error = true;
+      $scope.errorColor = 'danger';
+      $scope.errorMessage = 'No Barcode Entered!';
+      $timeout(function() {
+        $scope.error = false;
+      }, 2000);
+    }
+    //scanned barcode is a bin's barcode
+    else if ($scope.scan.length == 19) {
+      $scope.scan = $scope.scan.slice(-5);
+      //check if duplicate bin ID has been scanned on form already
+      if ($scope.binData.indexOf($scope.scan) == -1) {
+        //check if Bin ID has been entered in db
+        orchardRunService.BinCheck({binId: $scope.scan}, function(decodedData) {
+          //bin exists
+          if (decodedData.exists) {
+            $scope.binData.push($scope.scan);
+            $scope.scan = null;
+          }
+          //bin check fails
+          else {
+            $scope.error = true;
+            $scope.errorColor = 'danger';
+            $scope.errorMessage = 'Bin not found in database!';
+            $timeout(function() {
+              $scope.error = false;
+              $scope.scan = null;
             }, 2000);
-    $scope.clearData();
-   };
+          }
+        });
+      }
+      //duplicate bin
+      else {
+        $scope.error = true;
+        $scope.errorColor = 'danger';
+        $scope.errorMessage = 'Duplicate Bin Entered!';
+        $timeout(function() {
+          $scope.error = false;
+          $scope.scan = null;
+        }, 2000);
+      }
+    }
 
+    //scanned barcode is invalid type
+    else {
+      $scope.error = true;
+      $scope.errorColor = 'danger';
+      $scope.errorMessage = 'Invalid Barcode Type!';
+      $timeout(function() {
+        $scope.error = false;
+        $scope.scan = null;
+      }, 2000);
+    }
+  }
+  $scope.refocus = function() {
+    $scope.$broadcast('refocus');
+  }
+  $scope.removeScan = function(index){    //bin object
+    $scope.binData.splice(index, 1);
+    $scope.refocus();
+  }
 
- }]);
+  $scope.submitLoad = function(){
+
+    orchardRunService.GetLoadId({idType: 'pk'}, function(data){
+      $scope.loadId = data.loadId;
+      var loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
+      var load = {
+        loadData: {
+          load: {type:'pk', id: $scope.loadId},
+          truckDriver: $scope.truckDriver,      //object
+          loadDateTime: moment(loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
+          truck: {id: 'FKL'},                //object
+          loadComments: $scope.loadComments,
+          storage: {id: 'PK'}
+        },
+        binData: $scope.binData
+      };
+      //orchardRunService.SaveData(load);
+      storageService.SubmitStorageTransfer(load, function (resObj) {
+        $scope.responseModal(resObj, 1000);
+        if (!resObj.error) {
+          $scope.workingData = [];
+          //Allow db to finish clock-out updates before pulling
+          $timeout(function (){
+          }, 500)
+        };
+        //$location.url('/orchard_run_report');
+        $scope.clearLoad(false);
+      });
+    });
+  }
+
+  $scope.clearScan = function(){
+    $scope.scan=null;
+    $scope.refocus();
+  }
+
+  $scope.clearLoad = function (boolean) {
+    if (boolean) {
+      $scope.error = true;
+      $scope.errorColor = 'warning';
+      $scope.errorMessage = 'Load Canceled!';
+      $timeout(function() {
+        $scope.error = false;
+      }, 2000);
+    }
+    $scope.binData = [];
+    $scope.scan = null;
+    $scope.refocus();
+  }
+
+  //Confirmation modals
+  $scope.responseModal = function (object, time) {
+    var modalInstance = $uibModal.open({
+      templateUrl: 'js/views/alert_modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: function($scope) {
+        $scope.message = object.message;
+        $scope.color = object.error? 'btn-danger' : 'btn-success';
+      }
+    });
+    if (!object.error) {
+      $timeout(function() {
+        modalInstance.close(1);
+      }, time);
+    }
+  }
+
+  $scope.submitLoadButton = function () {
+    var modalInstance = $uibModal.open({
+      templateUrl: 'js/views/modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: function($scope) {
+        $scope.message = 'Are you sure you want to submit the load?';
+        $scope.confirmColor = 'btn-success';
+        $scope.dismissColor = 'btn-warning';
+      }
+    });
+    modalInstance.result.then(function(confirmation) {
+      if (confirmation) {
+        $scope.submitLoad();
+      }
+    });
+  }
+
+  $scope.clearLoadButton = function () {
+    var modalInstance = $uibModal.open({
+      templateUrl: 'js/views/modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: function($scope) {
+        $scope.message = 'Are you sure you want to cancel load?';
+        $scope.confirmColor = 'btn-danger';
+        $scope.dismissColor = 'btn-warning';
+      }
+    });
+    modalInstance.result.then(function(confirmation) {
+      if (confirmation) {
+        $scope.clearLoad(true);
+      }
+    });
+  }
+
+  //Datepickers
+  $scope.dateOptions = {
+    maxDate: new Date($scope.loadDate.getFullYear()+1, 11, 31),
+    minDate: new Date($scope.loadDate.getFullYear()-1, 0, 1),
+    startingDay: 0,
+    showWeeks: false
+  };
+
+  $scope.openDate = function(property) {
+    $scope.popup[property] = true;
+  }
+
+  $scope.popup = {};
+}]);

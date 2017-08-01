@@ -26,7 +26,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.hourOptions.push({name: i + ' AM', value: i},{name: i + ' PM', value: i+12});
     $scope.minuteOptions.push({name:(''+5*i)+'',value:5*i});
   }
-  $scope.hourOptions.sort(function(obj1,obj2){return obj1.value-obj2.value})
+  $scope.hourOptions.sort((a,b) => a.value-b.value)
 
   $scope.focused = false;
   $scope.scan = null;
@@ -62,52 +62,69 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     }
     //scanned barcode is a bin's barcode
     else if ($scope.scan.length == 19) {
-      //check if duplicate bin ID has been scanned already
-      if ($scope.binData.map(a => a.barcode).map(b => b.slice(-5)).indexOf($scope.scan.slice(-5)) == -1) {
-        orchardRunService.BinLookup({barcode: $scope.scan}, function(decodedData) {
-          //error in lookupManager
-          if (decodedData.error) {
+
+      //check if Bin ID has been entered in db already
+      orchardRunService.BinCheck({binId: $scope.scan.slice(-5)}, function(decodedData) {
+        //bin already exists, discard scan
+        if (decodedData.exists) {
+          $scope.error = true;
+          $scope.errorColor = 'danger';
+          $scope.errorMessage = 'Bin already found in database!';
+          $timeout(function() {
+            $scope.error = false;
+            $scope.scan = null;
+          }, 2000);
+        }
+        //bin does not exist, continue checks
+        else {
+          //check if duplicate bin ID has been scanned on form already
+          if ($scope.binData.map(a => a.barcode).map(b => b.slice(-5)).indexOf($scope.scan.slice(-5)) == -1) {
+            orchardRunService.BinLookup({barcode: $scope.scan}, function(decodedData) {
+              //error in lookupManager
+              if (decodedData.error) {
+                $scope.error = true;
+                $scope.errorColor = 'danger';
+                $scope.errorMessage = 'No ' + decodedData.errorProp + ' Found!';
+                $timeout(function() {
+                  $scope.error = false;
+                  $scope.scan = null;
+                }, 2000);
+              }
+              //lookupManager OK
+              else {
+                var value = {
+                  barcode: $scope.scan,
+                  pickDate : $scope.pickDate,
+                  boxesCount: $scope.boxesCount,
+                  binComments: $scope.binComments,
+                  storage: $scope.storage,    //object
+                  blockName: decodedData.blockName,
+                  varietyName: decodedData.varietyName,
+                  strainName: decodedData.strainName,
+                  bearingName: decodedData.bearingName,
+                  treatmentName: decodedData.treatmentName,
+                  pickName: decodedData.pickName,
+                  jobName: decodedData.jobName,
+                  pickerIds: []
+                };
+                $scope.binData.push(value);
+                $scope.scan = null;
+                $scope.boxesCount = 20;
+              }
+            });
+          }
+          //duplicate bin in form
+          else {
             $scope.error = true;
             $scope.errorColor = 'danger';
-            $scope.errorMessage = 'No ' + decodedData.errorProp + ' Found!';
+            $scope.errorMessage = 'Duplicate Bin Entered!';
             $timeout(function() {
               $scope.error = false;
               $scope.scan = null;
             }, 2000);
           }
-          //lookupManager OK
-          else {
-            var value = {
-              barcode: $scope.scan,
-              pickDate : $scope.pickDate,
-              boxesCount: $scope.boxesCount,
-              binComments: $scope.binComments,
-              storage: $scope.storage,    //object
-              blockName: decodedData.blockName,
-              varietyName: decodedData.varietyName,
-              strainName: decodedData.strainName,
-              bearingName: decodedData.bearingName,
-              treatmentName: decodedData.treatmentName,
-              pickName: decodedData.pickName,
-              jobName: decodedData.jobName,
-              pickerIds: []
-            };
-            $scope.binData.push(value);
-            $scope.scan = null;
-            $scope.boxesCount = 20;
-          }
-        });
-      }
-      //duplicate bin
-      else {
-        $scope.error = true;
-        $scope.errorColor = 'danger';
-        $scope.errorMessage = 'Duplicate Bin Entered!';
-        $timeout(function() {
-          $scope.error = false;
-          $scope.scan = null;
-        }, 2000);
-      }
+        }
+      });
     }
 
     //scanned barcode is a picker's barcode

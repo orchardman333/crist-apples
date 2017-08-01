@@ -26,6 +26,9 @@
       <select class="form-control" ng-model="truck" ng-options="trucks.name for trucks in truckList">
       </select>
     </div>
+  </div>
+</br>
+  <div class="row">
     <div class="col-sm-4">
       <label for="Load Date">Load Date:</label>
       <div class="input-group" id="load-date">
@@ -72,81 +75,42 @@
     <div class="col-sm-2">
     </div>
   </div>
-  <br/>
-  <div class="" ng-if="scan.substring(0,3)=='xxx'">
-    <div class="row" >
-      <div class="col-sm-4">
-        <label for="repBlock">Replacement Block:</label>
-        <select class="form-control" ng-model="repBlock" ng-options="a.b for a in [{b:1},{b:2}]">
-        </select>
-      </div>
-      <div class="col-sm-4">
-        <label for="repVariety">Replacement Variety:</label>
-        <select class="form-control" ng-model="repVariety" ng-options="a.b for a in [{b:1},{b:2}]">
-        </select>
-      </div>
-      <div class="col-sm-4">
-        <label for="repStrain">Replacement Strain:</label>
-        <select class="form-control" ng-model="repStrain" ng-options="a.b for a in [{b:1},{b:2}]">
-        </select>
-      </div>
-    </div>
-  </br>
-  <div class="row">
-    <div class="col-sm-3">
-      <label for="repBearing">Replacement Bearing:</label>
-      <select class="form-control" ng-model="repBearing" ng-options="a.b for a in [{b:1},{b:2}]">
-      </select>
-    </div>
-    <div class="col-sm-3">
-      <label for="repTreatment">Replacement Treatment:</label>
-      <select class="form-control" ng-model="repTreatment" ng-options="a.b for a in [{b:1},{b:2}]">
-      </select>
-    </div>
-    <div class="col-sm-3">
-      <label for="repPick">Replacement Pick:</label>
-      <select class="form-control" ng-model="repPick" ng-options="a.b for a in [{b:1},{b:2}]">
-      </select>
-    </div>
-    <div class="col-sm-3">
-      <label for="repJob">Replacement Job:</label>
-      <select class="form-control" ng-model="repJob" ng-options="a.b for a in [{b:1},{b:2}]">
-      </select>
-    </div>
-  </div>
-</div>
+</br>
 
-<div class="row">
+<div class="row" ng-if="error">
   <div class="col-sm-12">
-    <div class="alert alert-{{errorColor}} alert-dismissable" ng-if="error">
+    <div class="alert alert-{{errorColor}} alert-dismissable">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
       <strong>{{errorMessage}}</strong>
     </div>
   </div>
+</div>
+</br>
+<div class="row">
   <div class="well">
     <div class="row">
       <p><strong><h3>Load/Carga vaactrobu1p12510020</h3></strong></p>
     </div>
     <div class="row">
       <div class="" ng-repeat="bin in binData.slice().reverse() track by $index">
-        <div id="bins" class="col-sm-6">
+        <div id="bins" class="col-sm-3">
           <div class="panel panel-default">
             <div class="panel-heading row" ng-class="{'panel-heading-blue':(binData.length-$index)%2==1, 'panel-heading-teal':(binData.length-$index)%2==0}">
               <div class="col-sm-4" style="text-align:left;">
                 <h4><strong>{{binData.length-$index}}</strong></h4>
               </div>
-              <div class="col-sm-4"><h4><strong>{{bin.barcode.slice(-5)}}</strong></h4></div>
+              <div class="col-sm-4"><h4><strong>{{bin}}</strong></h4></div>
               <div class="col-sm-4" style="text-align:right;color:black;">
-                <button type="button" ng-click="showBoolean = !showBoolean">
+                <!-- <button type="button" ng-click="showBoolean = !showBoolean">
                   <span class='glyphicon glyphicon-pencil' ng-if="!showBoolean"></span>
                   <span class='glyphicon glyphicon-ok' ng-if="showBoolean"></span>
-                </button>
+                </button> -->
                 <button type="button" ng-click="removeScan($index)">
                   <span class='glyphicon glyphicon-trash'></span>
                 </button>
               </div>
             </div>
-            <div class="panel-body" style="color:black;">
+            <!-- <div class="panel-body" style="color:black;">
               <h4><span class="label label-success">{{bin.blockName}}</span></h4>
               <h4><span class="label label-danger">{{bin.varietyName}}</span></h4>
               <h4><span class="label label-warning">{{bin.strainName}}</span></h4>
@@ -176,7 +140,7 @@
                 <label for="Bin Comments">Bin Comments:</label>
                 <input class="form-control input" ng-model="bin.binComments" type="text">
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

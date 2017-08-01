@@ -5,13 +5,7 @@ angular.module('crist_farms')
 function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeService, storageService, truckService) {
 
   //Date and Time variable initializing
-  //var currentDateTime = new Date(Date.now());
-  //$scope.pickDate = currentDateTime;
   $scope.loadDate = new Date(Date.now());
-  //$scope.loadTimeHour = currentDateTime.getHours();
-  //$scope.loadTimeMinute = Math.floor(currentDateTime.getMinutes()/5)*5;
-  //$scope.hourOptions = [{name:'8 (AM)',value:8},{name:'9 (AM)',value:9},{name:'10 (AM)',value:10},{name:'11 (AM)',value:11},{name:'12 (PM)',value:12},{name:'1 (PM)',value:13},{name:'2 (PM)',value:14},{name:'3 (PM)',value:15},{name:'4 (PM)',value:16},{name:'5 (PM)',value:17},{name:'6 (PM)',value:18},{name:'7 (PM)',value:19}];
-  //$scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5},{name:'10',value:10},{name:'15',value:15},{name:'20',value:20},{name:'25',value:25},{name:'30',value:30},{name:'35',value:35},{name:'40',value:40},{name:'45',value:45},{name:'50',value:50},{name:'55',value:55}];
   if ($scope.loadDate.getMinutes()>55) {
     $scope.loadTimeMinute = 0;
     $scope.loadTimeHour = $scope.loadDate.getHours()+1;
@@ -26,7 +20,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.hourOptions.push({name: i + ' AM', value: i},{name: i + ' PM', value: i+12});
     $scope.minuteOptions.push({name:(''+5*i)+'',value:5*i});
   }
-  $scope.hourOptions.sort((obj1,obj2) => obj1.value-obj2.value)
+  $scope.hourOptions.sort((a,b) => a.value-b.value)
 
   $scope.focused = false;
   $scope.scan = null;
@@ -118,44 +112,68 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     orchardRunService.GetLoadId({idType: 'st'}, function(data){
       $scope.loadId = data.loadId;
       var loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
-      for (var i=0; i<$scope.binData.length; i++) {
-        $scope.binData[i].pickDate = moment($scope.binData[i].pickDate).format('YYYY-MM-DD');
-      }
       var load = {
         loadData: {
           load: {type:'st', id: $scope.loadId},
           truckDriver: $scope.truckDriver,      //object
           loadDateTime: moment(loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
           truck: $scope.truck,                //object
-          loadComments: $scope.loadComments
+          loadComments: $scope.loadComments,
+          storage: $scope.storage
         },
         binData: $scope.binData
       };
       //orchardRunService.SaveData(load);
-      storageService.SubmitStorageTransfer(load);
-      //$location.url('/orchard_run_report');
-      $scope.clearLoad();
+      storageService.SubmitStorageTransfer(load, function (resObj) {
+        $scope.responseModal(resObj, 1000);
+        if (!resObj.error) {
+          $scope.workingData = [];
+          //Allow db to finish clock-out updates before pulling
+          $timeout(function (){
+          }, 500)
+        };
+        //$location.url('/orchard_run_report');
+        $scope.clearLoad(false);
+      });
     });
   }
-
-  $scope.clearScan = function(){
+  $scope.clearScan = function (){
     $scope.scan=null;
     $scope.refocus();
   }
 
-  $scope.clearLoad = function(){
-    $scope.error = true;
-    $scope.errorColor = 'warning';
-    $scope.errorMessage = 'Load Canceled!';
-    $timeout(function() {
-      $scope.error = false;
-    }, 2000);
+  $scope.clearLoad = function (boolean) {
+    if (boolean) {
+      $scope.error = true;
+      $scope.errorColor = 'warning';
+      $scope.errorMessage = 'Load Canceled!';
+      $timeout(function() {
+        $scope.error = false;
+      }, 2000);
+    }
     $scope.binData = [];
     $scope.scan = null;
     $scope.refocus();
   }
 
   //Confirmation modals
+  $scope.responseModal = function (object, time) {
+    var modalInstance = $uibModal.open({
+      templateUrl: 'js/views/alert_modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: function($scope) {
+        $scope.message = object.message;
+        $scope.color = object.error? 'btn-danger' : 'btn-success';
+      }
+    });
+    if (!object.error) {
+      $timeout(function() {
+        modalInstance.close(1);
+      }, time);
+    }
+  }
+
   $scope.submitLoadButton = function () {
     var modalInstance = $uibModal.open({
       templateUrl: 'js/views/modal.html',
@@ -187,7 +205,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     });
     modalInstance.result.then(function(confirmation) {
       if (confirmation) {
-        $scope.clearLoad();
+        $scope.clearLoad(true);
       }
     });
   }
