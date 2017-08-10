@@ -1,12 +1,12 @@
 <div class="container-fluid">
 
-  <label for="Load ID">Load ID:</label> {{load.loadData.loadId}}</br>
-  <label for="Truck ID">Truck ID:</label> {{load.loadData.truckName}}</br>
-  <label for="Truck Driver">Truck Driver:</label> {{load.loadData.truckDriverName}}</br>
+  <label for="Load ID">Load ID:</label> {{load.loadData.load.id}}</br>
+  <label for="Truck ID">Truck ID:</label> {{load.loadData.truck.name}}</br>
+  <label for="Truck Driver">Truck Driver:</label> {{load.loadData.truckDriver.name}}</br>
   <label for="Date">Arrival Date:</label> {{load.loadData.loadDateTime.slice(0,11)}}</br>
   <label for="Time">Arrival Time:</label> {{load.loadData.loadDateTime.slice(-8)}}</br>
-<label for="Submitted">Submitted:</label> {{timeSubmitted | date:'short'}}</br>
-  <table class="table-condensed table-striped">
+  <label for="Submitted">Submitted:</label> {{timeSubmitted | date:'short'}}</br>
+  <table class="table-condensed">
     <thead>
       <tr>
         <th>Bin ID</th>
@@ -24,22 +24,35 @@
         <th>Pickers</th>
       </tr>
     </thead>
-    <tbody>
-      <tr ng-repeat="row in load.binData track by $index" ng-class-odd="'grey-td'">
-        <td>{{row.barcode.slice(-5)}}</td>
-        <td>{{row.blockName}}</td>
-        <td>{{row.varietyName}}</td>
-        <td>{{row.strainName}}</td>
-        <td>{{row.bearingName}}</td>
-        <td>{{row.treatmentName}}</td>
-        <td>{{row.pickName}}</td>
-        <td>{{row.jobName}}</td>
-        <td>{{row.storage.name}}</td>
-        <td>{{row.pickDate}}</td>
-        <td>{{row.boxesCount}}</td>
-        <td>{{row.binComments}}</td>
-        <td>{{row.pickerIds.join(', ')}}</td>
+    <tbody >
+      <tr ng-repeat-start="(key0,value0) in groupedBins track by $index">
       </tr>
+      <tr ng-repeat-start="(key1,value1) in value0 track by $index">
+      </tr>
+      <tr ng-repeat-start="(key2,value2) in value1 track by $index">
+      </tr>
+      <tr ng-repeat="value3 in value2.bins track by $index">
+        <td>{{value3.barcode}}</td>
+        <td>{{value3.blockName}}</td>
+        <td>{{value3.varietyName}}</td>
+        <td>{{value3.strainName}}</td>
+        <td>{{value3.bearingName}}</td>
+        <td>{{value3.treatmentName}}</td>
+        <td>{{value3.pickName}}</td>
+        <td>{{value3.jobName}}</td>
+        <td>{{value3.storage.name}}</td>
+        <td>{{value3.pickDate}}</td>
+        <td>{{value3.boxesCount}}</td>
+        <td>{{value3.binComments}}</td>
+        <td>{{value3.pickerIds.join(', ')}}</td>
+      </tr>
+      <tr ng-repeat-end>
+        <td class="tdTopBorder" colspan="3"><strong>Bins: {{value2.binCount}}</strong></td>
+        <td class="tdTopBorder" colspan="10"><strong>Sum: {{value2.sum}}</strong></td>
+
+      </tr>
+      <tr ng-repeat-end></tr>
+      <tr ng-repeat-end></tr>
     </tbody>
   </table>
 </div>

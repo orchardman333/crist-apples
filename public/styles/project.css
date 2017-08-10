@@ -9,6 +9,10 @@ th, tr, td {
 font-size: 8pt;
 }
 }
+
+.tdTopBorder {
+  border-top: 1px solid black;
+}
 .form-control, .modal-header, .modal-body, .model-footer, #pick-date, #load-date, #work-date {
 color: black;
 }

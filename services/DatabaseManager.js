@@ -8,3 +8,10 @@ module.exports = mysql.createPool({
   password : 'cristbros',
   database : 'orchard_run2017'
 })
+
+// module.exports = mysql.createPool({
+//   host     : 'localhost',
+//   user     : 'root',
+//   password : 'root',
+//   database : 'orchard_run2017'
+// })

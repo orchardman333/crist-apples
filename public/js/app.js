@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('crist_farms', ['ngRoute', 'ui.bootstrap']);
+var app = angular.module('crist_farms', ['ngRoute', 'ui.bootstrap', 'angular.filter']);
 
 app.config(['$routeProvider', function ($routeProvider) {
   $routeProvider
