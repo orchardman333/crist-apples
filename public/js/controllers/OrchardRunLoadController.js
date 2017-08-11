@@ -78,7 +78,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         //bin does not exist, continue checks
         else {
           //check if duplicate bin ID has been scanned on form already
-          if ($scope.binData.map(a => a.barcode).map(b => b.slice(-5)).indexOf($scope.scan.slice(-5)) == -1) {
+          if ($scope.binData.map(a => a.barcode).map(b => b.slice(-5)).indexOf($scope.scan.slice(-5)) === -1) {
             orchardRunService.BinLookup({barcode: $scope.scan}, function(decodedData) {
               //error in lookupManager
               if (decodedData.error) {
@@ -189,8 +189,11 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.refocus();
   }
 
-  $scope.submitLoad = function(){
-
+  var submitLoad = function(){
+    if ($scope.binData.length===0){
+      alertModal({titleMessage: 'No bins on load!', color: 'btn-danger'})
+      return;
+    }
     orchardRunService.GetLoadId({idType: 'or'}, function(data){
       $scope.loadId = data.loadId;
       var loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
@@ -208,8 +211,14 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         binData: $scope.binData
       };
       orchardRunService.SaveData(load);
-      orchardRunService.SubmitLoad(load);
-      $location.url('/orchard_run_report');
+      orchardRunService.SubmitLoad(load, function (data){
+        if (data.error) {
+          alertModal({titleMessage: data.message, color: 'btn-danger'})
+        }
+        else {
+          $location.url('/orchard_run_report');
+        }
+      });
     });
   }
 
@@ -218,7 +227,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.refocus();
   }
 
-  $scope.clearLoad = function(){
+  var clearLoad = function(){
     $scope.error = true;
     $scope.errorColor = 'warning';
     $scope.errorMessage = 'Load Canceled!';
@@ -231,41 +240,55 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
   }
 
   //Confirmation modals
-  $scope.submitLoadButton = function () {
+  var confirmationModal = function (options, callback) {
     var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/modal.html',
+      templateUrl: 'js/views/modal_confirmation.html',
       backdrop: 'static',
       keyboard: false,
       controller: function($scope) {
-        $scope.message = 'Are you sure you want to submit the load?';
-        $scope.confirmColor = 'btn-success';
-        $scope.dismissColor = 'btn-warning';
+        Object.assign($scope, options)    //copy options properties into $scope
       }
     });
     modalInstance.result.then(function(confirmation) {
       if (confirmation) {
-        $scope.submitLoad();
+        callback();
       }
     });
   }
 
-  $scope.clearLoadButton = function () {
-    var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/modal.html',
-      backdrop: 'static',
-      keyboard: false,
-      controller: function($scope) {
-        $scope.message = 'Are you sure you want to cancel load?';
-        $scope.confirmColor = 'btn-danger';
-        $scope.dismissColor = 'btn-warning';
-      }
-    });
-    modalInstance.result.then(function(confirmation) {
-      if (confirmation) {
-        $scope.clearLoad();
-      }
-    });
+  $scope.submitLoadButton = function() {
+    confirmationModal(
+      {
+        titleMessage:'Are you sure you want to submit the load?',
+        confirmColor:'btn-success',
+        confirmMessage: 'Yes, I\'m sure!',
+        dismissColor:'btn-warning',
+        dismissMessage: 'No, take me back!'
+      },
+        submitLoad)
   }
+
+  $scope.clearLoadButton = function() {
+    confirmationModal(
+      {
+        titleMessage:'Are you sure you want to cancel load?',
+        confirmColor:'btn-success',
+        confirmMessage: 'Yes, I\'m sure!',
+        dismissColor:'btn-warning',
+        dismissMessage: 'No, take me back!'
+      },
+        clearLoad)
+  }
+// Alert modals
+var alertModal = function (options) {
+  var modalInstance = $uibModal.open({
+    templateUrl: 'js/views/modal_alert.html',
+    keyboard: false,
+    controller: function($scope) {
+      Object.assign($scope, options)    //copy options properties into $scope
+    }
+  });
+}
 
   //Datepickers
   $scope.dateOptions = {

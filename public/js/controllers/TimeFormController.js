@@ -45,10 +45,8 @@ angular.module('crist_farms')
             $scope.scan = null;
           }, 1000);
         }
-
         else {
-
-          $scope.employeeName = decodedData.employeeName;
+          $scope.employeeName = decodedData.firstName + ' ' + decodedData.lastName;
           $scope.showEmployeeName = true;
         }
       });
@@ -91,11 +89,11 @@ angular.module('crist_farms')
   $scope.modal = function (object, time) {
     object.error? soundFailure.play() : soundSuccess.play();
     var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/alert_modal.html',
+      templateUrl: 'js/views/modal_alert.html',
       backdrop: 'static',
       keyboard: false,
       controller: function($scope) {
-        $scope.message = object.message;
+        $scope.message = object.titleMessage;
         $scope.color = object.error? 'btn-danger' : 'btn-success';
       }
     });

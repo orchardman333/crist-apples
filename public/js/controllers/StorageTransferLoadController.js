@@ -107,8 +107,11 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.refocus();
   }
 
-  $scope.submitLoad = function(){
-
+  var submitLoad = function(){
+    if ($scope.binData.length===0){
+      alertModal({message: 'No bins on load!', error: true})
+      return;
+    }
     orchardRunService.GetLoadId({idType: 'st'}, function(data){
       $scope.loadId = data.loadId;
       var loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
@@ -125,15 +128,14 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       };
       //orchardRunService.SaveData(load);
       storageService.SubmitStorageTransfer(load, function (resObj) {
-        $scope.responseModal(resObj, 1000);
+        alertModal(resObj, 1000);
         if (!resObj.error) {
           $scope.workingData = [];
           //Allow db to finish clock-out updates before pulling
           $timeout(function (){
           }, 500)
         };
-        //$location.url('/orchard_run_report');
-        $scope.clearLoad(false);
+        clearLoad(false);
       });
     });
   }
@@ -142,7 +144,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.refocus();
   }
 
-  $scope.clearLoad = function (boolean) {
+  var clearLoad = function (boolean) {
     if (boolean) {
       $scope.error = true;
       $scope.errorColor = 'warning';
@@ -157,13 +159,54 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
   }
 
   //Confirmation modals
-  $scope.responseModal = function (object, time) {
+  var confirmationModal = function (options, callback) {
     var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/alert_modal.html',
+      templateUrl: 'js/views/modal_confirmation.html',
       backdrop: 'static',
       keyboard: false,
       controller: function($scope) {
-        $scope.message = object.message;
+        Object.assign($scope, options)    //copy options properties into $scope
+      }
+    });
+    modalInstance.result.then(function(confirmation) {
+      if (confirmation) {
+        callback(true);
+      }
+    });
+  }
+
+  $scope.submitLoadButton = function() {
+    confirmationModal(
+      {
+        titleMessage:'Are you sure you want to submit the load?',
+        confirmColor:'btn-success',
+        confirmMessage: 'Yes, I\'m sure!',
+        dismissColor:'btn-warning',
+        dismissMessage: 'No, take me back!'
+      },
+        submitLoad)
+  }
+
+  $scope.clearLoadButton = function() {
+    confirmationModal(
+      {
+        titleMessage:'Are you sure you want to cancel load?',
+        confirmColor:'btn-success',
+        confirmMessage: 'Yes, I\'m sure!',
+        dismissColor:'btn-warning',
+        dismissMessage: 'No, take me back!'
+      },
+        clearLoad)
+  }
+
+// Alert Modal
+  var alertModal = function (object, time) {
+    var modalInstance = $uibModal.open({
+      templateUrl: 'js/views/modal_alert.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: function($scope) {
+        $scope.titleMessage = object.message;
         $scope.color = object.error? 'btn-danger' : 'btn-success';
       }
     });
@@ -173,43 +216,6 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       }, time);
     }
   }
-
-  $scope.submitLoadButton = function () {
-    var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/modal.html',
-      backdrop: 'static',
-      keyboard: false,
-      controller: function($scope) {
-        $scope.message = 'Are you sure you want to submit the load?';
-        $scope.confirmColor = 'btn-success';
-        $scope.dismissColor = 'btn-warning';
-      }
-    });
-    modalInstance.result.then(function(confirmation) {
-      if (confirmation) {
-        $scope.submitLoad();
-      }
-    });
-  }
-
-  $scope.clearLoadButton = function () {
-    var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/modal.html',
-      backdrop: 'static',
-      keyboard: false,
-      controller: function($scope) {
-        $scope.message = 'Are you sure you want to cancel load?';
-        $scope.confirmColor = 'btn-danger';
-        $scope.dismissColor = 'btn-warning';
-      }
-    });
-    modalInstance.result.then(function(confirmation) {
-      if (confirmation) {
-        $scope.clearLoad(true);
-      }
-    });
-  }
-
   //Datepickers
   $scope.dateOptions = {
     maxDate: new Date($scope.loadDate.getFullYear()+1, 11, 31),

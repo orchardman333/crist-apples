@@ -4,8 +4,10 @@ angular.module('crist_farms').service('OrchardRunService', ['$http', function($h
   var thisData = [];
   var service = {};
 
-  service.SubmitLoad = function(data) {
-    $http.post("/api/orchardRunManager/", data).then(function(response) { /* probably need to do something here */});
+  service.SubmitLoad = function(data, callback) {
+    $http.post("/api/orchardRunManager/", data).then(function(response) {
+      callback(response.data);
+    });
   };
 
   service.GetLoadReport = function(callback) {

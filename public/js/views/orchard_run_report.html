@@ -32,7 +32,7 @@
       <tr ng-repeat-start="(key2,value2) in value1 track by $index">
       </tr>
       <tr ng-repeat="value3 in value2.bins track by $index">
-        <td>{{value3.barcode}}</td>
+        <td>{{value3.barcode.slice(-5)}}</td>
         <td>{{value3.blockName}}</td>
         <td>{{value3.varietyName}}</td>
         <td>{{value3.strainName}}</td>
@@ -49,7 +49,6 @@
       <tr ng-repeat-end>
         <td class="tdTopBorder" colspan="3"><strong>Bins: {{value2.binCount}}</strong></td>
         <td class="tdTopBorder" colspan="10"><strong>Sum: {{value2.sum}}</strong></td>
-
       </tr>
       <tr ng-repeat-end></tr>
       <tr ng-repeat-end></tr>

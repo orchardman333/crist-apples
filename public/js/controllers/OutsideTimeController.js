@@ -202,11 +202,11 @@ $scope.addAllTodayCrewToWorking = function() {
 
   $scope.modal = function (object, time) {
     var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/alert_modal.html',
+      templateUrl: 'js/views/modal_alert.html',
       backdrop: 'static',
       keyboard: false,
       controller: function($scope) {
-        $scope.message = object.message;
+        $scope.titleMessage = object.message;
         $scope.color = object.error? 'btn-danger' : 'btn-success';
       }
     });
@@ -218,13 +218,13 @@ $scope.addAllTodayCrewToWorking = function() {
   }
   $scope.lunchModal = function (data) {
     var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/modal.html',
+      templateUrl: 'js/views/modal_confirmation',
       backdrop: 'static',
       keyboard: false,
       controller: function($scope) {
         $scope.message = 'Add Lunch Break?';
         $scope.confirmColor = 'btn-primary';
-        $scope.dismissColor = 'btn-warning';
+        $scope.dismissColor = 'btn-danger';
       }
     });
     modalInstance.result.then(function(confirmation) {

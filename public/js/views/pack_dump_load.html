@@ -17,7 +17,11 @@
       </select>
     </div>
     <div class="col-sm-6">
-      <label for="Load Time">Load Time:</label>
+
+        <label for="Packout Number">Packout Number:</label>
+        <input class="form-control input" ng-model="packoutId" type="text">
+
+      <!-- <label for="Load Time">Load Time:</label>
       <div class="row load-time">
         <div class="col-sm-6">
           <select class="form-control" ng-model="loadTimeHour" ng-options="hour.value as hour.name for hour in hourOptions">
@@ -26,7 +30,7 @@
         <div class="col-sm-6">
           <select class="form-control" ng-model="loadTimeMinute" ng-options="minute.value as minute.name for minute in minuteOptions">
           </select>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -58,11 +62,10 @@
       </div>
     </div>
   </div>
-</br>
   <div class="row">
     <div class="well">
       <div class="row">
-        <p><strong><h3>Load/Carga vaactrobu1p12510020</h3></strong></p>
+        <p><strong><h3>Load/Carga</h3></strong></p>
         </div>
         <div class="row">
         <div class="" ng-repeat="bin in binData.slice().reverse() track by $index">

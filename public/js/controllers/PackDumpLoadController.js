@@ -97,11 +97,15 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.refocus();
   }
 
-  $scope.submitLoad = function(){
-
+  var submitLoad = function(){
+    if ($scope.binData.length===0){
+      alertModal({message: 'No bins on load!', error: true})
+      return;
+    }
     orchardRunService.GetLoadId({idType: 'pk'}, function(data){
       $scope.loadId = data.loadId;
-      var loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
+      //var loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
+      var loadDateTime = new Date(Date.now());
       var load = {
         loadData: {
           load: {type:'pk', id: $scope.loadId},
@@ -113,17 +117,16 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         },
         binData: $scope.binData
       };
-      //orchardRunService.SaveData(load);
+
       storageService.SubmitStorageTransfer(load, function (resObj) {
-        $scope.responseModal(resObj, 1000);
+        alertModal(resObj, 1000);
         if (!resObj.error) {
           $scope.workingData = [];
           //Allow db to finish clock-out updates before pulling
           $timeout(function (){
           }, 500)
         };
-        //$location.url('/orchard_run_report');
-        $scope.clearLoad(false);
+        clearLoad(false);
       });
     });
   }
@@ -133,7 +136,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.refocus();
   }
 
-  $scope.clearLoad = function (boolean) {
+  var clearLoad = function (boolean) {
     if (boolean) {
       $scope.error = true;
       $scope.errorColor = 'warning';
@@ -148,70 +151,75 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
   }
 
   //Confirmation modals
-  $scope.responseModal = function (object, time) {
+  var confirmationModal = function (options, callback) {
     var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/alert_modal.html',
+      templateUrl: 'js/views/modal_confirmation.html',
       backdrop: 'static',
       keyboard: false,
       controller: function($scope) {
-        $scope.message = object.message;
-        $scope.color = object.error? 'btn-danger' : 'btn-success';
+        Object.assign($scope, options)    //copy options properties into $scope
       }
     });
-    if (!object.error) {
-      $timeout(function() {
-        modalInstance.close(1);
-      }, time);
+    modalInstance.result.then(function(confirmation) {
+      if (confirmation) {
+        callback(true);
+      }
+    });
+  }
+
+  $scope.submitLoadButton = function() {
+    confirmationModal(
+      {
+        titleMessage:'Are you sure you want to submit the load?',
+        confirmColor:'btn-success',
+        confirmMessage: 'Yes, I\'m sure!',
+        dismissColor:'btn-warning',
+        dismissMessage: 'No, take me back!'
+      },
+      submitLoad)
     }
-  }
 
-  $scope.submitLoadButton = function () {
-    var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/modal.html',
-      backdrop: 'static',
-      keyboard: false,
-      controller: function($scope) {
-        $scope.message = 'Are you sure you want to submit the load?';
-        $scope.confirmColor = 'btn-success';
-        $scope.dismissColor = 'btn-warning';
+    $scope.clearLoadButton = function() {
+      confirmationModal(
+        {
+          titleMessage:'Are you sure you want to cancel load?',
+          confirmColor:'btn-success',
+          confirmMessage: 'Yes, I\'m sure!',
+          dismissColor:'btn-warning',
+          dismissMessage: 'No, take me back!'
+        },
+        clearLoad)
       }
-    });
-    modalInstance.result.then(function(confirmation) {
-      if (confirmation) {
-        $scope.submitLoad();
+
+      // Alert modal
+      var alertModal = function (object, time) {
+        var modalInstance = $uibModal.open({
+          templateUrl: 'js/views/modal_alert.html',
+          backdrop: 'static',
+          keyboard: false,
+          controller: function($scope) {
+            $scope.titleMessage = object.message;
+            $scope.color = object.error? 'btn-danger' : 'btn-success';
+          }
+        });
+        if (!object.error) {
+          $timeout(function() {
+            modalInstance.close(1);
+          }, time);
+        }
       }
-    });
-  }
 
-  $scope.clearLoadButton = function () {
-    var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/modal.html',
-      backdrop: 'static',
-      keyboard: false,
-      controller: function($scope) {
-        $scope.message = 'Are you sure you want to cancel load?';
-        $scope.confirmColor = 'btn-danger';
-        $scope.dismissColor = 'btn-warning';
+      //Datepickers
+      $scope.dateOptions = {
+        maxDate: new Date($scope.loadDate.getFullYear()+1, 11, 31),
+        minDate: new Date($scope.loadDate.getFullYear()-1, 0, 1),
+        startingDay: 0,
+        showWeeks: false
+      };
+
+      $scope.openDate = function(property) {
+        $scope.popup[property] = true;
       }
-    });
-    modalInstance.result.then(function(confirmation) {
-      if (confirmation) {
-        $scope.clearLoad(true);
-      }
-    });
-  }
 
-  //Datepickers
-  $scope.dateOptions = {
-    maxDate: new Date($scope.loadDate.getFullYear()+1, 11, 31),
-    minDate: new Date($scope.loadDate.getFullYear()-1, 0, 1),
-    startingDay: 0,
-    showWeeks: false
-  };
-
-  $scope.openDate = function(property) {
-    $scope.popup[property] = true;
-  }
-
-  $scope.popup = {};
-}]);
+      $scope.popup = {};
+    }]);
