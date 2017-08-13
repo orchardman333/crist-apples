@@ -113,20 +113,15 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
           loadDateTime: moment(loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
           truck: {id: 'FKL'},                //object
           loadComments: $scope.loadComments,
-          storage: {id: 'PK'}
+          storage: {id: 'PK'},
+          buyer: null,
+          packoutId: $scope.packoutId
         },
         binData: $scope.binData
       };
 
       storageService.SubmitStorageTransfer(load, function (resObj) {
         alertModal(resObj, 1000);
-        if (!resObj.error) {
-          $scope.workingData = [];
-          //Allow db to finish clock-out updates before pulling
-          $timeout(function (){
-          }, 500)
-        };
-        clearLoad(false);
       });
     });
   }

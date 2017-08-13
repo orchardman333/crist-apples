@@ -37,7 +37,7 @@ module.exports = {
     //Employees beginning shift
     if (req.body.shiftIn && req.body.employeeIds.length > 0) {
       for (var i=0; i < req.body.employeeIds.length; i++) {
-        sqlValues.push([req.body.employeeIds[i], req.body.time, null, req.body.jobId, req.body.managerId, null]);
+        sqlValues.push([req.body.employeeIds[i], req.body.time, null, null, null, req.body.jobId, req.body.managerId, null]);
       }
       db.getConnection(function (err, connection) {
         //INSERT new records
@@ -79,8 +79,8 @@ module.exports = {
                   });
                   console.log(query.sql);
                   //INSERT after lunch shift
-                  sqlValues = [employeeId, req.body.lunchEnd, req.body.time, results[0].jobId, results[0].managerId, null];
-                  var query = connection.query('INSERT INTO time_table VALUES (?,?,?,?,?,?)', sqlValues, function (error, results, fields) {
+                  sqlValues = [[employeeId, req.body.lunchEnd, req.body.time, null, null, results[0].jobId, results[0].managerId, null]];
+                  var query = connection.query('INSERT INTO time_table VALUES ?', [sqlValues], function (error, results, fields) {
                     // if (error) {
                     //   console.log(error.message);
                     //   res.json({message:error.message, error:true});

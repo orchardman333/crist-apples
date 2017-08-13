@@ -9,7 +9,7 @@ var employeeManager = require('./services/EmployeeManager');
 var storageManager = require('./services/StorageManager');
 var orchardRunManager = require('./services/OrchardRunManager');
 var storageTransferManager = require('./services/StorageTransferManager');
-var packingDumpManager = require('./services/PackingDumpManager');
+//var packingDumpManager = require('./services/PackingDumpManager');
 var lookupManager = require('./services/LookupManager');
 var truckManager = require('./services/TruckManager');
 var loadSeqManager = require('./services/LoadSequenceIdManager');
@@ -75,9 +75,9 @@ app.post('/api/storageTransfer', function(req, res) {
   storageTransferManager.TransferBins(req, res);
 });
 
-app.post('/api/PackingDumpManager', function(req, res) {
-  packingDumpManager.DumpBins(req, res);
-});
+// app.post('/api/PackingDumpManager', function(req, res) {
+//   packingDumpManager.DumpBins(req, res);
+// });
 //-------------------------------------------------------
 // Time Clock
 app.post('/api/outsideTime', function(req,res) {

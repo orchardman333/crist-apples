@@ -8,16 +8,15 @@ var decode = require("./LookupManager");
 
 //Take entire list of barcode scans (including form data like storage, truck driver, etc.) from Angular
 //Then sort and INSERT them into db
-//req.body.loadData = object of extra load information
+//req.body.loadData = object of load heading information
 //req.body.binData = object array of bin and employee (picker) barcode
 module.exports = {
   LoadBins: function (req,res) {
     var barcodeProperties = {};
     var binValues = [];
-    var boxesValues = [];
-    //var loadHeadingValues = [];
-    var loadValues = [];
-    var error
+    var bushelValues = [];
+    var loadBinValues = [];
+
     //load_heading_table INSERT
     var loadHeadingValues = [insertIntoLoadHeadingArray(req.body.loadData)];
 
@@ -27,52 +26,41 @@ module.exports = {
 
       //bin_table & load_table INSERTs
       insertIntoBinArray(binValues, barcodeProperties, req.body.binData[i]);
-      insertIntoLoadArray(loadValues, barcodeProperties.binId, req.body.binData[i].storage.id, req.body.loadData.load.id);
+      insertIntoLoadArray(loadBinValues, barcodeProperties.binId, req.body.binData[i].storage.id, req.body.loadData.load.id);
 
       //Pickers
       for (var j=0; j < req.body.binData[i].pickerIds.length; j++) {
-        insertIntoBoxesArray(boxesValues, req.body.binData[i].pickerIds[j], barcodeProperties.binId)
+        insertIntoBoxesArray(bushelValues, req.body.binData[i].pickerIds[j], barcodeProperties.binId)
       }
     }
 
-    // insert(loadHeadingValues, 'load_heading_table', function () {
-    //   insert(binValues, 'bin_table', function () {
-    //     insert(loadValues, 'load_table', function () {
-    //       insert(boxesValues, 'boxes_table', function () {
-    //         console.log('end of load')
-    //         res.json({message: 'Hooray!'})
-    //       });
-    //     });
-    //   });
-    // });
-    insert(loadHeadingValues, 'load_heading_table')
+    insertLoadHeading()
+    .then(insertBinValues)
+    .then(insertLoadBins)
+    .then(insertBushelValues)
     .then(function() {
-      insert(binValues, 'bin_table')
-      .then(function() {
-        insert(loadValues, 'load_table')
-        .then(function() {
-          insert(boxesValues, 'boxes_table')
-          .then(function() {
-            res.json({message: 'Hooray! Load entered successfully', error: false})
-            console.log('end of load')
-          })
-          .catch(function(e) {
-            res.json({message: e.name + ' ' + e.message, error: true})
-          })
-        })
-        .catch(function(e) {
-          res.json({message: e.name + ' ' + e.message, error: true})
-        })
-      })
-      .catch(function(e) {
-        res.json({message: e.name + ' ' + e.message, error: true})
-      })
+      res.json({message: 'Hooray! Load entered successfully', error: false})
+      console.log('END OF LOAD ' + loadHeadingValues[0][1])
     })
     .catch(function(e) {
       res.json({message: e.name + ' ' + e.message, error: true})
-    })
+    });
+
+    //Wrapper functions
+    function insertLoadHeading(){
+      return insert(loadHeadingValues, 'load_heading_table')
+    }
+    function insertBinValues(){
+      return insert(binValues, 'bin_table')
+    }
+    function insertLoadBins(){
+      return insert(loadBinValues, 'load_bins_table')
+    }
+    function insertBushelValues(){
+      return insert(bushelValues, 'bushels_picker_table')
+    }
   }
-}
+};
 
 function insert(values, tableName){
   return new Promise (function(resolve, reject) {
@@ -80,8 +68,8 @@ function insert(values, tableName){
       db.getConnection(function (err, connection){
         var query = connection.query('INSERT INTO ' + tableName + ' VALUES ?', [values], function (error, results, fields) {
           if (error) {
-            reject(error);
             console.log(error);
+            reject(error);
           }
           connection.release();
           resolve();
@@ -117,7 +105,9 @@ function insertIntoLoadHeadingArray(loadData) {
     loadData.truckDriver.id,
     loadData.loadDateTime,
     loadData.truck.id,
-    loadData.loadComments];
+    loadData.loadComments,
+    loadData.buyer,
+    loadData.packoutId];
   };
 
   function insertIntoLoadArray(loadValues, binId, storageId, loadId) {

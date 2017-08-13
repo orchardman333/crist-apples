@@ -206,7 +206,9 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
           truckDriver: $scope.truckDriver,      //object
           loadDateTime: moment(loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
           truck: $scope.truck,                //object
-          loadComments: $scope.loadComments
+          loadComments: $scope.loadComments,
+          buyer: null,
+          packoutId: null
         },
         binData: $scope.binData
       };

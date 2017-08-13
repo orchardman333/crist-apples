@@ -4,8 +4,8 @@ module.exports = {
     //Employee beginning shift
     if (req.body.shiftIn) {
       db.getConnection(function (err, connection) {
-        var sqlValues = [req.body.employeeId, null, req.body.jobId, req.body.managerId, null];
-        var query = connection.query('INSERT INTO time_table VALUES (?, NOW(), ?, ?, ?, ?)', sqlValues, function (error, results, fields) {
+        var sqlValues = [req.body.employeeId, null, null, null, req.body.jobId, req.body.managerId, null];
+        var query = connection.query('INSERT INTO time_table VALUES (?, NOW(), ?, ?, ?, ?, ?, ?)', sqlValues, function (error, results, fields) {
           if (error) {
             console.log(error.message);
             res.json({message:error.message, error:true});

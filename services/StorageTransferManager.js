@@ -9,49 +9,56 @@ var decode = require("./LookupManager");
 //req.body.binData = object array of BinIDs and destination storage/buyer/pack house
 module.exports = {
   TransferBins: function (req,res) {
-    var binId = '';
-    var loadValues = [];
-
-    //load_heading_table INSERT
+    var loadBinValues = [];
     var loadHeadingValues = [insertIntoLoadHeadingArray(req.body.loadData)];
 
     //Iterate through list of bins
     for (var i=0; i < req.body.binData.length; i++) {
-      //binId = req.body.binData[i].barcodeice(-5);
 
-      //load_table INSERTs
-      loadValues.push([req.body.loadData.load.id, req.body.binData[i], req.body.loadData.storage.id]);
+      //load_bin_table INSERTs
+      loadBinValues.push([req.body.loadData.load.id, req.body.binData[i], req.body.loadData.storage.id]);
     }
 
-    insert(loadHeadingValues, 'load_heading_table', function (){
-      insert(loadValues, 'load_table', function (){
-        console.log('end of load')
-        res.json({message: 'Hooray!', error: false})
-      });
+    insertLoadHeading()
+    .then(insertLoadBins)
+    .then(function (){
+      res.json({message: 'Hooray! Load entered successfully', error: false})
+      console.log('END OF LOAD ' + loadHeadingValues[0][1])
+    })
+    .catch(function (e){
+      res.json({message: e.name + ' ' + e.message, error: true})
     });
+
+    //Wrapper functions
+    function insertLoadHeading(){
+      return insert(loadHeadingValues, 'load_heading_table')
+    }
+    function insertLoadBins(){
+      return insert(loadBinValues, 'load_bins_table')
+    }
   }
 };
 
-function insert(values, tableName, callback) {
-  if (values.length > 0) {
-    db.getConnection(function (err, connection) {
-      var query = connection.query('INSERT INTO ' + tableName + ' VALUES ?', [values], function (error, results, fields) {
-        // if (error) {
-        //   res.json({message:error.message, error:true});
-        // }
-        // else {
-        //   res.json({message:'Hooray! Storage transfer successful', error:false});
-        // }
-        connection.release();
-        callback();
+function insert(values, tableName){
+  return new Promise (function(resolve, reject) {
+    if (values.length > 0) {
+      db.getConnection(function (err, connection){
+        var query = connection.query('INSERT INTO ' + tableName + ' VALUES ?', [values], function (error, results, fields) {
+          if (error) {
+            console.log(error);
+            reject(error);
+          }
+          connection.release();
+          resolve();
+        });
+        console.log(query.sql);
       });
-      console.log(query.sql);
-    });
-  }
-  else {
-    callback();
-  }
-};
+    }
+    else {
+      resolve();
+    }
+  });
+}
 
 function insertIntoLoadHeadingArray(loadData) {
   return [loadData.load.type,
@@ -59,11 +66,7 @@ function insertIntoLoadHeadingArray(loadData) {
     loadData.truckDriver.id,
     loadData.loadDateTime,
     loadData.truck.id,
-    loadData.loadComments];
+    loadData.loadComments,
+    loadData.buyer,
+    loadData.packoutId];
   };
-
-  // function insertIntoLoadArray(loadValues, binId, storageId, loadId) {
-  //   loadValues.push([loadId,
-  //     binId,
-  //     storageId]);
-  //   };

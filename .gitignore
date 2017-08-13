@@ -6,5 +6,8 @@ npm-debug.log*
 # Dependency directories
 node_modules
 
+# Database connector
+services/DatabaseManager.js
+
 # Optional npm cache directory
 .npm

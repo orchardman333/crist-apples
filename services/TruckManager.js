@@ -8,13 +8,13 @@ module.exports = {
     db.getConnection(function(err, connection) {
       var query = connection.query('SELECT `Truck ID` AS id, `Truck Name` AS name FROM truck_table', function(error, results, fields) {
         connection.release();
-        for(var i=0; i<results.length; i++){
-          truckList.push({
-            id: results[i].id,
-            name: results[i].name
-          });
-        }
-        res.json(truckList);
+        // for(var i=0; i<results.length; i++){
+        //   truckList.push({
+        //     id: results[i].id,
+        //     name: results[i].name
+        //   });
+        // }
+        res.json(results);
       });
       console.log(query.sql);
     });
@@ -26,12 +26,9 @@ module.exports = {
       var query = connection.query('SELECT `Employee ID` AS id, `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Truck Driver`', function(error, results, fields) {
         connection.release();
         for (var i=0; i<results.length; i++) {
-          truckDriverList.push({
-            id: results[i].id,
-            name: results[i].firstName + ' ' + results[i].lastName
-          });
-        }
-        res.json(truckDriverList);
+            results[i].name = results[i].firstName + ' ' + results[i].lastName;
+          }
+        res.json(results);
       });
       console.log(query.sql);
     });

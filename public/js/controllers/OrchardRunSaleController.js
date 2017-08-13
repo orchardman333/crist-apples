@@ -1,12 +1,10 @@
 'use strict';
 
 angular.module('crist_farms')
-.controller('StorageTransferLoadController', ['$scope', '$location', '$timeout', '$uibModal', 'OrchardRunService', 'EmployeeService', 'StorageService', 'TruckService',
+.controller('OrchardRunSaleController', ['$scope', '$location', '$timeout', '$uibModal', 'OrchardRunService', 'EmployeeService', 'StorageService', 'TruckService',
 function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeService, storageService, truckService) {
 
   //Date and Time variable initializing
-  var timeRefresh = function (){
-
   $scope.loadDate = new Date(Date.now());
   if ($scope.loadDate.getMinutes()>55) {
     $scope.loadTimeMinute = 0;
@@ -16,8 +14,6 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.loadTimeMinute = Math.ceil($scope.loadDate.getMinutes()/5)*5;
     $scope.loadTimeHour = $scope.loadDate.getHours();
   }
-}
-timeRefresh();
   $scope.hourOptions = [{name: 'Midnight', value: 0},{name: '12 PM', value: 12},{name: '1 AM', value: 1},{name: '1 PM', value: 13}];
   $scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5}];
   for (var i=2; i<12; i++) {
@@ -29,21 +25,12 @@ timeRefresh();
   $scope.focused = false;
   $scope.scan = null;
   $scope.loadComments = null;
+  $scope.buyer = null;
   $scope.binData = [];
-
-  truckService.GetTrucks(function(data) {
-    $scope.truckList=data;
-    $scope.truck=$scope.truckList[0];
-  });
 
   truckService.GetTruckDrivers(function(data) {
     $scope.truckDriverList=data;
     $scope.truckDriver=$scope.truckDriverList[0];
-  });
-
-  storageService.GetStorageList(function(data) {
-    $scope.storageList = data;
-    $scope.storage=$scope.storageList[0];
   });
 
   $scope.addScan = function() {
@@ -116,18 +103,18 @@ timeRefresh();
       alertModal({message: 'No bins on load!', error: true})
       return;
     }
-    orchardRunService.GetLoadId({idType: 'st'}, function(data){
+    orchardRunService.GetLoadId({idType: 'sl'}, function(data){
       $scope.loadId = data.loadId;
       var loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
       var load = {
         loadData: {
-          load: {type:'st', id: $scope.loadId},
+          load: {type:'sl', id: $scope.loadId},
           truckDriver: $scope.truckDriver,      //object
           loadDateTime: moment(loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
           truck: $scope.truck,                //object
           loadComments: $scope.loadComments,
-          storage: $scope.storage,
-          buyer: null,
+          storage: {id: 'sl'},
+          buyer: $scope.buyer,
           packoutId: null
         },
         binData: $scope.binData
@@ -135,8 +122,13 @@ timeRefresh();
       //orchardRunService.SaveData(load);
       storageService.SubmitStorageTransfer(load, function (resObj) {
         alertModal(resObj, 1000);
+        if (!resObj.error) {
+          $scope.workingData = [];
+          //Allow db to finish clock-out updates before pulling
+          $timeout(function (){
+          }, 500)
+        };
         clearLoad(false);
-        timeRefresh();
       });
     });
   }
