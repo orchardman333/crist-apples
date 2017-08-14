@@ -7,17 +7,17 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
   //Date and Time variable initializing
   var timeRefresh = function (){
 
-  $scope.loadDate = new Date(Date.now());
-  if ($scope.loadDate.getMinutes()>55) {
-    $scope.loadTimeMinute = 0;
-    $scope.loadTimeHour = $scope.loadDate.getHours()+1;
+    $scope.loadDate = new Date(Date.now());
+    if ($scope.loadDate.getMinutes()>55) {
+      $scope.loadTimeMinute = 0;
+      $scope.loadTimeHour = $scope.loadDate.getHours()+1;
+    }
+    else {
+      $scope.loadTimeMinute = Math.ceil($scope.loadDate.getMinutes()/5)*5;
+      $scope.loadTimeHour = $scope.loadDate.getHours();
+    }
   }
-  else {
-    $scope.loadTimeMinute = Math.ceil($scope.loadDate.getMinutes()/5)*5;
-    $scope.loadTimeHour = $scope.loadDate.getHours();
-  }
-}
-timeRefresh();
+  timeRefresh();
   $scope.hourOptions = [{name: 'Midnight', value: 0},{name: '12 PM', value: 12},{name: '1 AM', value: 1},{name: '1 PM', value: 13}];
   $scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5}];
   for (var i=2; i<12; i++) {
@@ -185,49 +185,49 @@ timeRefresh();
         dismissColor:'btn-warning',
         dismissMessage: 'No, take me back!'
       },
-        submitLoad)
-  }
-
-  $scope.clearLoadButton = function() {
-    confirmationModal(
-      {
-        titleMessage:'Are you sure you want to cancel load?',
-        confirmColor:'btn-success',
-        confirmMessage: 'Yes, I\'m sure!',
-        dismissColor:'btn-warning',
-        dismissMessage: 'No, take me back!'
-      },
-        clearLoad)
-  }
-
-// Alert Modal
-  var alertModal = function (object, time) {
-    var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/modal_alert.html',
-      backdrop: 'static',
-      keyboard: false,
-      controller: function($scope) {
-        $scope.titleMessage = object.message;
-        $scope.color = object.error? 'btn-danger' : 'btn-success';
-      }
-    });
-    if (!object.error) {
-      $timeout(function() {
-        modalInstance.close(1);
-      }, time);
+      submitLoad)
     }
-  }
-  //Datepickers
-  $scope.dateOptions = {
-    maxDate: new Date($scope.loadDate.getFullYear()+1, 11, 31),
-    minDate: new Date($scope.loadDate.getFullYear()-1, 0, 1),
-    startingDay: 0,
-    showWeeks: false
-  };
 
-  $scope.openDate = function(property) {
-    $scope.popup[property] = true;
-  }
+    $scope.clearLoadButton = function() {
+      confirmationModal(
+        {
+          titleMessage:'Are you sure you want to cancel load?',
+          confirmColor:'btn-success',
+          confirmMessage: 'Yes, I\'m sure!',
+          dismissColor:'btn-warning',
+          dismissMessage: 'No, take me back!'
+        },
+        clearLoad)
+      }
 
-  $scope.popup = {};
-}]);
+      // Alert Modal
+      var alertModal = function (object, time) {
+        var modalInstance = $uibModal.open({
+          templateUrl: 'js/views/modal_alert.html',
+          backdrop: 'static',
+          keyboard: false,
+          controller: function($scope) {
+            $scope.titleMessage = object.message;
+            $scope.color = object.error? 'btn-danger' : 'btn-success';
+          }
+        });
+        if (!object.error) {
+          $timeout(function() {
+            modalInstance.close(1);
+          }, time);
+        }
+      }
+      //Datepickers
+      $scope.dateOptions = {
+        maxDate: new Date($scope.loadDate.getFullYear()+1, 11, 31),
+        minDate: new Date($scope.loadDate.getFullYear()-1, 0, 1),
+        startingDay: 0,
+        showWeeks: false
+      };
+
+      $scope.openDate = function(property) {
+        $scope.popup[property] = true;
+      }
+
+      $scope.popup = {};
+    }]);
