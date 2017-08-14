@@ -21,11 +21,13 @@ module.exports = {
 
     insertLoadHeading()
     .then(insertLoadBins)
+    .then(updateBins)
     .then(function (){
       res.json({message: 'Hooray! Load entered successfully', error: false})
       console.log('END OF LOAD ' + loadHeadingValues[0][1])
     })
     .catch(function (e){
+      console.log(e.name + ' ' + e.message);
       res.json({message: e.name + ' ' + e.message, error: true})
     });
 
@@ -35,6 +37,9 @@ module.exports = {
     }
     function insertLoadBins(){
       return insert(loadBinValues, 'load_bins_table')
+    }
+    function updateBins(){
+      return update(req.body.loadData.load.id, req.body.loadData.storage.id)
     }
   }
 };
@@ -57,6 +62,22 @@ function insert(values, tableName){
     else {
       resolve();
     }
+  });
+}
+
+function update(loadId, storageId){
+  return new Promise (function(resolve, reject) {
+      db.getConnection(function (err, connection){
+        var query = connection.query('UPDATE `bin_table` INNER JOIN `load_bins_table` ON `bin_table`.`Bin ID`=`load_bins_table`.`Bin ID` SET `Previous Load` = ?, `Current Storage` = ? WHERE `Load ID` = ?', [loadId, storageId, loadId], function (error, results, fields) {
+          if (error) {
+            console.log(error);
+            reject(error);
+          }
+          connection.release();
+          resolve();
+        });
+        console.log(query.sql);
+      });
   });
 }
 

@@ -7,7 +7,7 @@ npm-debug.log*
 node_modules
 
 # Database connector
-services/DatabaseManager.js
+# services/DatabaseManager.js
 
 # Optional npm cache directory
 .npm

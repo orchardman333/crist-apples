@@ -1,15 +1,14 @@
 # Crist Farms
 
-The application provides a front-end single-page web application for Crist Bros. Orchards to enter data into
-their AWS MySQL instance.  There are four components to this applications:
+This repository provides a single-page web application for Crist Bros. Orchards to enter data into
+a MySQL instance.  The components to this application include:
 
 Under Active Development
 1. Orchard Run Load
 2. Time Form for Employees
-
-Coming Later
-1. Pack Bin
-2. Storage Transfer
+3. Pack Bin
+4. Storage Transfer
+5. Orchard Run Sale
 
 This application is written using a hybrid form of the MEAN stack.  It utilizes:
 Node.js, Express web framework, AngularJS, and MySQL.

@@ -25,7 +25,7 @@ module.exports = {
       barcodeProperties = decode.decodeBarcode(req.body.binData[i].barcode, true);
 
       //bin_table & load_table INSERTs
-      insertIntoBinArray(binValues, barcodeProperties, req.body.binData[i]);
+      insertIntoBinArray(binValues, barcodeProperties, req.body.binData[i], req.body.loadData.load.id);
       insertIntoLoadArray(loadBinValues, barcodeProperties.binId, req.body.binData[i].storage.id, req.body.loadData.load.id);
 
       //Pickers
@@ -83,7 +83,7 @@ function insert(values, tableName){
   });
 }
 
-function insertIntoBinArray(binValues, barcodeProperties, binData) {
+function insertIntoBinArray(binValues, barcodeProperties, binData, loadId) {
   binValues.push([
     barcodeProperties.binId,
     barcodeProperties.blockId,
@@ -96,6 +96,8 @@ function insertIntoBinArray(binValues, barcodeProperties, binData) {
     binData.pickDate,
     binData.boxesCount,
     binData.binComments,
+    loadId,
+    binData.storage.id
   ]);
 };
 
