@@ -13,7 +13,7 @@ angular.module('crist_farms')
     $scope.manager=$scope.managerList[0];
     $scope.retrieveRecords();
   });
-
+$scope.hoursOffered = false;
   $scope.shiftStatusOptions = [{boolean:true, name:'Shift In'}, {boolean:false, name:'Shift End'}];
   $scope.shiftStatus = $scope.shiftStatusOptions[0];
   $scope.time = new Date(Date.now());
@@ -25,13 +25,32 @@ angular.module('crist_farms')
     $scope.timeMinutes = Math.ceil($scope.time.getMinutes()/5)*5;
     $scope.timeHours = $scope.time.getHours();
   }
+
+  $scope.timeMinutesOffered = $scope.timeMinutes;
+  $scope.timeHoursOffered = $scope.timeHours;
+
+  $scope.checkOffered = function(){
+    if ($scope.shiftStatus.boolean) {
+      if ( ($scope.timeHours + $scope.timeMinutes/60) <= ($scope.timeHoursOffered + $scope.timeMinutesOffered/60) ) {
+        $scope.timeMinutesOffered = $scope.timeMinutes;
+        $scope.timeHoursOffered = $scope.timeHours;
+      }
+    }
+    else {
+      if ( ($scope.timeHours + $scope.timeMinutes/60) >= ($scope.timeHoursOffered + $scope.timeMinutesOffered/60) ) {
+        $scope.timeMinutesOffered = $scope.timeMinutes;
+        $scope.timeHoursOffered = $scope.timeHours;
+    }
+  }
+}
+
   $scope.hourOptions = [{name: 'Midnight', value: 0},{name: '12 PM', value: 12},{name: '1 AM', value: 1},{name: '1 PM', value: 13}];
   $scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5}];
   for (var i=2; i<12; i++) {
     $scope.hourOptions.push({name: i + ' AM', value: i},{name: i + ' PM', value: i+12});
     $scope.minuteOptions.push({name:(''+5*i)+'',value:5*i});
   }
-  $scope.hourOptions.sort(function(obj1,obj2){return obj1.value-obj2.value})
+  $scope.hourOptions.sort(function(a,b){return a.value-b.value})
   $scope.workingData = [];
 
   $scope.addToWorkingChanges = function() {
@@ -122,15 +141,31 @@ angular.module('crist_farms')
   $scope.submitButton = function() {
     var data = {};
     var dateTime = new Date($scope.time.getFullYear(),$scope.time.getMonth(),$scope.time.getDate(),$scope.timeHours, $scope.timeMinutes, 0, 0);
+    var dateTimeOffered = dateTime;
+    console.log(dateTime);
+    //console.log(dateTimeOffered);
+
+    if ($scope.hoursOffered) {
+      console.log(dateTime);
+      dateTimeOffered = new Date($scope.time.getFullYear(),$scope.time.getMonth(),$scope.time.getDate(),$scope.timeHoursOffered, $scope.timeMinutesOffered, 0, 0);
+      //dateTimeOffered.setHours($scope.timeHoursOffered, $scope.timeMinutesOffered);
+      console.log(dateTime);
+
+    }
+    console.log(dateTime);
+    //console.log(dateTimeOffered);
+
     //shifting in
     if ($scope.shiftStatus.boolean) {
       data = {
         employeeIds: $scope.workingData.map(a => a.employeeId),
         shiftIn: true,
         time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
+        timeOffered: moment(dateTimeOffered).format('YYYY-MM-DD kk:mm:ss'),
         jobId: $scope.job.id,
         managerId: $scope.manager.id
       };
+      console.log(data);
       $scope.submitRecords(data);
     }
     //shifting out
@@ -139,6 +174,7 @@ angular.module('crist_farms')
           employeeIds: $scope.retrievedData.filter(a => a.selected).map(b => b.employeeId),
           shiftIn: false,
           time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
+          timeOffered: moment(dateTimeOffered).format('YYYY-MM-DD kk:mm:ss'),
           date: moment($scope.time).format('YYYY-MM-DD')
         };
         $scope.lunchModal(data);
@@ -218,13 +254,15 @@ $scope.addAllTodayCrewToWorking = function() {
   }
   $scope.lunchModal = function (data) {
     var modalInstance = $uibModal.open({
-      templateUrl: 'js/views/modal_confirmation',
+      templateUrl: 'js/views/modal_confirmation.html',
       backdrop: 'static',
       keyboard: false,
       controller: function($scope) {
-        $scope.message = 'Add Lunch Break?';
+        $scope.titleMessage = 'Add Lunch Break?';
         $scope.confirmColor = 'btn-primary';
         $scope.dismissColor = 'btn-danger';
+        $scope.confirmMessage = 'Yes';
+        $scope.dismissMessage = 'No';
       }
     });
     modalInstance.result.then(function(confirmation) {

@@ -12,11 +12,22 @@
   </div>
 
   <div class="row">
-    <div class="col-sm-4">
-      <label for="Truck Driver">Manager:</label>
+    <div class="col-sm-3">
+      <label for="Manager">Manager:</label>
       <select class="form-control" ng-model="manager" ng-options="(managers.firstName+' '+managers.lastName) for managers in managerList" ng-change="retrieveRecords()">
       </select>
-      <br/>
+    </div>
+    <div class="col-sm-3">
+      <label for="inputlg">Shift Status:</label>
+      <select class="form-control" ng-model="shiftStatus" ng-options="status.name for status in shiftStatusOptions" ng-change="checkOffered()">
+      </select>
+    </div>
+    <div class="col-sm-3">
+      <label for="inputlg">Job:</label>
+      <select class="form-control" ng-model="job" ng-options="jobs.name for jobs in jobList" ng-disabled="!shiftStatus.boolean">
+      </select>
+    </div>
+    <div class="col-sm-3">
       <label for="Date">Date:</label>
       <div class="input-group" id="work-date">
         <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="time" ng-change="retrieveRecords()" show-button-bar="false" is-open="popup.selectedDate" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
@@ -25,35 +36,53 @@
         </span>
       </div>
     </div>
-    <div class="col-sm-4">
-      <label for="inputlg">Shift Status:</label>
-      <select class="form-control" ng-model="shiftStatus" ng-options="status.name for status in shiftStatusOptions">
-      </select>
-      <br/>
+  </div>
+</br>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="row load-time">
+        <div class="col-sm-6">
       <label for="Time">Time:</label>
-      <select class="form-control" ng-model="timeHours" ng-options="hour.value as hour.name for hour in hourOptions">
+      <select class="form-control" ng-model="timeHours" ng-options="hour.value as hour.name for hour in hourOptions" ng-change="checkOffered()">
       </select>
     </div>
-    <div class="col-sm-4">
-      <label for="inputlg">Job:</label>
-      <select class="form-control" ng-model="job" ng-options="jobs.name for jobs in jobList" ng-disabled="!shiftStatus.boolean">
-      </select>
-      <br/>
+    <div class="col-sm-6">
       <label for="Minutes">&nbsp;</label>
-      <select class="form-control" ng-model="timeMinutes" ng-options="minute.value as minute.name for minute in minuteOptions">
+      <select class="form-control" ng-model="timeMinutes" ng-options="minute.value as minute.name for minute in minuteOptions" ng-change="checkOffered()">
       </select>
+    </div>
+    </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="row load-time" ng-if="hoursOffered">
+        <div class="col-sm-6">
+      <label for="Time">Time Offered:</label>
+      <select class="form-control" ng-model="$parent.timeHoursOffered" ng-options="hour.value as hour.name for hour in hourOptions">
+      </select>
+    </div>
+    <div class="col-sm-6">
+      <label for="Minutes">&nbsp;</label>
+      <select class="form-control" ng-model="$parent.timeMinutesOffered" ng-options="minute.value as minute.name for minute in minuteOptions">
+      </select>
+    </div>
+    </div>
     </div>
   </div>
 
   <div class="row">
-    <div class="col-sm-3"></div>
+    <div class="col-sm-3">
+    </div>
     <div class="col-sm-6">
       <label for="Scan Barcode"></label>
       <div class="form-group has-feedback" ng-class="{'has-success':focused, 'has-error':!focused}">
         <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-enter="addToWorkingChanges()" type="text" ng-blur="focused=false" ng-focus="focused=true">
       </div>
     </div>
-    <div class="col-sm-3"></div>
+    <div class="col-sm-3">
+    </br>
+      <label for="">Hours Offered</label>
+      <input type="checkbox" ng-model="hoursOffered">
+    </div>
   </div>
 
   <div class="row">

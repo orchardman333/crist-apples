@@ -27,7 +27,6 @@ module.exports = {
       console.log('END OF LOAD ' + loadHeadingValues[0][1])
     })
     .catch(function (e){
-      console.log(e.name + ' ' + e.message);
       res.json({message: e.name + ' ' + e.message, error: true})
     });
 
