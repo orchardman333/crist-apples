@@ -114,9 +114,9 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
           load: {type:'pk', id: $scope.loadId},
           truckDriver: $scope.truckDriver,      //object
           loadDateTime: moment(loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
-          truck: {id: 'FKL'},                //object
+          truck: {id: 'fkl'},                //object
           loadComments: $scope.loadComments,
-          storage: {id: 'PK'},
+          storage: {id: 'pk'},
           buyer: null,
           packoutId: $scope.packoutId
         },

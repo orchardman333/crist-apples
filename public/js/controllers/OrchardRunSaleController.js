@@ -5,15 +5,19 @@ angular.module('crist_farms')
 function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeService, storageService, truckService) {
 
   //Date and Time variable initializing
-  $scope.loadDate = new Date(Date.now());
-  if ($scope.loadDate.getMinutes()>55) {
-    $scope.loadTimeMinute = 0;
-    $scope.loadTimeHour = $scope.loadDate.getHours()+1;
+  var timeRefresh = function (){
+
+    $scope.loadDate = new Date(Date.now());
+    if ($scope.loadDate.getMinutes()>55) {
+      $scope.loadTimeMinute = 0;
+      $scope.loadTimeHour = $scope.loadDate.getHours()+1;
+    }
+    else {
+      $scope.loadTimeMinute = Math.ceil($scope.loadDate.getMinutes()/5)*5;
+      $scope.loadTimeHour = $scope.loadDate.getHours();
+    }
   }
-  else {
-    $scope.loadTimeMinute = Math.ceil($scope.loadDate.getMinutes()/5)*5;
-    $scope.loadTimeHour = $scope.loadDate.getHours();
-  }
+  timeRefresh();
   $scope.hourOptions = [{name: 'Midnight', value: 0},{name: '12 PM', value: 12},{name: '1 AM', value: 1},{name: '1 PM', value: 13}];
   $scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5}];
   for (var i=2; i<12; i++) {
@@ -111,7 +115,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
           load: {type:'sl', id: $scope.loadId},
           truckDriver: $scope.truckDriver,      //object
           loadDateTime: moment(loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
-          truck: $scope.truck,                //object
+          truck: {id: 'fkl'},                //object
           loadComments: $scope.loadComments,
           storage: {id: 'sl'},
           buyer: $scope.buyer,
@@ -122,13 +126,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       //orchardRunService.SaveData(load);
       storageService.SubmitStorageTransfer(load, function (resObj) {
         alertModal(resObj, 1000);
-        if (!resObj.error) {
-          $scope.workingData = [];
-          //Allow db to finish clock-out updates before pulling
-          $timeout(function (){
-          }, 500)
-        };
         clearLoad(false);
+        timeRefresh();
       });
     });
   }
