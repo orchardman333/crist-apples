@@ -2,16 +2,18 @@
 <html lang="en" ng-app="crist_farms">
 
   <script>
-    function CallPrint(strid) {
-        var prtContent = document.getElementById(strid);
-        var popupWin = window.open('', '', 'height=400,width=800');
-        popupWin.document.open();
-        popupWin.document.write(prtContent.innerHTML);
-        popupWin.close();
-    }
-//     window.onbeforeunload = function () {
-// return true;
-//     }
+  function callPrint(id) {
+    var prtContent = document.getElementById(id);
+    var popupWin = window.open();
+    popupWin.document.write(prtContent.innerHTML);
+    popupWin.document.close();
+    popupWin.focus();
+    popupWin.print();
+    popupWin.close();
+  }
+  window.onbeforeunload = function () {
+    return "";
+  }
   </script>
 
   <head>
@@ -43,11 +45,11 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="orchard_run_load">Orchard Run</a></li>
+            <li><a href="orchard_run_load">Orch Run</a></li>
             <li><a href="storage_transfer_load">Storage Transfer</a></li>
             <li><a href="pack_dump_load">Packout</a></li>
             <li><a href="orchard_run_sale">OR Sale</a></li>
-            <!-- <li><a href="time_form">Time Form</a></li> -->
+            <li><a href="time_form">Inside Time</a></li>
             <li><a href="outside_time">Outside Time</a></li>
           </ul>
         </div><!--/.nav-collapse -->

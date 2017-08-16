@@ -5,9 +5,9 @@ body {
   background: rgba(20,20,20,.9);
 }
 @media print {
-th, tr, td {
-font-size: 8pt;
-}
+  label {
+    font-size: 10pt;
+  }
 }
 
 .tdTopBorder {
@@ -57,7 +57,7 @@ h2, h3, h4, h5, h6 {
 
 th, td, tr {
 font-size: 8pt;
-  text-align: left !important;
+  text-align: left;
 }
 .grey-td {
 color:black;

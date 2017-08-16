@@ -1,12 +1,17 @@
-<div class="container-fluid">
-
-  <label for="Load ID">Load ID:</label> {{load.loadData.load.id}}</br>
-  <label for="Truck ID">Truck ID:</label> {{load.loadData.truck.name}}</br>
-  <label for="Truck Driver">Truck Driver:</label> {{load.loadData.truckDriver.name}}</br>
-  <label for="Date">Arrival Date:</label> {{load.loadData.loadDateTime.slice(0,11)}}</br>
-  <label for="Time">Arrival Time:</label> {{load.loadData.loadDateTime.slice(-8)}}</br>
-  <label for="Submitted">Submitted:</label> {{timeSubmitted | date:'short'}}</br>
-  <table class="table-condensed">
+<div class="container-fluid" id="printArea" style="padding-top: -60px;">
+  <table class="table-condensed borderless" align="center">
+    <tr>
+      <td><strong>Load ID: </strong>{{load.loadData.load.id}}</td>
+      <td><strong>Truck Driver: </strong>{{load.loadData.truckDriver.name}}</td>
+      <td><strong>Truck ID: </strong>{{load.loadData.truck.name}}</td>
+    </tr>
+    <tr>
+      <td><strong>Arrival Date: </strong>{{load.loadData.loadDateTime.slice(0,11)}}</td>
+      <td><strong>Arrival Time: </strong>{{load.loadData.loadDateTime.slice(-8)}}</td>
+      <td><strong>Comments: </strong>{{load.loadData.loadComments}}</td>
+    </tr>
+  </table>
+  <table class="table-condensed" align="center">
     <thead>
       <tr>
         <th>Bin ID</th>
@@ -52,9 +57,16 @@
       </tr>
       <tr ng-repeat-end></tr>
       <tr ng-repeat-end></tr>
+      <tr>
+        <td class="tdTopBorder" colspan="1"></td>
+        <td class="tdTopBorder" colspan="3"><strong>Load Bins: {{load.binData.length}}</strong></td>
+        <td class="tdTopBorder" colspan="9"><strong>Load Bushels: {{loadBushelSum}}</strong></td>
+      </tr>
     </tbody>
   </table>
 </div>
 <br>
+<p>Submitted: {{timeSubmitted | date:'short'}}</p>
 <br>
 <a href="javascript:window.print()">print</a>
+<!-- <a href="javascript:callPrint('printArea')">print</a> -->

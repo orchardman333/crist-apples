@@ -35,6 +35,8 @@ var groupBy = function (collection, property) {
   }
   return result;
 }
+
+$scope.loadBushelSum = $scope.load.binData.map(a=>a.boxesCount).reduce((b,c)=>b+c,0);
 $scope.groupedBins = group($scope.load.binData);
 //console.log($scope.groupedBins);
 }]);
