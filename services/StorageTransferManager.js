@@ -10,7 +10,9 @@ var decode = require("./LookupManager");
 module.exports = {
   TransferBins: function (req,res) {
     var loadBinValues = [];
-    var loadHeadingValues = [insertIntoLoadHeadingArray(req.body.loadData)];
+    var loadHeadingValues = [];
+
+    insertIntoLoadHeadingArray(loadHeadingValues, req.body.loadData);
 
     //Iterate through list of bins
     for (var i=0; i < req.body.binData.length; i++) {
@@ -23,11 +25,12 @@ module.exports = {
     .then(insertLoadBins)
     .then(updateBins)
     .then(function (){
-      res.json({message: 'Hooray! Load entered successfully', error: false})
-      console.log('END OF LOAD ' + loadHeadingValues[0][1])
+      res.json({message: 'Hooray! Load entered successfully', error: false});
+      console.log('END OF LOAD ' + loadHeadingValues[0][1]);
     })
     .catch(function (e){
-      res.json({message: e.name + ' ' + e.message, error: true})
+      res.json({message: e.name + ' ' + e.message, error: true});
+      console.log(e);
     });
 
     //Wrapper functions
@@ -49,7 +52,6 @@ function insert(values, tableName){
       db.getConnection(function (err, connection){
         var query = connection.query('INSERT INTO ' + tableName + ' VALUES ?', [values], function (error, results, fields) {
           if (error) {
-            console.log(error);
             reject(error);
           }
           connection.release();
@@ -66,27 +68,27 @@ function insert(values, tableName){
 
 function update(loadId, storageId){
   return new Promise (function(resolve, reject) {
-      db.getConnection(function (err, connection){
-        var query = connection.query('UPDATE `bin_table` INNER JOIN `load_bins_table` ON `bin_table`.`Bin ID`=`load_bins_table`.`Bin ID` SET `Previous Load` = ?, `Current Storage` = ? WHERE `Load ID` = ?', [loadId, storageId, loadId], function (error, results, fields) {
-          if (error) {
-            console.log(error);
-            reject(error);
-          }
-          connection.release();
-          resolve();
-        });
-        console.log(query.sql);
+    db.getConnection(function (err, connection){
+      var query = connection.query('UPDATE `bin_table` INNER JOIN `load_bins_table` ON `bin_table`.`Bin ID`=`load_bins_table`.`Bin ID` SET `Previous Load` = ?, `Current Storage` = ? WHERE `Load ID` = ?', [loadId, storageId, loadId], function (error, results, fields) {
+        if (error) {
+          reject(error);
+        }
+        connection.release();
+        resolve();
       });
+      console.log(query.sql);
+    });
   });
 }
 
-function insertIntoLoadHeadingArray(loadData) {
-  return [loadData.load.type,
+function insertIntoLoadHeadingArray(loadHeadingValues, loadData) {
+  loadHeadingValues.push([loadData.load.type,
     loadData.load.id,
     loadData.truckDriver.id,
     loadData.loadDateTime,
     loadData.truck.id,
     loadData.loadComments,
     loadData.buyer,
-    loadData.packoutId];
-  };
+    loadData.packoutId
+  ]);
+};

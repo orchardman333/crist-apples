@@ -92,7 +92,7 @@
                   <span class='glyphicon glyphicon-pencil' ng-if="!showBoolean"></span>
                   <span class='glyphicon glyphicon-ok' ng-if="showBoolean"></span>
                 </button> -->
-                <button type="button" ng-click="removeScan($index)">
+                <button type="button" ng-click="removeScan(binData.length-$index-1)">
                   <span class='glyphicon glyphicon-trash'></span>
                 </button>
               </div>

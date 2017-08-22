@@ -46,8 +46,10 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       }, 2000);
     }
     //scanned barcode is a bin's barcode
-    else if ($scope.scan.length == 19) {
-      $scope.scan = $scope.scan.slice(-5);
+    else if ([5,19].indexOf($scope.scan.length) > -1) {
+      if ($scope.scan.length === 19) {
+        $scope.scan = $scope.scan.slice(-5);
+      }
       //check if duplicate bin ID has been scanned on form already
       if ($scope.binData.indexOf($scope.scan) == -1) {
         //check if Bin ID has been entered in db

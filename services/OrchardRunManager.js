@@ -16,9 +16,10 @@ module.exports = {
     var binValues = [];
     var bushelValues = [];
     var loadBinValues = [];
-
+    var loadHeadingValues = [];
+    
     //load_heading_table INSERT
-    var loadHeadingValues = [insertIntoLoadHeadingArray(req.body.loadData)];
+    insertIntoLoadHeadingArray(loadHeadingValues, req.body.loadData);
 
     //Iterate through list of bins
     for (var i=0; i < req.body.binData.length; i++) {
@@ -44,6 +45,7 @@ module.exports = {
     })
     .catch(function(e) {
       res.json({message: e.name + ' ' + e.message, error: true})
+      console.log(e);
     });
 
     //Wrapper functions
@@ -68,7 +70,6 @@ function insert(values, tableName){
       db.getConnection(function (err, connection){
         var query = connection.query('INSERT INTO ' + tableName + ' VALUES ?', [values], function (error, results, fields) {
           if (error) {
-            console.log(error);
             reject(error);
           }
           connection.release();
@@ -101,26 +102,22 @@ function insertIntoBinArray(binValues, barcodeProperties, binData, loadId) {
   ]);
 };
 
-function insertIntoLoadHeadingArray(loadData) {
-  return [loadData.load.type,
+function insertIntoLoadHeadingArray(loadHeadingValues, loadData) {
+  loadHeadingValues.push([loadData.load.type,
     loadData.load.id,
     loadData.truckDriver.id,
     loadData.loadDateTime,
     loadData.truck.id,
     loadData.loadComments,
     loadData.buyer,
-    loadData.packoutId];
-  };
+    loadData.packoutId
+  ]);
+};
 
-  function insertIntoLoadArray(loadValues, binId, storageId, loadId) {
-    loadValues.push([loadId,
-      binId,
-      storageId]);
-    };
+function insertIntoLoadArray(loadValues, binId, storageId, loadId) {
+  loadValues.push([loadId, binId, storageId]);
+};
 
-    function insertIntoBoxesArray(boxesValues, employeeId, binId) {
-      boxesValues.push(
-        [binId,
-          employeeId]
-        );  //picker, not truck driver
-      };
+function insertIntoBoxesArray(boxesValues, employeeId, binId) {
+  boxesValues.push([binId, employeeId]);  //picker, not truck driver
+};

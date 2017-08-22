@@ -102,7 +102,7 @@
                 </div>
                 <div class="col-sm-9"><h4><strong>{{person.firstName + ' ' + person.lastName}}</strong></h4></div>
                 <div class="col-sm-1" style="color:black;">
-                  <button type="button" ng-click="removeFromWorkingChanges($index)">
+                  <button type="button" ng-click="removeFromWorkingChanges(workingData.length-$index-1)">
                     <span class='glyphicon glyphicon-trash'></span>
                   </button>
                 </div>
