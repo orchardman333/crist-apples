@@ -8,12 +8,6 @@ module.exports = {
     db.getConnection(function(err, connection) {
       var query = connection.query('SELECT `Truck ID` AS id, `Truck Name` AS name FROM truck_table', function(error, results, fields) {
         connection.release();
-        // for(var i=0; i<results.length; i++){
-        //   truckList.push({
-        //     id: results[i].id,
-        //     name: results[i].name
-        //   });
-        // }
         res.json(results);
       });
       console.log(query.sql);

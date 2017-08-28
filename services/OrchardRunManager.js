@@ -17,7 +17,7 @@ module.exports = {
     var bushelValues = [];
     var loadBinValues = [];
     var loadHeadingValues = [];
-    
+
     //load_heading_table INSERT
     insertIntoLoadHeadingArray(loadHeadingValues, req.body.loadData);
 
@@ -39,7 +39,7 @@ module.exports = {
     .then(insertBinValues)
     .then(insertLoadBins)
     .then(insertBushelValues)
-    .then(function() {
+    .then(function(_) {
       res.json({message: 'Hooray! Load entered successfully', error: false})
       console.log('END OF LOAD ' + loadHeadingValues[0][1])
     })
@@ -52,13 +52,13 @@ module.exports = {
     function insertLoadHeading(){
       return insert(loadHeadingValues, 'load_heading_table')
     }
-    function insertBinValues(){
+    function insertBinValues(_){
       return insert(binValues, 'bin_table')
     }
-    function insertLoadBins(){
+    function insertLoadBins(_){
       return insert(loadBinValues, 'load_bins_table')
     }
-    function insertBushelValues(){
+    function insertBushelValues(_){
       return insert(bushelValues, 'bushels_picker_table')
     }
   }

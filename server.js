@@ -15,6 +15,7 @@ var truckManager = require('./services/TruckManager');
 var loadSeqManager = require('./services/LoadSequenceIdManager');
 var timeFormManager = require('./services/TimeFormManager');
 var outsideTimeManager = require('./services/OutsideTimeManager');
+var replacementLabelManager = require('./services/ReplacementLabelManager');
 // configuration =================
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
 app.use(morgan('dev'));                                         // log every request to the console
@@ -64,6 +65,10 @@ app.post('/api/loadId', function(req, res) {
 
 app.get('/api/jobs', function(req, res) {
   lookupManager.GetJobs(res);
+});
+
+app.get('/api/replacementvalues', function(req, res) {
+  replacementLabelManager.ReplacementValues(res);
 });
 //-------------------------------------------------------
 // Storages and Transfers

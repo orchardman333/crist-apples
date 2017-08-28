@@ -4,16 +4,9 @@
 var db   = require("./DatabaseManager");
 module.exports = {
   GetEmployees: function (res) {
-    var employeeList = [];
     db.getConnection(function(err, connection) {
       var query = connection.query('SELECT `Employee ID` AS id, `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table', function(error, results, fields) {
         connection.release();
-        // for (var i=0; i<results.length; i++) {
-        //   employeeList.push({
-        //     id: results[i].id,
-        //     name: results[i].firstName + ' ' + results[i].lastName
-        //   });
-        // }
         res.json(results);
       });
       console.log(query.sql);
@@ -21,16 +14,9 @@ module.exports = {
   },
 
   GetManagers: function (res) {
-    var managerList = [];
     db.getConnection(function(err, connection) {
       var query = connection.query('SELECT `Employee ID` AS id, `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Manager`', function(error, results, fields) {
         connection.release();
-        // for (var i=0; i<results.length; i++) {
-        //   managerList.push({
-        //     id: results[i].id,
-        //     name: results[i].firstName + ' ' + results[i].lastName
-        //   });
-        // }
         res.json(results);
       });
       console.log(query.sql);

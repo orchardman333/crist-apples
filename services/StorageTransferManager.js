@@ -24,7 +24,7 @@ module.exports = {
     insertLoadHeading()
     .then(insertLoadBins)
     .then(updateBins)
-    .then(function (){
+    .then(function (_){
       res.json({message: 'Hooray! Load entered successfully', error: false});
       console.log('END OF LOAD ' + loadHeadingValues[0][1]);
     })
@@ -37,10 +37,10 @@ module.exports = {
     function insertLoadHeading(){
       return insert(loadHeadingValues, 'load_heading_table')
     }
-    function insertLoadBins(){
+    function insertLoadBins(_){
       return insert(loadBinValues, 'load_bins_table')
     }
-    function updateBins(){
+    function updateBins(_){
       return update(req.body.loadData.load.id, req.body.loadData.storage.id)
     }
   }
