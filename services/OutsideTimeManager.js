@@ -94,8 +94,9 @@ module.exports = {
                 }
                 //no lunch break
                 else {
+
                   sqlValues = [req.body.time, req.body.timeOffered, employeeId, results[0].timeIn];
-                  var query = connection.query('UPDATE time_table SET `Time Out` = ? `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', sqlValues, function (error, results, fields) {
+                  var query = connection.query('UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', sqlValues, function (error, results, fields) {
                     // if (error) {
                     //   console.log(error.message);
                     //   res.json({message: error.message, error:true});

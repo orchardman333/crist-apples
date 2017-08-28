@@ -273,6 +273,7 @@ $scope.addAllTodayCrewToWorking = function() {
         dateTime = new Date($scope.time.getFullYear(),$scope.time.getMonth(),$scope.time.getDate(), 12, 30, 0, 0);
         data.lunchEnd= moment(dateTime).format('YYYY-MM-DD kk:mm:ss');
       }
+      else data.lunch = false;
       $scope.submitRecords(data);
     });
   }
