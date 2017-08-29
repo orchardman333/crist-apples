@@ -15,7 +15,11 @@ angular.module('crist_farms').service('OrchardRunService', ['$http', function($h
       callback(response.data);
     });
   };
-
+  service.GetReplacements = function(callback) {
+    $http.get("/api/replacementvalues/").then(function(response) {
+      callback(response.data);
+    });
+  };
   service.GetLoadId = function(data, callback) {
     $http.post("/api/loadId/", data).then(function(response) {
       callback(response.data);

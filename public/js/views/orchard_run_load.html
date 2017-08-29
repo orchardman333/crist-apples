@@ -35,11 +35,45 @@
       <input class="form-control input" ng-model="binComments" type="text">
     </div>
   </div>
-  <div class="row">
-    <div class="col-sm-2">
+  <br/>
+  <div class="" ng-if="replaceLabel">
+    <div class="row" >
+      <div class="col-sm-6">
+        <label for="repBlock">Replacement Block:</label>
+        <select class="form-control" ng-model="$parent.repBvs" ng-options="(bvs.blockName + ' ' + bvs.varietyName + ' ' + bvs.strainName) for bvs in repList.bvs">
+        </select>
+      </div>
+      <div class="col-sm-6">
+        <label for="repJob">Replacement Job:</label>
+        <select class="form-control" ng-model="$parent.repJob" ng-options="job.name for job in repList.job">
+        </select>
+      </div>
     </div>
-    <div class="col-sm-8">
-      <label for="Scan Barcode"></label>
+  </br>
+  <div class="row">
+    <div class="col-sm-4">
+      <label for="repBearing">Replacement Bearing:</label>
+      <select class="form-control" ng-model="$parent.repBearing" ng-options="bearing.name for bearing in repList.bearing">
+      </select>
+    </div>
+    <div class="col-sm-4">
+      <label for="repTreatment">Replacement Treatment:</label>
+      <select class="form-control" ng-model="$parent.repTreatment" ng-options="treatment.name for treatment in repList.treatment">
+      </select>
+    </div>
+    <div class="col-sm-4">
+      <label for="repPick">Replacement Pick:</label>
+      <select class="form-control" ng-model="$parent.repPick" ng-options="pick.name for pick in repList.pick">
+      </select>
+    </div>
+  </div>
+  <br/>
+</div>
+  <div class="row">
+    <div class="col-sm-3">
+      <button type="button" class="btn btn-primary btn-lg" ng-if="replaceLabel" ng-click="buildReplacementBarcode()">Build Barcode</button>
+    </div>
+    <div class="col-sm-6">
       <div class="input-group">
       <div class="form-group has-feedback" ng-class="{'has-success':focused, 'has-error':!focused}">
         <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-enter="addScan()" type="text" ng-blur="focused=false" ng-focus="focused=true">
@@ -50,53 +84,11 @@
     </div>
     </div>
   </div>
-  <div class="col-sm-2">
+  <div class="col-sm-3">
+    <button type="button" class="btn btn-warning btn-lg" ng-if="!replaceLabel" ng-click="showReplacements()">Replace Label</button>
   </div>
 </div>
 <br/>
-<div class="" ng-if="replaceLabel">
-  <div class="row" >
-    <div class="col-sm-4">
-      <label for="repBlock">Replacement Block:</label>
-      <select class="form-control" ng-model="repBlock" ng-options="a.b for a in [{b:1},{b:2}]">
-      </select>
-    </div>
-    <div class="col-sm-4">
-      <label for="repVariety">Replacement Variety:</label>
-      <select class="form-control" ng-model="repVariety" ng-options="a.b for a in [{b:1},{b:2}]">
-      </select>
-    </div>
-    <div class="col-sm-4">
-      <label for="repStrain">Replacement Strain:</label>
-      <select class="form-control" ng-model="repStrain" ng-options="a.b for a in [{b:1},{b:2}]">
-      </select>
-    </div>
-  </div>
-</br>
-<div class="row">
-  <div class="col-sm-3">
-    <label for="repBearing">Replacement Bearing:</label>
-    <select class="form-control" ng-model="repBearing" ng-options="a.b for a in [{b:1},{b:2}]">
-    </select>
-  </div>
-  <div class="col-sm-3">
-    <label for="repTreatment">Replacement Treatment:</label>
-    <select class="form-control" ng-model="repTreatment" ng-options="a.b for a in [{b:1},{b:2}]">
-    </select>
-  </div>
-  <div class="col-sm-3">
-    <label for="repPick">Replacement Pick:</label>
-    <select class="form-control" ng-model="repPick" ng-options="a.b for a in [{b:1},{b:2}]">
-    </select>
-  </div>
-  <div class="col-sm-3">
-    <label for="repJob">Replacement Job:</label>
-    <select class="form-control" ng-model="repJob" ng-options="a.b for a in [{b:1},{b:2}]">
-    </select>
-  </div>
-</div>
-</div>
-
 <div class="row" ng-if="error">
   <div class="col-sm-12">
     <div class="alert alert-{{errorColor}} alert-dismissable">

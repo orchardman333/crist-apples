@@ -1,16 +1,41 @@
 // ReplacementLabelManager
 
 var db = require("./DatabaseManager");
-var decode = require("./LookupManager");
 var asynch = require("async");
 
 module.exports = {
   ReplacementValues: function (res) {
-    //var tables = ['block', 'variety', 'strain', 'bearing', 'treatment', 'pick', 'job'];
-    standardQueryStack(res, queryString, null)
+    var object = {};
+    var properties = ['bvs', 'bearing', 'treatment', 'pick', 'job'];
+    var queries = [bvsQueryString,
+                  'SELECT `bearing ID` AS id, `bearing Name` AS name FROM `bearing_table`',
+                  'SELECT `treatment ID` AS id, `treatment Name` AS name FROM `treatment_table`',
+                  'SELECT `pick ID` AS id, `pick Name` AS name FROM `pick_table`',
+                  'SELECT `job ID` AS id, `job Name` AS name FROM `job_table`'];
+
+      dbConnectionTo(db).then(function(connection) {
+        asynch.eachOf(queries, function(query, index, callback) {
+          var sqlQuery = connection.query(query, function(error, results, fields) {
+            if (error) callback(error)
+            else {
+              object[properties[index]] = results;
+              callback();
+            }
+          });
+          console.log(sqlQuery.sql);
+        },
+        function(err) {
+          if (err) res.json(err);
+          else res.json(object);
+          connection.release();
+        }
+      );
+    })
+    .catch(function (e) {
+      res.json(e)
+    })
   }
 }
-
 // My standard database query flow
 // Get connection, send query, return results or error
 function standardQueryStack (res, query, parameters) {
@@ -47,7 +72,6 @@ function queryDb(dbConnection, queryString, sqlValues) {
     var query = dbConnection.query(queryString, sqlValues, function(error, results, fields) {
       if (error) reject(error);
       else {
-        dbConnection.release();
         resolve(results)
       }
       console.log(query.sql);
@@ -55,17 +79,17 @@ function queryDb(dbConnection, queryString, sqlValues) {
   });
 }
 
-var queryString = `SELECT
-bvs_table.\`Block ID\`,
-block_table.\`Block Name\`,
-bvs_table.\`Variety ID\`,
-variety_table.\`Variety Name\`,
-bvs_table.\`Strain ID\`,
-strain_table.\`Strain Name\`
+var bvsQueryString = `SELECT
+bvs_table.\`Block ID\` AS blockId,
+block_table.\`Block Name\` AS blockName,
+bvs_table.\`Variety ID\` AS varietyId,
+variety_table.\`Variety Name\` AS varietyName,
+bvs_table.\`Strain ID\` AS strainId,
+strain_table.\`Strain Name\` AS strainName
 
 FROM bvs_table
 
 INNER JOIN block_table ON bvs_table.\`Block ID\` = block_table.\`Block ID\`
 INNER JOIN variety_table ON bvs_table.\`Variety ID\` = variety_table.\`Variety ID\`
 INNER JOIN strain_table ON bvs_table.\`Strain ID\` = strain_table.\`Strain ID\``
-queryString = queryString.replace(/\n/g, ' ')    // Removes new-line characters
+bvsQueryString = bvsQueryString.replace(/\n/g, ' ')    // Removes new-line characters

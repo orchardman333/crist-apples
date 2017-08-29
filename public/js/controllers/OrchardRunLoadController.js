@@ -8,10 +8,6 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
   var currentDateTime = new Date(Date.now());
   $scope.pickDate = currentDateTime;
   $scope.loadDate = currentDateTime;
-  //$scope.loadTimeHour = currentDateTime.getHours();
-  //$scope.loadTimeMinute = Math.floor(currentDateTime.getMinutes()/5)*5;
-  //$scope.hourOptions = [{name:'8 (AM)',value:8},{name:'9 (AM)',value:9},{name:'10 (AM)',value:10},{name:'11 (AM)',value:11},{name:'12 (PM)',value:12},{name:'1 (PM)',value:13},{name:'2 (PM)',value:14},{name:'3 (PM)',value:15},{name:'4 (PM)',value:16},{name:'5 (PM)',value:17},{name:'6 (PM)',value:18},{name:'7 (PM)',value:19}];
-  //$scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5},{name:'10',value:10},{name:'15',value:15},{name:'20',value:20},{name:'25',value:25},{name:'30',value:30},{name:'35',value:35},{name:'40',value:40},{name:'45',value:45},{name:'50',value:50},{name:'55',value:55}];
   if ($scope.loadDate.getMinutes()>55) {
     $scope.loadTimeMinute = 0;
     $scope.loadTimeHour = $scope.loadDate.getHours()+1;
@@ -241,6 +237,32 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.refocus();
   }
 
+  //ReplacementValues
+  var i = 0;
+  $scope.showReplacements = function () {
+    if (i < 1) {
+      orchardRunService.GetReplacements(function(data) {
+        data.bvs.sort((a,b)=> a.blockName.localeCompare(b.blockName));
+        $scope.repList = data;
+        $scope.repBvs = $scope.repList.bvs[0];
+        $scope.repBearing = $scope.repList.bearing[0];
+        $scope.repTreatment = $scope.repList.treatment[0];
+        $scope.repPick = $scope.repList.pick[0];
+        $scope.repJob = $scope.repList.job[0];
+        $scope.replaceLabel = true;
+        i++;
+      });
+    }
+    else {
+      $scope.replaceLabel = true;
+    }
+  }
+  $scope.buildReplacementBarcode = function () {
+    $scope.scan = $scope.repBvs.blockId
+    .concat($scope.repBvs.varietyId,$scope.repBvs.strainId,$scope.repBearing.id, $scope.repTreatment.id,$scope.repPick.id,$scope.repJob.id);
+    $scope.refocus();
+    $scope.replaceLabel = false;
+  }
   //Confirmation modals
   var confirmationModal = function (options, callback) {
     var modalInstance = $uibModal.open({
@@ -267,42 +289,42 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         dismissColor:'btn-warning',
         dismissMessage: 'No, take me back!'
       },
-        submitLoad)
-  }
-
-  $scope.clearLoadButton = function() {
-    confirmationModal(
-      {
-        titleMessage:'Are you sure you want to cancel load?',
-        confirmColor:'btn-success',
-        confirmMessage: 'Yes, I\'m sure!',
-        dismissColor:'btn-warning',
-        dismissMessage: 'No, take me back!'
-      },
-        clearLoad)
-  }
-// Alert modals
-var alertModal = function (options) {
-  var modalInstance = $uibModal.open({
-    templateUrl: 'js/views/modal_alert.html',
-    keyboard: false,
-    controller: function($scope) {
-      Object.assign($scope, options)    //copy options properties into $scope
+      submitLoad)
     }
-  });
-}
 
-  //Datepickers
-  $scope.dateOptions = {
-    maxDate: new Date($scope.pickDate.getFullYear()+1, 11, 31),
-    minDate: new Date($scope.pickDate.getFullYear()-1, 0, 1),
-    startingDay: 0,
-    showWeeks: false
-  };
+    $scope.clearLoadButton = function() {
+      confirmationModal(
+        {
+          titleMessage:'Are you sure you want to cancel load?',
+          confirmColor:'btn-success',
+          confirmMessage: 'Yes, I\'m sure!',
+          dismissColor:'btn-warning',
+          dismissMessage: 'No, take me back!'
+        },
+        clearLoad)
+      }
+      // Alert modals
+      var alertModal = function (options) {
+        var modalInstance = $uibModal.open({
+          templateUrl: 'js/views/modal_alert.html',
+          keyboard: false,
+          controller: function($scope) {
+            Object.assign($scope, options)    //copy options properties into $scope
+          }
+        });
+      }
 
-  $scope.openDate = function(property) {
-    $scope.popup[property] = true;
-  }
+      //Datepickers
+      $scope.dateOptions = {
+        maxDate: new Date($scope.pickDate.getFullYear()+1, 11, 31),
+        minDate: new Date($scope.pickDate.getFullYear()-1, 0, 1),
+        startingDay: 0,
+        showWeeks: false
+      };
 
-  $scope.popup = {};
-}]);
+      $scope.openDate = function(property) {
+        $scope.popup[property] = true;
+      }
+
+      $scope.popup = {};
+    }]);
