@@ -70,10 +70,7 @@
   <br/>
 </div>
   <div class="row">
-    <div class="col-sm-3">
-      <button type="button" class="btn btn-primary btn-lg" ng-if="replaceLabel" ng-click="buildReplacementBarcode()">Build Barcode</button>
-    </div>
-    <div class="col-sm-6">
+    <div class="col-sm-9">
       <div class="input-group">
       <div class="form-group has-feedback" ng-class="{'has-success':focused, 'has-error':!focused}">
         <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-enter="addScan()" type="text" ng-blur="focused=false" ng-focus="focused=true">
@@ -86,6 +83,7 @@
   </div>
   <div class="col-sm-3">
     <button type="button" class="btn btn-warning btn-lg" ng-if="!replaceLabel" ng-click="showReplacements()">Replace Label</button>
+    <button type="button" class="btn btn-primary btn-lg" ng-if="replaceLabel" ng-click="buildReplacementBarcode()">Build Barcode</button>
   </div>
 </div>
 <br/>
