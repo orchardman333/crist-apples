@@ -7,7 +7,7 @@
       <p><strong><h2>Outside Time Form</h2></strong></p>
     </div>
     <div class="col-sm-3">
-      <button type="button" class="btn btn-lg btn-success" ng-click="submitButton()">{{shiftStatus.boolean? 'Clock-in':'Clock-out'}}</button>
+      <button type="button" class="btn btn-lg btn-success" ng-click="submitButton()">{{shiftStatus.name}}</button>
     </div>
   </div>
 
@@ -24,7 +24,7 @@
     </div>
     <div class="col-sm-3">
       <label for="inputlg">Job:</label>
-      <select class="form-control" ng-model="job" ng-options="jobs.name for jobs in jobList" ng-disabled="!shiftStatus.boolean">
+      <select class="form-control" ng-model="job" ng-options="jobs.name for jobs in jobList" ng-disabled="shiftStatus.id==1">
       </select>
     </div>
     <div class="col-sm-3">
@@ -37,35 +37,36 @@
       </div>
     </div>
   </div>
-</br>
+  <br/>
+
   <div class="row">
     <div class="col-sm-6">
       <div class="row load-time">
         <div class="col-sm-6">
-      <label for="Time">Time:</label>
-      <select class="form-control" ng-model="timeHours" ng-options="hour.value as hour.name for hour in hourOptions" ng-change="checkOffered()">
-      </select>
-    </div>
-    <div class="col-sm-6">
-      <label for="Minutes">&nbsp;</label>
-      <select class="form-control" ng-model="timeMinutes" ng-options="minute.value as minute.name for minute in minuteOptions" ng-change="checkOffered()">
-      </select>
-    </div>
-    </div>
+          <label for="Time">Time:</label>
+          <select class="form-control" ng-model="timeHours" ng-options="hour.value as hour.name for hour in hourOptions" ng-change="checkOffered()">
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <label for="Minutes">&nbsp;</label>
+          <select class="form-control" ng-model="timeMinutes" ng-options="minute.value as minute.name for minute in minuteOptions" ng-change="checkOffered()">
+          </select>
+        </div>
+      </div>
     </div>
     <div class="col-sm-6">
       <div class="row load-time" ng-if="hoursOffered">
         <div class="col-sm-6">
-      <label for="Time">Time Offered:</label>
-      <select class="form-control" ng-model="$parent.timeHoursOffered" ng-options="hour.value as hour.name for hour in hourOptions">
-      </select>
-    </div>
-    <div class="col-sm-6">
-      <label for="Minutes">&nbsp;</label>
-      <select class="form-control" ng-model="$parent.timeMinutesOffered" ng-options="minute.value as minute.name for minute in minuteOptions">
-      </select>
-    </div>
-    </div>
+          <label for="Time">Time Offered:</label>
+          <select class="form-control" ng-model="$parent.timeHoursOffered" ng-options="hour.value as hour.name for hour in hourOptions">
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <label for="Minutes">&nbsp;</label>
+          <select class="form-control" ng-model="$parent.timeMinutesOffered" ng-options="minute.value as minute.name for minute in minuteOptions">
+          </select>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -73,116 +74,112 @@
     <div class="col-sm-3">
     </div>
     <div class="col-sm-6">
-      <label for="Scan Barcode"></label>
-      <div class="form-group has-feedback" ng-class="{'has-success':focused, 'has-error':!focused}">
-        <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-enter="addToWorkingChanges()" type="text" ng-blur="focused=false" ng-focus="focused=true">
+      <div ng-if="shiftStatus.id == 0">
+        <label for="Scan Barcode"></label>
+        <div class="form-group has-feedback" ng-class="{'has-success':focused, 'has-error':!focused}">
+          <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-enter="addToWorkingChanges()" type="text" ng-blur="focused=false" ng-focus="focused=true">
+        </div>
       </div>
     </div>
     <div class="col-sm-3">
     </br>
-      <label for="">Hours Offered</label>
-      <input type="checkbox" ng-model="hoursOffered">
-    </div>
+    <label for="">Hours Offered</label>
+    <input type="checkbox" ng-model="hoursOffered">
   </div>
+</div>
 
-  <div class="row">
-    <div class="alert alert-{{errorColor}} alert-dismissable" ng-if="error">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      <strong>{{errorMessage}}</strong>
-    </div>
-    <div class="well" ng-if="shiftStatus.boolean">
-      <p><strong><h3>Clock-in Employees: {{workingData.length}}</h3></strong></p>
-      <div class="row">
-        <div ng-repeat="person in workingData track by $index">
-          <div class="col-sm-6">
-            <div class="panel panel-default">
-              <div class="panel-heading row" ng-class="{'panel-heading-blue':(workingData.length-$index)%2==1, 'panel-heading-teal':(workingData.length-$index)%2==0}">
-                <div class="col-sm-1" style="text-align:left;">
-                  <h4><strong>{{person.employeeId}}</strong></h4>
-                </div>
-                <div class="col-sm-9"><h4><strong>{{person.firstName + ' ' + person.lastName}}</strong></h4></div>
-                <div class="col-sm-1" style="color:black;">
-                  <button type="button" ng-click="removeFromWorkingChanges(workingData.length-$index-1)">
-                    <span class='glyphicon glyphicon-trash'></span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="well">
-      <div class="row">
-        <div class="col-sm-3"></div>
+<div class="row">
+  <div class="alert alert-{{errorColor}} alert-dismissable" ng-if="error">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <strong>{{errorMessage}}</strong>
+  </div>
+  <div class="well" ng-if="shiftStatus.id == 0">
+    <p><strong><h3>Clock-in Employees: {{workingData.length}}</h3></strong></p>
+    <div class="row">
+      <div ng-repeat="person in workingData track by $index">
         <div class="col-sm-6">
-          <p><strong><h3>{{(shiftStatus.boolean? 'Current Shifts: ' : 'Clock-out Employees: ') + retrievedData.length}}</h3></strong></p>
-        </div>
-        <div class="col-sm-3">
-          <div class="" ng-if="!shiftStatus.boolean">
-            <h5>Select All</h5>&nbsp;<input type="checkbox" ng-model="toggleAll" ng-change="toggle()">
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div ng-repeat="record in retrievedData track by $index">
-          <div class="col-sm-6">
-            <div class="panel panel-default">
-              <div class="panel-heading row" ng-class="{'panel-heading-blue':(retrievedData.length-$index)%2==1, 'panel-heading-teal':(retrievedData.length-$index)%2==0}">
-                <div class="col-sm-1" style="text-align:left;">
-                  <h4><strong>{{record.employeeId}}</strong></h4>
-                </div>
-                <div class="col-sm-9"><h4><strong>{{record.firstName + ' ' + record.lastName}}</strong></h4></div>
-                <div class="col-sm-1" style="color:black;">
-                  <input type="checkbox" ng-model="record.selected" ng-if="!shiftStatus.boolean">
-                </div>
+          <div class="panel panel-default">
+            <div class="panel-heading row" ng-class="{'panel-heading-blue':(workingData.length-$index)%2==1, 'panel-heading-teal':(workingData.length-$index)%2==0}">
+              <div class="col-sm-1" style="text-align:left;">
+                <h4><strong>{{person.employeeId}}</strong></h4>
               </div>
-              <div class="panel-body" style="color:black;">
-                <h4><span class="label label-danger">{{record.timeIn | date: 'shortTime'}}</span></h4>
-                <h4><span class="label label-success">{{record.jobId}}</span></h4>
+              <div class="col-sm-9"><h4><strong>{{person.firstName + ' ' + person.lastName}}</strong></h4></div>
+              <div class="col-sm-1" style="color:black;">
+                <button type="button" ng-click="removeFromWorkingChanges(workingData.length-$index-1)">
+                  <span class='glyphicon glyphicon-trash'></span>
+                </button>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="well" ng-if="shiftStatus.boolean">
-      <div class="row">
-        <div class="col-sm-3"></div>
-        <div class="col-sm-6">
-          <p><strong><h3>Today's Crew: {{crew.length}}</h3></strong></p>
-        </div>
-        <div class="col-sm-3">
-            <h5>Select All</h5>&nbsp;<button type="button" ng-click="addAllTodayCrewToWorking()">
-              <span class='glyphicon glyphicon-ok' style="color:black;"></span>
-            </button>
-
-        </div>
-      </div>
-      <div class="row">
-        <div ng-repeat="record in crew track by $index">
-          <div class="col-sm-6">
-            <div class="panel panel-default">
-              <div class="panel-heading row" ng-class="{'panel-heading-blue':(crew.length-$index)%2==1, 'panel-heading-teal':(crew.length-$index)%2==0}">
-                <div class="col-sm-1" style="text-align:left;">
-                  <h4><strong>{{record.employeeId}}</strong></h4>
-                </div>
-                <div class="col-sm-9"><h4><strong>{{record.firstName + ' ' + record.lastName}}</strong></h4></div>
-                <div class="col-sm-1" style="color:black;">
-                  <button type="button" ng-click="addTodayCrewToWorking($index)">
-                    <span class='glyphicon glyphicon-ok'></span>
-                  </button>
-                </div>
-              </div>
-              <!-- <div class="panel-body" style="color:black;">
-                <h4><span class="label label-danger">{{record.timeIn | date: 'shortTime'}}</span></h4>
-                <h4><span class="label label-success">{{record.jobId}}</span></h4>
-              </div> -->
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <div class="well">
+    <div class="row">
+      <div class="col-sm-3"></div>
+      <div class="col-sm-6">
+        <p><strong><h3>{{(shiftStatus.id > 0 ? 'Current Shifts: ' : 'Clock-out Employees: ') + retrievedData.length}}</h3></strong></p>
+      </div>
+      <div class="col-sm-3">
+        <div class="" ng-if="shiftStatus.id > 0">
+          <h5>Select All</h5>&nbsp;<input type="checkbox" ng-model="toggleAll" ng-change="toggle()">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div ng-repeat="record in retrievedData track by $index">
+        <div class="col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading row" ng-class="{'panel-heading-blue':(retrievedData.length-$index)%2==1, 'panel-heading-teal':(retrievedData.length-$index)%2==0}">
+              <div class="col-sm-1" style="text-align:left;">
+                <h4><strong>{{record.employeeId}}</strong></h4>
+              </div>
+              <div class="col-sm-9"><h4><strong>{{record.firstName + ' ' + record.lastName}}</strong></h4></div>
+              <div class="col-sm-1" style="color:black;">
+                <input type="checkbox" ng-model="record.selected" ng-if="shiftStatus.id > 0">
+              </div>
+            </div>
+            <div class="panel-body" style="color:black;">
+              <h4><span class="label label-danger">{{record.timeIn | date: 'shortTime'}}</span></h4>
+              <h4><span class="label label-success">{{record.jobId}}</span></h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="well" ng-if="shiftStatus.id == 0">
+    <div class="row">
+      <div class="col-sm-3"></div>
+      <div class="col-sm-6">
+        <p><strong><h3>Today's Crew: {{crew.length}}</h3></strong></p>
+      </div>
+      <div class="col-sm-3">
+        <h5>Select All</h5>&nbsp;<button type="button" ng-click="addAllTodayCrewToWorking()">
+          <span class='glyphicon glyphicon-ok' style="color:black;"></span>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div ng-repeat="record in crew track by $index">
+        <div class="col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading row" ng-class="{'panel-heading-blue':(crew.length-$index)%2==1, 'panel-heading-teal':(crew.length-$index)%2==0}">
+              <div class="col-sm-1" style="text-align:left;">
+                <h4><strong>{{record.employeeId}}</strong></h4>
+              </div>
+              <div class="col-sm-9"><h4><strong>{{record.firstName + ' ' + record.lastName}}</strong></h4></div>
+              <div class="col-sm-1" style="color:black;">
+                <button type="button" ng-click="addTodayCrewToWorking($index)">
+                  <span class='glyphicon glyphicon-ok'></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </div>

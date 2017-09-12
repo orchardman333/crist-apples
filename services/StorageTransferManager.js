@@ -51,11 +51,9 @@ function insert(values, tableName){
     if (values.length > 0) {
       db.getConnection(function (err, connection){
         var query = connection.query('INSERT INTO ' + tableName + ' VALUES ?', [values], function (error, results, fields) {
-          if (error) {
-            reject(error);
-          }
           connection.release();
-          resolve();
+          if (error) reject(error);
+          else resolve();
         });
         console.log(query.sql);
       });
@@ -70,11 +68,9 @@ function update(loadId, storageId){
   return new Promise (function(resolve, reject) {
     db.getConnection(function (err, connection){
       var query = connection.query('UPDATE `bin_table` INNER JOIN `load_bins_table` ON `bin_table`.`Bin ID`=`load_bins_table`.`Bin ID` SET `Previous Load` = ?, `Current Storage` = ? WHERE `Load ID` = ?', [loadId, storageId, loadId], function (error, results, fields) {
-        if (error) {
-          reject(error);
-        }
         connection.release();
-        resolve();
+        if (error) reject(error);
+        else resolve();
       });
       console.log(query.sql);
     });

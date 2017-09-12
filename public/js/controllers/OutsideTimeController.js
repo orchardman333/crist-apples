@@ -14,7 +14,7 @@ angular.module('crist_farms')
     $scope.retrieveRecords();
   });
 $scope.hoursOffered = false;
-  $scope.shiftStatusOptions = [{boolean:true, name:'Shift In'}, {boolean:false, name:'Shift End'}];
+  $scope.shiftStatusOptions = [{id:0, name:'Shift In'}, {id:1, name:'Shift Out'}, {id:2, name:'Change Job'}];
   $scope.shiftStatus = $scope.shiftStatusOptions[0];
   $scope.time = new Date(Date.now());
   if ($scope.time.getMinutes()>55) {
@@ -30,13 +30,13 @@ $scope.hoursOffered = false;
   $scope.timeHoursOffered = $scope.timeHours;
 
   $scope.checkOffered = function(){
-    if ($scope.shiftStatus.boolean) {
+    if ($scope.shiftStatus.id === 0) {
       if ( ($scope.timeHours + $scope.timeMinutes/60) <= ($scope.timeHoursOffered + $scope.timeMinutesOffered/60) ) {
         $scope.timeMinutesOffered = $scope.timeMinutes;
         $scope.timeHoursOffered = $scope.timeHours;
       }
     }
-    else {
+    else if ($scope.shiftStatus.id === 1){
       if ( ($scope.timeHours + $scope.timeMinutes/60) >= ($scope.timeHoursOffered + $scope.timeMinutesOffered/60) ) {
         $scope.timeMinutesOffered = $scope.timeMinutes;
         $scope.timeHoursOffered = $scope.timeHours;
@@ -50,7 +50,7 @@ $scope.hoursOffered = false;
     $scope.hourOptions.push({name: i + ' AM', value: i},{name: i + ' PM', value: i+12});
     $scope.minuteOptions.push({name:(''+5*i)+'',value:5*i});
   }
-  $scope.hourOptions.sort(function(a,b){return a.value-b.value})
+  $scope.hourOptions.sort((a,b) => a.value-b.value)
   $scope.workingData = [];
 
   $scope.addToWorkingChanges = function() {
@@ -142,24 +142,18 @@ $scope.hoursOffered = false;
     var data = {};
     var dateTime = new Date($scope.time.getFullYear(),$scope.time.getMonth(),$scope.time.getDate(),$scope.timeHours, $scope.timeMinutes, 0, 0);
     var dateTimeOffered = dateTime;
-    console.log(dateTime);
-    //console.log(dateTimeOffered);
 
     if ($scope.hoursOffered) {
-      console.log(dateTime);
       dateTimeOffered = new Date($scope.time.getFullYear(),$scope.time.getMonth(),$scope.time.getDate(),$scope.timeHoursOffered, $scope.timeMinutesOffered, 0, 0);
       //dateTimeOffered.setHours($scope.timeHoursOffered, $scope.timeMinutesOffered);
-      console.log(dateTime);
-
     }
-    console.log(dateTime);
-    //console.log(dateTimeOffered);
 
     //shifting in
-    if ($scope.shiftStatus.boolean) {
+    if ($scope.shiftStatus.id === 0) {
       data = {
         employeeIds: $scope.workingData.map(a => a.employeeId),
         shiftIn: true,
+        shiftOut: false,
         time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
         timeOffered: moment(dateTimeOffered).format('YYYY-MM-DD kk:mm:ss'),
         jobId: $scope.job.id,
@@ -169,13 +163,27 @@ $scope.hoursOffered = false;
       $scope.submitRecords(data);
     }
     //shifting out
-    else {
+    else if ($scope.shiftStatus.id === 1){
         data = {
           employeeIds: $scope.retrievedData.filter(a => a.selected).map(b => b.employeeId),
           shiftIn: false,
+          shiftOut: true,
           time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
           timeOffered: moment(dateTimeOffered).format('YYYY-MM-DD kk:mm:ss'),
           date: moment($scope.time).format('YYYY-MM-DD')
+        };
+        $scope.lunchModal(data);
+    }
+    //changing jobs
+    else if ($scope.shiftStatus.id === 2){
+        data = {
+          employeeIds: $scope.retrievedData.filter(a => a.selected).map(b => b.employeeId),
+          shiftIn: true,
+          shiftOut: true,
+          time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
+          timeOffered: moment(dateTimeOffered).format('YYYY-MM-DD kk:mm:ss'),
+          date: moment($scope.time).format('YYYY-MM-DD'),
+          jobId: $scope.job.id
         };
         $scope.lunchModal(data);
     }

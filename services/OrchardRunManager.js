@@ -69,11 +69,9 @@ function insert(values, tableName){
     if (values.length > 0) {
       db.getConnection(function (err, connection){
         var query = connection.query('INSERT INTO ' + tableName + ' VALUES ?', [values], function (error, results, fields) {
-          if (error) {
-            reject(error);
-          }
           connection.release();
-          resolve();
+          if (error) reject(error);
+          else resolve();
         });
         console.log(query.sql);
       });
