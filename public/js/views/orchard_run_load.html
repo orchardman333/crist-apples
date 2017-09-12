@@ -73,7 +73,7 @@
     <div class="col-sm-9">
       <div class="input-group">
       <div class="form-group has-feedback" ng-class="{'has-success':focused, 'has-error':!focused}">
-        <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-enter="addScan()" type="text" ng-blur="focused=false" ng-focus="focused=true">
+        <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="scan" my-focus="refocus" my-input-toggle="toggle" my-enter="addScan()" type="text" ng-blur="focused=false" ng-focus="focused=true">
       </div>
       <div class="input-group-btn">
       <button type="button" class="btn btn-default btn-lg" ng-click="addScan()">Add Barcode</button>
@@ -194,5 +194,5 @@
       </div>
     </div>
   </div>
-</div>
+  <button type="button" class="btn btn-default" ng-click="inputEnable()">Enable!</button>
 </div>

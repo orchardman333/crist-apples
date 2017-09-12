@@ -45,8 +45,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.storageList = data;
     $scope.storage=$scope.storageList[0];
   });
-
-  $scope.addScan = function() {
+$scope.inputEnable = () => $scope.$broadcast('toggle');
+  $scope.addScan = function(event) {
     //blank scan
     if ($scope.scan === null) {
       $scope.error = true;
@@ -58,7 +58,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     }
     //scanned barcode is a bin's barcode
     else if ($scope.scan.length == 19) {
-
+      $scope.$broadcast('toggle');
       //check if Bin ID has been entered in db already
       orchardRunService.BinCheck({binId: $scope.scan.slice(-5)}, function(decodedData) {
         //bin already exists, discard scan
@@ -70,6 +70,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
             $scope.error = false;
             $scope.scan = null;
           }, 2000);
+          $scope.$broadcast('toggle');
+          $scope.$broadcast('refocus');
         }
         //bin does not exist, continue checks
         else {
@@ -107,6 +109,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
                 $scope.scan = null;
                 $scope.boxesCount = 20;
               }
+              $scope.$broadcast('toggle');
+              $scope.$broadcast('refocus');
             });
           }
           //duplicate bin in form
@@ -118,6 +122,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
               $scope.error = false;
               $scope.scan = null;
             }, 2000);
+            $scope.$broadcast('toggle');
+            $scope.$broadcast('refocus');
           }
         }
       });
@@ -137,6 +143,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       }
       //check if duplicate picker ID has been scanned already
       else if ($scope.binData[$scope.binData.length - 1].pickerIds.indexOf($scope.scan) == -1) {
+        $scope.$broadcast('toggle');
         employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
           //error in lookupManager
           if (decodedData.error) {
@@ -153,6 +160,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
             $scope.binData[$scope.binData.length - 1].pickerIds.push($scope.scan);
             $scope.scan = null;
           }
+          $scope.$broadcast('toggle');
+          $scope.$broadcast('refocus');
         });
       }
       //duplicate picker
