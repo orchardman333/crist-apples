@@ -159,7 +159,6 @@ $scope.hoursOffered = false;
         jobId: $scope.job.id,
         managerId: $scope.manager.id
       };
-      console.log(data);
       $scope.submitRecords(data);
     }
     //shifting out
@@ -183,7 +182,8 @@ $scope.hoursOffered = false;
           time: moment(dateTime).format('YYYY-MM-DD kk:mm:ss'),
           timeOffered: moment(dateTimeOffered).format('YYYY-MM-DD kk:mm:ss'),
           date: moment($scope.time).format('YYYY-MM-DD'),
-          jobId: $scope.job.id
+          jobId: $scope.job.id,
+          managerId: $scope.manager.id
         };
         $scope.lunchModal(data);
     }

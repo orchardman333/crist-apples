@@ -16,8 +16,8 @@ module.exports = {
     })
     .then(results => {
       results[0].release();   //release db connection
-      resObject.timeData = results[1][0];
-      resObject.crew = results[2][0];
+      resObject.timeData = results[1];
+      resObject.crew = results[2];
       res.json(resObject);
     })
     .catch(error => {
@@ -34,34 +34,22 @@ module.exports = {
         //Employees ending shift
         if (req.body.shiftOut && req.body.employeeIds.length > 0) {
           asynch.each(req.body.employeeIds, function(employeeId, callback) {
-            var query = connection.query('SELECT `Time In` AS timeIn, `Time Out` AS timeOut, `Job ID` AS jobId, `Manager ID` AS managerId FROM time_table WHERE `Employee ID`= ? AND (DATE(`Time In`)=?) ORDER BY timeIn DESC LIMIT 1', [employeeId, req.body.date],function (error, results, fields) {
-              if (error) callback(error);
+            queryDb(connection,'SELECT `Time In` AS timeIn, `Time Out` AS timeOut, `Job ID` AS jobId, `Manager ID` AS managerId FROM time_table WHERE `Employee ID`= ? AND (DATE(`Time In`)=?) ORDER BY timeIn DESC LIMIT 1', [employeeId, req.body.date])
+            .then(results => {
               if (results.length == 0) {
                 console.log('No expected clock-in records found for ' + employeeId);
               }
               else if (results.length == 1) {
                 if (results[0].timeOut == null) {
                   //add lunch break
+                  //INSERT after lunch shift
                   if (req.body.lunch) {
-                    sqlValues = [req.body.lunchStart, req.body.lunchStart, employeeId, results[0].timeIn];
-                    var query = connection.query('UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', sqlValues, function (error, results, fields) {
-                      if (error) callback(error);
-                    });
-                    console.log(query.sql);
-                    //INSERT after lunch shift
                     sqlValues = [[employeeId, req.body.lunchEnd, req.body.time, req.body.lunchEnd, req.body.timeOffered, results[0].jobId, results[0].managerId, null]];
-                    var query = connection.query('INSERT INTO time_table VALUES ?', [sqlValues], function (error, results, fields) {
-                      if (error) callback(error);
-                    });
-                    console.log(query.sql);
+                    return Promise.all([queryDb(connection, 'UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.lunchStart, req.body.lunchStart, employeeId, results[0].timeIn]),queryDb(connection, 'INSERT INTO time_table VALUES ?', [sqlValues])]);
                   }
                   //no lunch break
                   else {
-                    sqlValues = [req.body.time, req.body.timeOffered, employeeId, results[0].timeIn];
-                    var query = connection.query('UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', sqlValues, function (error, results, fields) {
-                      if (error) callback(error);
-                    });
-                    console.log(query.sql);
+                    return queryDb(connection, 'UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.time, req.body.timeOffered, employeeId, results[0].timeIn]);
                   }
                 }
                 else {
@@ -71,9 +59,13 @@ module.exports = {
               else {
                 console.log('error finding clock-in record');
               }
+            })
+            .then(results => {
               callback();
-            });
-            console.log(query.sql);
+            })
+            .catch(error =>
+              callback(error)
+            )
           }, function (error) {
             if (error) reject(error);
             else resolve(connection);
@@ -85,13 +77,14 @@ module.exports = {
     .then(connection => {
       //Employees beginning shift
       if (req.body.shiftIn && req.body.employeeIds.length > 0) {
+        sqlValues = [];
         for (var i=0; i < req.body.employeeIds.length; i++) {
           sqlValues.push([req.body.employeeIds[i], req.body.time, null, req.body.timeOffered, null, req.body.jobId, req.body.managerId, null]);
         }
         //INSERT new records
-        return Promise.all([connection, queryDb(connection, 'INSERT INTO time_table VALUES ?', [sqlValues])]);
+        return queryDb(connection, 'INSERT INTO time_table VALUES ?', [sqlValues]);
       }
-      else return Promise.resolve(connection);
+      else return Promise.resolve(null);
     })
     .then(results => {
       //results[0].release();
@@ -116,8 +109,8 @@ function queryDb(connection, queryString, sqlValues) {
   return new Promise (function (resolve, reject) {
     var query = connection.query(queryString, sqlValues, function(error, results, fields) {
       if (error) reject(error);
-      else resolve([results,fields]);
+      else resolve(results);
     });
-    //console.log(query.sql);
+    console.log(query.sql);
   });
 }
