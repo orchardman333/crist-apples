@@ -77,7 +77,7 @@
       <div ng-if="shiftStatus.id == 0">
         <label for="Scan Barcode"></label>
         <div class="form-group has-feedback" ng-class="{'has-success':focused, 'has-error':!focused}">
-          <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="$parent.scan" my-focus="refocus" my-enter="addToWorkingChanges()" type="text" ng-blur="focused=false" ng-focus="focused=true">
+          <input class="form-control input-lg" placeholder="{{focused? 'Ready to scan':'Touch here to begin scanning'}}" ng-model="$parent.scan" my-focus="refocus" my-input-toggle="toggle" my-enter="addToWorkingChanges()" type="text" ng-blur="focused=false" ng-focus="focused=true">
         </div>
       </div>
     </div>

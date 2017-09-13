@@ -77,6 +77,7 @@ $scope.hoursOffered = false;
       }
 
       else if ($scope.workingData.map(a => a.employeeId).indexOf($scope.scan) == -1) {
+        $scope.$broadcast('toggle');
         employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
           //error in employeeLookup
           if (decodedData.error) {
@@ -94,6 +95,8 @@ $scope.hoursOffered = false;
             $scope.workingData.push(decodedData);
             $scope.scan = null;
           }
+          $scope.$broadcast('toggle');
+          $scope.$broadcast('refocus');
         });
       }
       //duplicate picker

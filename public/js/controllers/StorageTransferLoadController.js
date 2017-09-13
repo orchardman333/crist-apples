@@ -63,6 +63,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       }
       //check if duplicate bin ID has been scanned on form already
       if ($scope.binData.indexOf($scope.scan) == -1) {
+        $scope.$broadcast('toggle');
         //check if Bin ID has been entered in db
         orchardRunService.BinCheck({binId: $scope.scan}, function(decodedData) {
           //bin exists
@@ -80,6 +81,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
               $scope.scan = null;
             }, 2000);
           }
+          $scope.$broadcast('toggle');
+          $scope.$broadcast('refocus');
         });
       }
       //duplicate bin
