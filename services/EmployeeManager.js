@@ -1,7 +1,7 @@
 // Retrieve employees
 // ========
+const db = require("./DatabaseManager");
 
-var db   = require("./DatabaseManager");
 module.exports = {
   GetEmployees: function (res) {
     db.getConnection(function(err, connection) {
@@ -31,8 +31,8 @@ module.exports = {
           object = results[0];
         }
         catch (err) {
-          object['error'] = true;
-          object['errorProp'] = 'EMPLOYEE';
+          object.error = true;
+          object.errorProp = 'EMPLOYEE';
         }
         res.json(object);
         connection.release();

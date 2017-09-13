@@ -155,6 +155,16 @@ $scope.inputEnable = () => $scope.$broadcast('toggle');
               $scope.scan = null;
             }, 2000);
           }
+          //picker ID not found in database
+          else if (decodedData.length == 0) {
+            $scope.error = true;
+            $scope.errorColor = 'danger';
+            $scope.errorMessage = 'No Employee ID Found!';
+            $timeout(function() {
+              $scope.error = false;
+              $scope.scan = null;
+            }, 2000);
+          }
           else {
             //good scan
             $scope.binData[$scope.binData.length - 1].pickerIds.push($scope.scan);
@@ -193,7 +203,10 @@ $scope.inputEnable = () => $scope.$broadcast('toggle');
     $scope.binData.splice(index, 1);
     $scope.refocus();
   }
-
+  $scope.removePicker = function(indexBin, indexPicker){    //bin object
+    $scope.binData[indexBin].pickerIds.splice(indexPicker, 1);
+    $scope.refocus();
+  }
   var submitLoad = function(){
     if ($scope.binData.length===0){
       alertModal({titleMessage: 'No bins on load!', color: 'btn-danger'})
@@ -246,10 +259,10 @@ $scope.inputEnable = () => $scope.$broadcast('toggle');
     $scope.refocus();
   }
 
-  //ReplacementValues
-  var i = 0;
-  $scope.showReplacements = function () {
-    if (i < 1) {
+  //Get Replacement Values
+  var foundReplacements = false;
+  var getReplacements = function () {
+    if (!foundReplacements) {
       orchardRunService.GetReplacements(function(data) {
         data.bvs.sort((a,b)=> a.blockName.localeCompare(b.blockName));
         $scope.repList = data;
@@ -258,14 +271,17 @@ $scope.inputEnable = () => $scope.$broadcast('toggle');
         $scope.repTreatment = $scope.repList.treatment[0];
         $scope.repPick = $scope.repList.pick[0];
         $scope.repJob = $scope.repList.job[0];
-        $scope.replaceLabel = true;
-        i++;
+        foundReplacements = true;
       });
     }
-    else {
-      $scope.replaceLabel = true;
-    }
   }
+  //ReplacementValues
+  $scope.showReplacements = function () {
+      $scope.replaceLabel = true;
+      getReplacements();
+  }
+  $scope.cancelReplacements = () => $scope.replaceLabel = false;
+
   $scope.buildReplacementBarcode = function () {
     $scope.scan = $scope.repBvs.blockId
     .concat($scope.repBvs.varietyId,$scope.repBvs.strainId,$scope.repBearing.id, $scope.repTreatment.id,$scope.repPick.id,$scope.repJob.id);
