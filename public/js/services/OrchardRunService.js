@@ -21,19 +21,19 @@ angular.module('crist_farms').service('OrchardRunService', ['$http', function($h
     });
   };
   service.GetLoadId = function(data, callback) {
-    $http.post("/api/loadId/", data).then(function(response) {
+    $http.get("/api/loadId/", {params:{idType: data.idType}}).then(function(response) {
       callback(response.data);
     });
   };
 
   service.BinLookup = function(data, callback) {
-    $http.post("/api/BinLookup/", data).then(function(response) {
+    $http.get("/api/binlookup/", {params:{barcode: data.barcode}}).then(function(response) {
       callback(response.data);
     });
   };
 
   service.BinCheck = function(data, callback) {
-    $http.post("/api/BinCheck/", data).then(function(response) {
+    $http.get("/api/bincheck/", {params:{binId: data.binId}}).then(function(response) {
       callback(response.data);
     });
   };

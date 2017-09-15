@@ -67,7 +67,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         //check if Bin ID has been entered in db
         orchardRunService.BinCheck({binId: $scope.scan}, function(decodedData) {
           //bin exists
-          if (decodedData.exists) {
+          if (decodedData.length == 1) {
             $scope.binData.push($scope.scan);
             $scope.scan = null;
           }
@@ -137,11 +137,13 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         },
         binData: $scope.binData
       };
-      //orchardRunService.SaveData(load);
+
       storageService.SubmitStorageTransfer(load, function (resObj) {
-        alertModal(resObj, 1000);
-        clearLoad(false);
-        timeRefresh();
+        alertModal(resObj, 2000);
+        if (!data.error) {
+          clearLoad(false);
+          timeRefresh();
+        }
       });
     });
   }

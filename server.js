@@ -26,62 +26,62 @@ app.use(methodOverride());
 
 // REST API -------------------------------------------------------------
 // People and Trucks
-app.get('/api/trucks', function(req, res) {
-  truckManager.GetTrucks(res);
+app.get('/api/trucks', function(req,res) {
+  truckManager.GetTrucks(req,res);
 });
 
-app.get('/api/truckDrivers', function(req, res) {
-  truckManager.GetTruckDrivers(res);
+app.get('/api/truckDrivers', function(req,res) {
+  truckManager.GetTruckDrivers(req,res);
 });
 
-app.get('/api/employees', function(req, res) {
-  employeeManager.GetEmployees(res);
+app.get('/api/employees', function(req,res) {
+  employeeManager.GetEmployees(req,res);
 });
 
-app.get('/api/managers', function(req, res) {
-  employeeManager.GetManagers(res);
+app.get('/api/managers', function(req,res) {
+  employeeManager.GetManagers(req,res);
 });
 
-app.post('/api/employeeLookup', function(req, res) {
-  employeeManager.EmployeeLookup(req, res);
+app.get('/api/employee', function(req,res) {   // ?employeeId = ...
+  employeeManager.EmployeeLookup(req,res);
 });
 //-------------------------------------------------------
 // Bins and Orchard Run
-app.post('/api/binLookup', function(req, res) {
-  lookupManager.BinLookup(req, res);
+app.get('/api/binlookup', function(req,res) {
+  lookupManager.BinLookup(req,res);
 });
 
-app.post('/api/binCheck', function(req, res) {
-  lookupManager.BinCheck(req, res);
+app.get('/api/bincheck', function(req,res) {
+  lookupManager.BinCheck(req,res);
 });
 
-app.post('/api/orchardRunManager', function(req, res) {
-  orchardRunManager.LoadBins(req, res);
+app.post('/api/orchardRunManager', function(req,res) {
+  orchardRunManager.LoadBins(req,res);
 });
 
-app.post('/api/loadId', function(req, res) {
-  loadSeqManager.GetLoadId(req, res);
+app.get('/api/loadId', function(req,res) {
+  loadSeqManager.GetLoadId(req,res);
 });
 
-app.get('/api/jobs', function(req, res) {
-  lookupManager.GetJobs(res);
+app.get('/api/jobs', function(req,res) {
+  lookupManager.GetJobs(req,res);
 });
 
-app.get('/api/replacementvalues', function(req, res) {
-  replacementLabelManager.ReplacementValues(res);
+app.get('/api/replacementvalues', function(req,res) {
+  replacementLabelManager.ReplacementValues(req,res);
 });
 //-------------------------------------------------------
 // Storages and Transfers
-app.get('/api/storage', function(req, res) {
-  storageManager.GetStorageList(res);
+app.get('/api/storage', function(req,res) {
+  storageManager.GetStorageList(req,res);
 });
 
-app.post('/api/storageTransfer', function(req, res) {
-  storageTransferManager.TransferBins(req, res);
+app.post('/api/storageTransfer', function(req,res) {
+  storageTransferManager.TransferBins(req,res);
 });
 
-// app.post('/api/PackingDumpManager', function(req, res) {
-//   packingDumpManager.DumpBins(req, res);
+// app.post('/api/PackingDumpManager', function(req,res) {
+//   packingDumpManager.DumpBins(req,res);
 // });
 //-------------------------------------------------------
 // Time Clock
@@ -98,7 +98,7 @@ app.post('/api/timeForm', function(req,res) {
 });
 
 // application -------------------------------------------------------------
-app.get('*', function(req, res) {
+app.get('*', function(req,res) {
   res.sendFile(__dirname + '/public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
 });
 

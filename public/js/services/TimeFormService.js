@@ -9,7 +9,6 @@ angular.module('crist_farms')
       callback(response.data);
     });
   }
-
   service.getOutsideRecords = function(data, callback) {
     $http.post("/api/getoutsidetime", data).then(function(response) {
       callback(response.data);

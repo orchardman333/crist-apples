@@ -45,10 +45,10 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.storageList = data;
     $scope.storage=$scope.storageList[0];
   });
-$scope.inputEnable = () => $scope.$broadcast('toggle');
+
   $scope.addScan = function(event) {
     //blank scan
-    if ($scope.scan === null) {
+    if ($scope.scan == null) {
       $scope.error = true;
       $scope.errorColor = 'danger';
       $scope.errorMessage = 'No Barcode Entered!';
@@ -144,7 +144,7 @@ $scope.inputEnable = () => $scope.$broadcast('toggle');
       //check if duplicate picker ID has been scanned already
       else if ($scope.binData[$scope.binData.length - 1].pickerIds.indexOf($scope.scan) == -1) {
         $scope.$broadcast('toggle');
-        employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
+        employeeService.LookupEmployee({employeeId: $scope.scan}, function(decodedData) {
           //error in lookupManager
           if (decodedData.error) {
             $scope.error = true;
@@ -277,8 +277,8 @@ $scope.inputEnable = () => $scope.$broadcast('toggle');
   }
   //ReplacementValues
   $scope.showReplacements = function () {
-      $scope.replaceLabel = true;
-      getReplacements();
+    $scope.replaceLabel = true;
+    getReplacements();
   }
   $scope.cancelReplacements = () => $scope.replaceLabel = false;
 

@@ -93,7 +93,7 @@ angular.module('crist_farms')
       backdrop: 'static',
       keyboard: false,
       controller: function($scope) {
-        $scope.message = object.titleMessage;
+        $scope.titleMessage = object.message;
         $scope.color = object.error? 'btn-danger' : 'btn-success';
       }
     });

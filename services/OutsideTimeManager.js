@@ -1,6 +1,6 @@
 const db = require("./DatabaseManager");
+const query = require("./QueryManager")
 const asynch = require("async");
-const util = require("util");
 
 module.exports = {
   SeeWork: function(req,res) {
@@ -9,63 +9,61 @@ module.exports = {
       crew: [],
       error: false
     };
-    connect()
+    //Connect to database
+    query.connectOnly(db)
     .then(connection => {
       //Finds every employee's most recent time in that does not have a time out for a given date and manager
-      return Promise.all([connection, queryDb(connection, 'SELECT subquery.*, `time_table`.`Time Out` AS timeOut, `time_table`.`Job ID` AS jobId FROM (SELECT `time_table`.`Employee ID` AS employeeId, `employee_table`.`Employee First Name` AS firstName, `employee_table`.`Employee Last Name` AS lastName, MAX(`time_table`.`Time In`) AS timeIn, `time_table`.`Manager ID` AS managerId FROM `time_table` JOIN `employee_table` ON `employee_table`.`Employee ID` = `time_table`.`Employee ID` WHERE `Manager ID`= ? AND (DATE(`Time In`)=?) GROUP BY employeeId) subquery JOIN `time_table` ON `time_table`.`time In`=subquery.timeIn AND `time_table`.`Employee ID`=subquery.employeeid WHERE `time_table`.`Time Out` IS NULL', [req.body.managerId, req.body.date]), queryDb(connection, 'SELECT `time_table`.`Employee ID` AS employeeId, `employee_table`.`Employee First Name` AS firstName, `employee_table`.`Employee Last Name` AS lastName, `time_table`.`Manager ID` AS managerId FROM `time_table` JOIN `employee_table` ON `employee_table`.`Employee ID` = `time_table`.`Employee ID` WHERE `Manager ID`= ? AND (DATE(`Time In`)=?) GROUP BY employeeId', [req.body.managerId, req.body.date])]);
+      return Promise.all([connection, query.queryOnly(connection, 'SELECT subquery.*, `time_table`.`Time Out` AS timeOut, `time_table`.`Job ID` AS jobId FROM (SELECT `time_table`.`Employee ID` AS employeeId, `employee_table`.`Employee First Name` AS firstName, `employee_table`.`Employee Last Name` AS lastName, MAX(`time_table`.`Time In`) AS timeIn, `time_table`.`Manager ID` AS managerId FROM `time_table` JOIN `employee_table` ON `employee_table`.`Employee ID` = `time_table`.`Employee ID` WHERE `Manager ID`= ? AND (DATE(`Time In`)=?) GROUP BY employeeId) subquery JOIN `time_table` ON `time_table`.`time In`=subquery.timeIn AND `time_table`.`Employee ID`=subquery.employeeid WHERE `time_table`.`Time Out` IS NULL', [req.body.managerId, req.body.date]), query.queryOnly(connection, 'SELECT `time_table`.`Employee ID` AS employeeId, `employee_table`.`Employee First Name` AS firstName, `employee_table`.`Employee Last Name` AS lastName, `time_table`.`Manager ID` AS managerId FROM `time_table` JOIN `employee_table` ON `employee_table`.`Employee ID` = `time_table`.`Employee ID` WHERE `Manager ID`= ? AND (DATE(`Time In`)=?) GROUP BY employeeId', [req.body.managerId, req.body.date])]);
     })
     .then(results => {
+      //Release db connection and send response
       results[0].release();   //release db connection
       resObject.timeData = results[1];
       resObject.crew = results[2];
       res.json(resObject);
     })
     .catch(error => {
+      //Respond with error if thrown
       console.error(error);
       res.json({message:error.message, error:true});
     });
   },
 
   DoWork: function(req,res) {
-    var sqlValues = [];
-    connect()
+    var queryValues = [];
+    //Connect to database
+    query.connectOnly(db)
     .then(connection => {
-      return new Promise (function(resolve, reject) {
+      return new Promise ((resolve, reject) => {
         //Employees ending shift
         if (req.body.shiftOut && req.body.employeeIds.length > 0) {
+          //For each employee, find the specified day's most recent
           asynch.each(req.body.employeeIds, function(employeeId, callback) {
-            queryDb(connection,'SELECT `Time In` AS timeIn, `Time Out` AS timeOut, `Job ID` AS jobId, `Manager ID` AS managerId FROM time_table WHERE `Employee ID`= ? AND (DATE(`Time In`)=?) ORDER BY timeIn DESC LIMIT 1', [employeeId, req.body.date])
+            query.queryOnly(connection,'SELECT `Time In` AS timeIn, `Time Out` AS timeOut, `Job ID` AS jobId, `Manager ID` AS managerId FROM time_table WHERE `Employee ID`= ? AND (DATE(`Time In`)=?) ORDER BY timeIn DESC LIMIT 1', [employeeId, req.body.date])
             .then(results => {
-              if (results.length == 0) {
-                console.log('No expected clock-in records found for ' + employeeId);
-              }
-              else if (results.length == 1) {
+              //Only 1 record found
+              if (results.length == 1) {
+                //Only found record has no timeOut
                 if (results[0].timeOut == null) {
-                  //add lunch break
-                  //INSERT after lunch shift
+                  //Include lunch break
                   if (req.body.lunch) {
-                    sqlValues = [[employeeId, req.body.lunchEnd, req.body.time, req.body.lunchEnd, req.body.timeOffered, results[0].jobId, results[0].managerId, null]];
-                    return Promise.all([queryDb(connection, 'UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.lunchStart, req.body.lunchStart, employeeId, results[0].timeIn]),queryDb(connection, 'INSERT INTO time_table VALUES ?', [sqlValues])]);
+                    //UPDATE morning entry, INSERT afternoon shift
+                    queryValues = [[employeeId, req.body.lunchEnd, req.body.time, req.body.lunchEnd, req.body.timeOffered, results[0].jobId, results[0].managerId, null]];
+                    return Promise.all([query.queryOnly(connection, 'UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.lunchStart, req.body.lunchStart, employeeId, results[0].timeIn]), query.queryOnly(connection, 'INSERT INTO time_table VALUES ?', [queryValues])]);
                   }
-                  //no lunch break
+                  //No lunch break
                   else {
-                    return queryDb(connection, 'UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.time, req.body.timeOffered, employeeId, results[0].timeIn]);
+                    return query.queryOnly(connection, 'UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.time, req.body.timeOffered, employeeId, results[0].timeIn]);
                   }
                 }
-                else {
-                  console.log('Most recent record already clocked out for ' + employeeId);
-                }
-              }
-              else {
-                console.log('error finding clock-in record');
               }
             })
             .then(results => {
-              callback();
+              callback();   //asynch.each iteration successfully completed
             })
-            .catch(error =>
-              callback(error)
-            )
+            .catch(error => {
+              callback(error);    //asynch.each iteration failed, break to final callback
+            })
           }, function (error) {
             if (error) reject(error);
             else resolve(connection);
@@ -77,40 +75,23 @@ module.exports = {
     .then(connection => {
       //Employees beginning shift
       if (req.body.shiftIn && req.body.employeeIds.length > 0) {
-        sqlValues = [];
+        queryValues = [];
         for (var i=0; i < req.body.employeeIds.length; i++) {
-          sqlValues.push([req.body.employeeIds[i], req.body.time, null, req.body.timeOffered, null, req.body.jobId, req.body.managerId, null]);
+          queryValues.push([req.body.employeeIds[i], req.body.time, null, req.body.timeOffered, null, req.body.jobId, req.body.managerId, null]);
         }
         //INSERT new records
-        return queryDb(connection, 'INSERT INTO time_table VALUES ?', [sqlValues]);
+        return Promise.all([connection, query.queryOnly(connection, 'INSERT INTO time_table VALUES ?', [queryValues])]);
       }
-      else return Promise.resolve(null);
+      else return Promise.all([connection]);
     })
     .then(results => {
-      //results[0].release();
+      results[0].release();   //release db connection
       res.json({message:'DB Success!', error:false});
     })
+    //Catch any errors and respond
     .catch(error => {
       console.error(error);
       res.json({message: error.message, error:true});
     })
   }
-}
-
-function connect() {
-  return new Promise (function(resolve, reject) {
-    db.getConnection(function(error, connection) {
-      if (error) reject(error);
-      else resolve(connection);
-    });
-  });
-}
-function queryDb(connection, queryString, sqlValues) {
-  return new Promise (function (resolve, reject) {
-    var query = connection.query(queryString, sqlValues, function(error, results, fields) {
-      if (error) reject(error);
-      else resolve(results);
-    });
-    console.log(query.sql);
-  });
-}
+};

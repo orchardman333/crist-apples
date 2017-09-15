@@ -17,12 +17,11 @@ angular.module('crist_farms')
     });
   }
 
-    service.LookupEmployee = function(data, callback) {
-      $http.post("/api/EmployeeLookup/", data).then(function(response) {
-        callback(response.data);
-      });
-    };
-
+  service.LookupEmployee = function(data, callback) {
+    $http.get("/api/employee", {params:{employeeId: data.employeeId}}).then(function(response) {
+      callback(response.data);
+    });
+  };
 
   return service;
 }]);

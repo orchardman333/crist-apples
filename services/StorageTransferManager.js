@@ -1,7 +1,8 @@
 // StorageTransferManager.js
 
-var db = require("./DatabaseManager");
-var decode = require("./LookupManager");
+const db = require("./DatabaseManager");
+const query = require("./QueryManager")
+const decode = require("./LookupManager");
 
 //Take entire list of barcode scans (including form data like storage, truck driver, etc.) from Angular
 //Then sort and INSERT them into db
@@ -21,62 +22,34 @@ module.exports = {
       loadBinValues.push([req.body.loadData.load.id, req.body.binData[i], req.body.loadData.storage.id]);
     }
 
-    insertLoadHeading()
+    query.connectOnly(db)
+    .then(insertLoadHeading)
     .then(insertLoadBins)
     .then(updateBins)
-    .then(function (_){
+    .then(results => {
+      results[0].release();
       res.json({message: 'Hooray! Load entered successfully', error: false});
       console.log('END OF LOAD ' + loadHeadingValues[0][1]);
     })
-    .catch(function (e){
-      res.json({message: e.name + ' ' + e.message, error: true});
-      console.log(e);
+    .catch(error => {
+      res.json({message: error.name + ' ' + error.message, error: true})
+      console.log(error);
     });
 
     //Wrapper functions
-    function insertLoadHeading(){
-      return insert(loadHeadingValues, 'load_heading_table')
+    function insertLoadHeading(connection) {
+      return query.insert(connection, loadHeadingValues, 'load_heading_table')
     }
-    function insertLoadBins(_){
-      return insert(loadBinValues, 'load_bins_table')
+    function insertLoadBins(results) {
+      return query.insert(results[0], loadBinValues, 'load_bins_table')
     }
-    function updateBins(_){
-      return update(req.body.loadData.load.id, req.body.loadData.storage.id)
+    function updateBins(results) {
+      return query.update(results[0], req.body.loadData.load.id, req.body.loadData.storage.id)
     }
   }
 };
 
-function insert(values, tableName){
-  return new Promise (function(resolve, reject) {
-    if (values.length > 0) {
-      db.getConnection(function (err, connection){
-        var query = connection.query('INSERT INTO ' + tableName + ' VALUES ?', [values], function (error, results, fields) {
-          connection.release();
-          if (error) reject(error);
-          else resolve();
-        });
-        console.log(query.sql);
-      });
-    }
-    else {
-      resolve();
-    }
-  });
-}
-
-function update(loadId, storageId){
-  return new Promise (function(resolve, reject) {
-    db.getConnection(function (err, connection){
-      var query = connection.query('UPDATE `bin_table` INNER JOIN `load_bins_table` ON `bin_table`.`Bin ID`=`load_bins_table`.`Bin ID` SET `Previous Load` = ?, `Current Storage` = ? WHERE `Load ID` = ?', [loadId, storageId, loadId], function (error, results, fields) {
-        connection.release();
-        if (error) reject(error);
-        else resolve();
-      });
-      console.log(query.sql);
-    });
-  });
-}
-
+//Create arrays for INSERT
 function insertIntoLoadHeadingArray(loadHeadingValues, loadData) {
   loadHeadingValues.push([loadData.load.type,
     loadData.load.id,

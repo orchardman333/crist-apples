@@ -1,15 +1,10 @@
 // Retrieve storage rooms
 // ========
-var db = require("./DatabaseManager");
+const db = require("./DatabaseManager");
+const query = require("./QueryManager")
 
 module.exports = {
-  GetStorageList: function (res) {
-    db.getConnection(function(err, connection) {
-      var query = connection.query('SELECT `Storage ID` AS id, `Storage Name` AS name from storage_table', function(error, results, fields) {
-        connection.release();
-        res.json(results);
-      });
-      console.log(query.sql);
-    });
+  GetStorageList: function (req, res) {
+    query.standardStack(db, res, 'SELECT `Storage ID` AS id, `Storage Name` AS name from storage_table', null);
   }
 };

@@ -96,7 +96,7 @@
   <div class="well" ng-if="shiftStatus.id == 0">
     <p><strong><h3>Clock-in Employees: {{workingData.length}}</h3></strong></p>
     <div class="row">
-      <div ng-repeat="person in workingData track by $index">
+      <div ng-repeat="person in workingData.slice().reverse() track by $index">
         <div class="col-sm-6">
           <div class="panel panel-default">
             <div class="panel-heading row" ng-class="{'panel-heading-blue':(workingData.length-$index)%2==1, 'panel-heading-teal':(workingData.length-$index)%2==0}">

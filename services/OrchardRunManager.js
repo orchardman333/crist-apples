@@ -3,8 +3,9 @@
 // h01 mc ld b u 1 p100 10000
 // h01mcldbu1p10010000
 // ========
-var db = require("./DatabaseManager");
-var decode = require("./LookupManager");
+const db = require("./DatabaseManager");
+const query = require("./QueryManager")
+const decode = require("./LookupManager");
 
 //Take entire list of barcode scans (including form data like storage, truck driver, etc.) from Angular
 //Then sort and INSERT them into db
@@ -31,57 +32,43 @@ module.exports = {
 
       //Pickers
       for (var j=0; j < req.body.binData[i].pickerIds.length; j++) {
+        if (req.body.binData[i].pickerIds[j] == null) continue;
         insertIntoBoxesArray(bushelValues, req.body.binData[i].pickerIds[j], barcodeProperties.binId)
       }
     }
 
-    insertLoadHeading()
+    query.connectOnly(db)
+    .then(insertLoadHeading)
     .then(insertBinValues)
     .then(insertLoadBins)
     .then(insertBushelValues)
-    .then(function(_) {
+    .then(results => {
+      results[0].release();
       res.json({message: 'Hooray! Load entered successfully', error: false})
       console.log('END OF LOAD ' + loadHeadingValues[0][1])
     })
-    .catch(function(e) {
-      res.json({message: e.name + ' ' + e.message, error: true})
-      console.log(e);
+    .catch(error => {
+      res.json({message: error.name + ' ' + error.message, error: true})
+      console.log(error);
     });
-
-    //Wrapper functions
-    function insertLoadHeading(){
-      return insert(loadHeadingValues, 'load_heading_table')
-    }
-    function insertBinValues(_){
-      return insert(binValues, 'bin_table')
-    }
-    function insertLoadBins(_){
-      return insert(loadBinValues, 'load_bins_table')
-    }
-    function insertBushelValues(_){
-      return insert(bushelValues, 'bushels_picker_table')
-    }
   }
 };
 
-function insert(values, tableName){
-  return new Promise (function(resolve, reject) {
-    if (values.length > 0) {
-      db.getConnection(function (err, connection){
-        var query = connection.query('INSERT INTO ' + tableName + ' VALUES ?', [values], function (error, results, fields) {
-          connection.release();
-          if (error) reject(error);
-          else resolve();
-        });
-        console.log(query.sql);
-      });
-    }
-    else {
-      resolve();
-    }
-  });
+//Wrapper functions
+function insertLoadHeading(connection) {
+  return query.insert(connection, loadHeadingValues, 'load_heading_table')
+}
+function insertBinValues(results) {
+  return query.insert(results[0], binValues, 'bin_table')
+}
+function insertLoadBins(results) {
+  return query.insert(results[0], loadBinValues, 'load_bins_table')
+}
+function insertBushelValues(results) {
+  return query.insert(results[0], bushelValues, 'bushels_picker_table')
 }
 
+//Create arrays for INSERT statements
 function insertIntoBinArray(binValues, barcodeProperties, binData, loadId) {
   binValues.push([
     barcodeProperties.binId,
