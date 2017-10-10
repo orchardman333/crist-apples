@@ -22,20 +22,17 @@ module.exports = {
     var queryStrings = [bvsQueryString, 'SELECT `Bearing ID` AS id, `Bearing Name` AS name FROM `bearing_table`', 'SELECT `Treatment ID` AS id, `Treatment Name` AS name FROM `treatment_table`', 'SELECT `Pick ID` AS id, `Pick Name` AS name FROM `pick_table`', 'SELECT `Job ID` AS id, `Job Name` AS name FROM `job_table`'];
 
     query.connectOnly(db)
-    .then(connection => {
-      // var promiseArray = [connection];
-      // for (var i=0; i<=queryStrings; i++) {
-      //   promiseArray.push(query.queryCallback(connection, queryStrings[i], null));
-      // }
-      // return Promise.all(promiseArray);
-      return Promise.all([connection, query.queryOnly(connection, queryStrings[0], null), query.queryOnly(connection, queryStrings[1], null), query.queryOnly(connection, queryStrings[2], null), query.queryOnly(connection, queryStrings[3], null), query.queryOnly(connection, queryStrings[4], null)])
+    .then(results => {
+      return Promise.all([query.queryOnly(results.connection, queryStrings[0], null), query.queryOnly(results.connection, queryStrings[1], null), query.queryOnly(results.connection, queryStrings[2], null), query.queryOnly(results.connection, queryStrings[3], null), query.queryOnly(results.connection, queryStrings[4], null)]);
     })
     .then(results => {
-      results[0].release();
-      res.json({bvs: results[1], bearing: results[2], treatment: results[3], pick: results[4], job: results[5]});
+      results[0].connection.release();
+      res.json({bvs: results[0].data, bearing: results[1].data, treatment: results[2].data, pick: results[3].data, job: results[4].data});
     })
     .catch(error => {
-      res.json({error: true, id: error.name, message: error.message})
+      if (!error.getConnectionError) error.connection.release();
+      res.json({error: true, message: error.data.name + ' ' + error.data.message})
+      console.error(error.data);
     });
   }
 }

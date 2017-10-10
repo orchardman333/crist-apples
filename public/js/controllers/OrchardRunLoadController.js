@@ -5,24 +5,8 @@ angular.module('crist_farms')
 function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeService, storageService, truckService) {
 
   //Date and Time variable initializing
-  var currentDateTime = new Date(Date.now());
-  $scope.pickDate = currentDateTime;
-  $scope.loadDate = currentDateTime;
-  if ($scope.loadDate.getMinutes()>55) {
-    $scope.loadTimeMinute = 0;
-    $scope.loadTimeHour = $scope.loadDate.getHours()+1;
-  }
-  else {
-    $scope.loadTimeMinute = Math.ceil($scope.loadDate.getMinutes()/5)*5;
-    $scope.loadTimeHour = $scope.loadDate.getHours();
-  }
-  $scope.hourOptions = [{name: 'Midnight', value: 0},{name: '12 PM', value: 12},{name: '1 AM', value: 1},{name: '1 PM', value: 13}];
-  $scope.minuteOptions = [{name:'00',value:0},{name:'05',value:5}];
-  for (var i=2; i<12; i++) {
-    $scope.hourOptions.push({name: i + ' AM', value: i},{name: i + ' PM', value: i+12});
-    $scope.minuteOptions.push({name:(''+5*i)+'',value:5*i});
-  }
-  $scope.hourOptions.sort((a,b) => a.value-b.value)
+  Object.assign($scope, orchardRunService.timeSet());
+  Object.assign($scope, orchardRunService.timeOptions());
 
   $scope.focused = false;
   $scope.scan = null;
@@ -31,45 +15,33 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
   $scope.loadComments = null;
   $scope.binData = [];
 
-  truckService.GetTrucks(function(data) {
-    $scope.truckList=data;
-    $scope.truck=$scope.truckList[0];
+  truckService.GetTrucks(data => {
+    $scope.truckList = data;
+    $scope.truck = $scope.truckList[0];
   });
 
-  truckService.GetTruckDrivers(function(data) {
-    $scope.truckDriverList=data;
-    $scope.truckDriver=$scope.truckDriverList[0];
+  truckService.GetTruckDrivers(data => {
+    $scope.truckDriverList = data;
+    $scope.truckDriver = $scope.truckDriverList[0];
   });
 
-  storageService.GetStorageList(function(data) {
+  storageService.GetStorageList(data => {
     $scope.storageList = data;
-    $scope.storage=$scope.storageList[0];
+    $scope.storage = $scope.storageList[0];
   });
 
-  $scope.addScan = function(event) {
+  $scope.addScan = function() {
     //blank scan
-    if ($scope.scan == null) {
-      $scope.error = true;
-      $scope.errorColor = 'danger';
-      $scope.errorMessage = 'No Barcode Entered!';
-      $timeout(function() {
-        $scope.error = false;
-      }, 2000);
-    }
+    if ($scope.scan === null) alertError({message: 'No Barcode Entered!'});
+
     //scanned barcode is a bin's barcode
-    else if ($scope.scan.length == 19) {
+    else if ($scope.scan.length === 19) {
       $scope.$broadcast('toggle');
       //check if Bin ID has been entered in db already
       orchardRunService.BinCheck({binId: $scope.scan.slice(-5)}, function(decodedData) {
         //bin already exists, discard scan
         if (decodedData.exists) {
-          $scope.error = true;
-          $scope.errorColor = 'danger';
-          $scope.errorMessage = 'Bin already found in database!';
-          $timeout(function() {
-            $scope.error = false;
-            $scope.scan = null;
-          }, 2000);
+          alertError({message: 'Bin already found in database!'});
           $scope.$broadcast('toggle');
           $scope.$broadcast('refocus');
         }
@@ -79,15 +51,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
           if ($scope.binData.map(a => a.barcode).map(b => b.slice(-5)).indexOf($scope.scan.slice(-5)) === -1) {
             orchardRunService.BinLookup({barcode: $scope.scan}, function(decodedData) {
               //error in lookupManager
-              if (decodedData.error) {
-                $scope.error = true;
-                $scope.errorColor = 'danger';
-                $scope.errorMessage = 'No ' + decodedData.errorProp + ' Found!';
-                $timeout(function() {
-                  $scope.error = false;
-                  $scope.scan = null;
-                }, 2000);
-              }
+              if (decodedData.error) alertError({message: 'No ' + decodedData.errorProp + ' Found!'});
               //lookupManager OK
               else {
                 var value = {
@@ -115,13 +79,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
           }
           //duplicate bin in form
           else {
-            $scope.error = true;
-            $scope.errorColor = 'danger';
-            $scope.errorMessage = 'Duplicate Bin Entered!';
-            $timeout(function() {
-              $scope.error = false;
-              $scope.scan = null;
-            }, 2000);
+            alertError({message: 'Duplicate Bin Entered!'});
             $scope.$broadcast('toggle');
             $scope.$broadcast('refocus');
           }
@@ -130,44 +88,20 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     }
 
     //scanned barcode is a picker's barcode
-    else if ($scope.scan.length == 6) {
+    else if ($scope.scan.length === 6) {
       //check to make sure at least one bin is present
       if ($scope.binData.length <= 0) {
-        $scope.error = true;
-        $scope.errorColor = 'danger';
-        $scope.errorMessage = 'Need Bin First!';
-        $timeout(function() {
-          $scope.error = false;
-          $scope.scan = null;
-        }, 2000);
+        alertError({message: 'Need Bin First!'});
       }
       //check if duplicate picker ID has been scanned already
-      else if ($scope.binData[$scope.binData.length - 1].pickerIds.indexOf($scope.scan) == -1) {
+      else if ($scope.binData[$scope.binData.length - 1].pickerIds.indexOf($scope.scan) === -1) {
         $scope.$broadcast('toggle');
         employeeService.LookupEmployee({employeeId: $scope.scan}, function(decodedData) {
-          //error in lookupManager
-          if (decodedData.error) {
-            $scope.error = true;
-            $scope.errorColor = 'danger';
-            $scope.errorMessage = 'No ' + decodedData.errorProp + ' Found!';
-            $timeout(function() {
-              $scope.error = false;
-              $scope.scan = null;
-            }, 2000);
-          }
           //picker ID not found in database
-          else if (decodedData.length == 0) {
-            $scope.error = true;
-            $scope.errorColor = 'danger';
-            $scope.errorMessage = 'No Employee ID Found!';
-            $timeout(function() {
-              $scope.error = false;
-              $scope.scan = null;
-            }, 2000);
-          }
+          if (decodedData.length !== 1 || decodedData[0].error) alertError({message: 'No Employee Found!'});
+          //good scan
           else {
-            //good scan
-            $scope.binData[$scope.binData.length - 1].pickerIds.push($scope.scan);
+            $scope.binData[$scope.binData.length - 1].pickerIds.push(decodedData[0].employeeId);
             $scope.scan = null;
           }
           $scope.$broadcast('toggle');
@@ -175,40 +109,27 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         });
       }
       //duplicate picker
-      else {
-        $scope.error = true;
-        $scope.errorColor = 'danger';
-        $scope.errorMessage = 'Duplicate Picker Entered!';
-        $timeout(function() {
-          $scope.error = false;
-          $scope.scan = null;
-        }, 2000);
-      }
+      else alertError({message: 'Duplicate Picker Entered!'});
     }
     //scanned barcode is invalid type
-    else {
-      $scope.error = true;
-      $scope.errorColor = 'danger';
-      $scope.errorMessage = 'Invalid Barcode Type!';
-      $timeout(function() {
-        $scope.error = false;
-        $scope.scan = null;
-      }, 2000);
-    }
+    else alertError({message:'Invalid Barcode Type!'});
   }
   $scope.refocus = function() {
     $scope.$broadcast('refocus');
-  }
-  $scope.removeScan = function(index){    //bin object
+  };
+
+  $scope.removeScan = function(index) {
     $scope.binData.splice(index, 1);
-    $scope.refocus();
-  }
-  $scope.removePicker = function(indexBin, indexPicker){    //bin object
+    $scope.$broadcast('refocus');
+  };
+
+  $scope.removePicker = function(indexBin, indexPicker) {
     $scope.binData[indexBin].pickerIds.splice(indexPicker, 1);
-    $scope.refocus();
-  }
-  var submitLoad = function(){
-    if ($scope.binData.length===0){
+    $scope.$broadcast('refocus');
+  };
+
+  var submitLoad = function() {
+    if ($scope.binData.length === 0){
       alertModal({titleMessage: 'No bins on load!', color: 'btn-danger'})
       return;
     }
@@ -232,36 +153,37 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       };
       orchardRunService.SaveData(load);
       orchardRunService.SubmitLoad(load, function (data){
-        if (data.error) {
-          alertModal({titleMessage: data.message, color: 'btn-danger'})
-        }
-        else {
-          $location.url('/orchard_run_report');
-        }
+        if (data.error) alertModal({titleMessage: data.message, color: 'btn-danger'});
+        else $location.url('/orchard_run_report');
       });
     });
-  }
+  };
 
-  $scope.clearScan = function(){
+  $scope.clearScan = function() {
     $scope.scan=null;
-    $scope.refocus();
-  }
+    $scope.$broadcast('refocus');
+  };
 
-  var clearLoad = function(){
-    $scope.error = true;
-    $scope.errorColor = 'warning';
-    $scope.errorMessage = 'Load Canceled!';
-    $timeout(function() {
-      $scope.error = false;
-    }, 2000);
+  var clearLoad = function() {
+    alertError({message: 'Load Canceled!', color: 'warning'});
     $scope.binData = [];
     $scope.scan = null;
-    $scope.refocus();
-  }
+    $scope.$broadcast('refocus');
+  };
+
+  //Alerts
+  var alertError = function(options) {
+    $scope.error = true;
+    $scope.errorColor = options.color? options.color : 'danger';
+    $scope.errorMessage = options.message;
+    $timeout(function() {
+      $scope.error = false;
+    }, options.time? options.time : 3000);
+  };
 
   //Get Replacement Values
   var foundReplacements = false;
-  var getReplacements = function () {
+  var getReplacements = function() {
     if (!foundReplacements) {
       orchardRunService.GetReplacements(function(data) {
         data.bvs.sort((a,b)=> a.blockName.localeCompare(b.blockName));
@@ -274,20 +196,30 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         foundReplacements = true;
       });
     }
-  }
+  };
+
   //ReplacementValues
   $scope.showReplacements = function () {
     $scope.replaceLabel = true;
     getReplacements();
-  }
-  $scope.cancelReplacements = () => $scope.replaceLabel = false;
+  };
+
+  $scope.cancelReplacements = function() {
+    $scope.replaceLabel = false;
+  };
 
   $scope.buildReplacementBarcode = function () {
-    $scope.scan = $scope.repBvs.blockId
-    .concat($scope.repBvs.varietyId,$scope.repBvs.strainId,$scope.repBearing.id, $scope.repTreatment.id,$scope.repPick.id,$scope.repJob.id);
-    $scope.refocus();
-    $scope.replaceLabel = false;
-  }
+    $scope.scan = $scope.repBvs.blockId.concat(
+      $scope.repBvs.varietyId,
+      $scope.repBvs.strainId,
+      $scope.repBearing.id,
+      $scope.repTreatment.id,
+      $scope.repPick.id,
+      $scope.repJob.id);
+      $scope.replaceLabel = false;
+    $scope.$broadcast('refocus');
+  };
+
   //Confirmation modals
   var confirmationModal = function (options, callback) {
     var modalInstance = $uibModal.open({
@@ -295,15 +227,13 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       backdrop: 'static',
       keyboard: false,
       controller: function($scope) {
-        Object.assign($scope, options)    //copy options properties into $scope
+        Object.assign($scope, options);   //copy options properties into $scope
       }
     });
     modalInstance.result.then(function(confirmation) {
-      if (confirmation) {
-        callback();
-      }
+      if (confirmation) callback();
     });
-  }
+  };
 
   $scope.submitLoadButton = function() {
     confirmationModal(
@@ -314,8 +244,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         dismissColor:'btn-warning',
         dismissMessage: 'No, take me back!'
       },
-      submitLoad)
-    }
+      submitLoad);
+    };
 
     $scope.clearLoadButton = function() {
       confirmationModal(
@@ -326,18 +256,19 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
           dismissColor:'btn-warning',
           dismissMessage: 'No, take me back!'
         },
-        clearLoad)
-      }
+        clearLoad);
+      };
+
       // Alert modals
       var alertModal = function (options) {
         var modalInstance = $uibModal.open({
           templateUrl: 'js/views/modal_alert.html',
           keyboard: false,
           controller: function($scope) {
-            Object.assign($scope, options)    //copy options properties into $scope
+            Object.assign($scope, options);    //copy options properties into $scope
           }
         });
-      }
+      };
 
       //Datepickers
       $scope.dateOptions = {
@@ -349,7 +280,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
 
       $scope.openDate = function(property) {
         $scope.popup[property] = true;
-      }
+      };
 
       $scope.popup = {};
     }]);

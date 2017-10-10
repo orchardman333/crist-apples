@@ -8,43 +8,47 @@ module.exports = {
   BinCheck: function(req,res) {
     query.standardStack(db, res, 'SELECT `Bin ID` AS binId FROM bin_table WHERE `Bin ID` = ?', [req.query.binId]);
   },
-  
+
   //Take bin's IDs and return full names to frontend
   BinLookup: function(req,res) {
     var resObject = {error: false, errorProp: null};
     query.connectOnly(db)
-    .then(connection => {
+    .then(results => {
       return new Promise (function (resolve, reject) {
         var idObject = module.exports.decodeBarcode(req.query.barcode, false);
         asynch.eachOf(idObject, function(value, property, callback) {
           property = property.slice(0,-2);
           //SELECT `block name` AS prop FROM `block_table` WHERE `block ID` = [yourBlockId]
-          query.queryOnly(connection, 'SELECT `'+ property +' Name` AS prop FROM `'+ property +'_table` WHERE `'+ property + ' ID` = ?', [value])
+          query.queryOnly(results.connection, 'SELECT `'+ property +' Name` AS prop FROM `'+ property +'_table` WHERE `'+ property + ' ID` = ?', [value])
           .then(results => {
-            if (results.length ==1){
-              resObject[property + 'Name'] = results[0].prop;
-              callback();
+            if (results.data.length ==1) {
+              resObject[property + 'Name'] = results.data[0].prop;
             }
+            else {
+              resObject[property + 'Name']='ERROR!';
+              resObject.error = true;
+              resObject.errorProp = property.toUpperCase();
+            }
+              callback();
           })
           .catch(error => {
-            resObject[property + 'Name']='ERROR!';
-            resObject.error = true;
-            resObject.errorProp = property.toUpperCase();
             callback(error);
           });
         },
         function(error) {
           if (error) reject(error);
-          else resolve (connection)
+          else resolve({connection: results.connection});
         });
       })
     })
-    .then(connection => {
-      connection.release();
-      res.json(resObject)
+    .then(results => {
+      results.connection.release();
+      res.json(resObject);
     })
     .catch(error => {
-
+      if (!error.getConnectionError) error.connection.release();
+      res.json({error: true, message: error.data.name + ' ' + error.data.message});
+      console.error(error.data);
     })
   },
 

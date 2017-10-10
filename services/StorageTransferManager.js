@@ -27,24 +27,25 @@ module.exports = {
     .then(insertLoadBins)
     .then(updateBins)
     .then(results => {
-      results[0].release();
+      results.connection.release();
       res.json({message: 'Hooray! Load entered successfully', error: false});
       console.log('END OF LOAD ' + loadHeadingValues[0][1]);
     })
     .catch(error => {
+      if (!error.getConnectionError) error.connection.release();
       res.json({message: error.name + ' ' + error.message, error: true})
-      console.log(error);
+      console.error(error.data);
     });
 
     //Wrapper functions
-    function insertLoadHeading(connection) {
-      return query.insert(connection, loadHeadingValues, 'load_heading_table')
+    function insertLoadHeading(results) {
+      return query.insert(results.connection, loadHeadingValues, 'load_heading_table')
     }
     function insertLoadBins(results) {
-      return query.insert(results[0], loadBinValues, 'load_bins_table')
+      return query.insert(results.connection, loadBinValues, 'load_bins_table')
     }
     function updateBins(results) {
-      return query.update(results[0], req.body.loadData.load.id, req.body.loadData.storage.id)
+      return query.update(results.connection, req.body.loadData.load.id, req.body.loadData.storage.id)
     }
   }
 };

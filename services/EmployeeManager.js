@@ -13,6 +13,6 @@ module.exports = {
   },
 
   EmployeeLookup: function (req, res) {
-    query.standardStack(db, res, 'SELECT `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Employee ID` = ?', [req.query.employeeId]);
+    query.standardStack(db, res, 'SELECT `Employee ID` as employeeId, `Employee First Name` AS firstName, `Employee Last Name` AS lastName FROM employee_table WHERE `Employee ID` = ?', [req.query.employeeId]);
   }
 };

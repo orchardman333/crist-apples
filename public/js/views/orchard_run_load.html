@@ -18,7 +18,7 @@
     </div>
     <div class="col-sm-3">
       <label for="Bushels">Bushels/Casas:</label>
-      <select class="form-control" ng-model="boxesCount" ng-options="x for x in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]">
+      <select class="form-control" ng-model="boxesCount" ng-options="x for x in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]" ng-change="refocus()">
       </select>
     </div>
     <div class="col-sm-3">

@@ -7,19 +7,22 @@ module.exports = {
   GetLoadId: function (req,res) {
     var idType = req.query.idType + ' id';
     query.connectOnly(db)
-    .then(connection => {
-      return Promise.all([connection, query.queryOnly(connection, 'SELECT ?? AS num FROM load_sequence_table', [idType])]);
+    .then(results => {
+      return query.queryOnly(results.connection, 'SELECT ?? AS num FROM load_sequence_table', [idType]);
     })
     .then(results => {
-      return Promise.all([results[0], results[1], query.queryOnly(results[0], 'UPDATE load_sequence_table SET ?? = ?? + 1', [idType, idType])]);
+      return Promise.all([results.data, query.queryOnly(results.connection, 'UPDATE load_sequence_table SET ?? = ?? + 1', [idType, idType])]);
     })
     .then(results => {
-      results[0].release();
-      res.json({loadId: results[1][0].num});
+      console.log("1");
+      results[1].connection.release();
+      console.log("2");
+      res.json({loadId: results[0][0].num});
     })
     .catch(error => {
+      if (!error.getConnectionError) error.connection.release();
       console.error(error);
-      res.json({error: true, id: error.name, message: error.message})
+      res.json({error: true, message: error.data.name + ' ' + error.data.message})
     })
   }
 };

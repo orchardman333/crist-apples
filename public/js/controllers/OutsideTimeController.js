@@ -78,12 +78,12 @@ $scope.hoursOffered = false;
 
       else if ($scope.workingData.map(a => a.employeeId).indexOf($scope.scan) == -1) {
         $scope.$broadcast('toggle');
-        employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
+        employeeService.LookupEmployee({employeeId: $scope.scan}, function(decodedData) {
           //error in employeeLookup
-          if (decodedData.error) {
+          if (decodedData.length != 1 || decodedData[0].error) {
             $scope.error = true;
             $scope.errorColor = 'danger';
-            $scope.errorMessage = 'No ' + decodedData.errorProp + ' Found!';
+            $scope.errorMessage = 'No Employee Found!';
             $timeout(function() {
               $scope.error = false;
               $scope.scan = null;
@@ -91,8 +91,7 @@ $scope.hoursOffered = false;
           }
           //good scan
           else {
-            decodedData.employeeId = $scope.scan;
-            $scope.workingData.push(decodedData);
+            $scope.workingData.push(decodedData[0]);
             $scope.scan = null;
           }
           $scope.$broadcast('toggle');

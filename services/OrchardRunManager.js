@@ -32,7 +32,7 @@ module.exports = {
 
       //Pickers
       for (var j=0; j < req.body.binData[i].pickerIds.length; j++) {
-        if (req.body.binData[i].pickerIds[j] == null) continue;
+        if (req.body.binData[i].pickerIds[j] === null) continue;
         insertIntoBoxesArray(bushelValues, req.body.binData[i].pickerIds[j], barcodeProperties.binId)
       }
     }
@@ -43,30 +43,31 @@ module.exports = {
     .then(insertLoadBins)
     .then(insertBushelValues)
     .then(results => {
-      results[0].release();
+      results.connection.release();
       res.json({message: 'Hooray! Load entered successfully', error: false})
       console.log('END OF LOAD ' + loadHeadingValues[0][1])
     })
     .catch(error => {
-      res.json({message: error.name + ' ' + error.message, error: true})
-      console.log(error);
+      if (!error.getConnectionError) error.connection.release();
+      res.json({message: error.data.name + ' ' + error.data.message, error: true});
+      console.error(error.data);
     });
+
+    //Wrapper functions
+    function insertLoadHeading(results) {
+      return query.insert(results.connection, loadHeadingValues, 'load_heading_table')
+    }
+    function insertBinValues(results) {
+      return query.insert(results.connection, binValues, 'bin_table')
+    }
+    function insertLoadBins(results) {
+      return query.insert(results.connection, loadBinValues, 'load_bins_table')
+    }
+    function insertBushelValues(results) {
+      return query.insert(results.connection, bushelValues, 'bushels_picker_table')
+    }
   }
 };
-
-//Wrapper functions
-function insertLoadHeading(connection) {
-  return query.insert(connection, loadHeadingValues, 'load_heading_table')
-}
-function insertBinValues(results) {
-  return query.insert(results[0], binValues, 'bin_table')
-}
-function insertLoadBins(results) {
-  return query.insert(results[0], loadBinValues, 'load_bins_table')
-}
-function insertBushelValues(results) {
-  return query.insert(results[0], bushelValues, 'bushels_picker_table')
-}
 
 //Create arrays for INSERT statements
 function insertIntoBinArray(binValues, barcodeProperties, binData, loadId) {

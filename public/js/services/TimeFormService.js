@@ -5,22 +5,22 @@ angular.module('crist_farms')
   // this service handles retrieving the truck drivers data from API
   var service = {};
   service.submitTimeRecord = function(data, callback) {
-    $http.post("/api/timeForm", data).then(function (response) {
+    $http.post("/api/timeForm", data).then(response => {
       callback(response.data);
     });
   }
   service.getOutsideRecords = function(data, callback) {
-    $http.post("/api/getoutsidetime", data).then(function(response) {
+    $http.post("/api/getoutsidetime", data).then(response => {
       callback(response.data);
     });
   }
   service.submitOutsideRecords = function(data, callback) {
-    $http.post("/api/outsidetime", data).then(function(response) {
+    $http.post("/api/outsidetime", data).then(response => {
       callback(response.data);
     });
   }
   service.GetJobs = function(callback) {
-    $http.get("/api/jobs").then(function(response) {
+    $http.get("/api/jobs").then(response => {
       callback(response.data);
     });
   }
