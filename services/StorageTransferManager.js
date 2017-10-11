@@ -17,15 +17,20 @@ module.exports = {
 
     //Iterate through list of bins
     for (var i=0; i < req.body.binData.length; i++) {
-
       //load_bin_table INSERTs
       loadBinValues.push([req.body.loadData.load.id, req.body.binData[i], req.body.loadData.storage.id]);
     }
 
     query.connectOnly(db)
-    .then(insertLoadHeading)
-    .then(insertLoadBins)
-    .then(updateBins)
+    .then(results => {
+      return query.insert(results.connection, loadHeadingValues, 'load_heading_table');
+    })
+    .then(results => {
+      return query.insert(results.connection, loadBinValues, 'load_bins_table');
+    })
+    .then(results => {
+      return query.update(results.connection, req.body.loadData.load.id, req.body.loadData.storage.id);
+    })
     .then(results => {
       results.connection.release();
       res.json({message: 'Hooray! Load entered successfully', error: false});
@@ -38,15 +43,15 @@ module.exports = {
     });
 
     //Wrapper functions
-    function insertLoadHeading(results) {
-      return query.insert(results.connection, loadHeadingValues, 'load_heading_table')
-    }
-    function insertLoadBins(results) {
-      return query.insert(results.connection, loadBinValues, 'load_bins_table')
-    }
-    function updateBins(results) {
-      return query.update(results.connection, req.body.loadData.load.id, req.body.loadData.storage.id)
-    }
+  //   function insertLoadHeading(results) {
+  //     return query.insert(results.connection, loadHeadingValues, 'load_heading_table')
+  //   }
+  //   function insertLoadBins(results) {
+  //     return query.insert(results.connection, loadBinValues, 'load_bins_table')
+  //   }
+  //   function updateBins(results) {
+  //     return query.update(results.connection, req.body.loadData.load.id, req.body.loadData.storage.id)
+  //   }
   }
 };
 

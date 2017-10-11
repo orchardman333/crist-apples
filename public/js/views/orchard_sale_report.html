@@ -1,0 +1,66 @@
+<div class="container-fluid" id="printArea" style="padding-top: -60px;">
+  <table class="table-condensed borderless" align="center">
+    <tr>
+      <td><strong>Load ID: </strong>{{load.loadData.load.id}}</td>
+      <td><strong>Truck Driver: </strong>{{load.loadData.truckDriver.name}}</td>
+      <td><strong>Truck ID: </strong>{{load.loadData.truck.name}}</td>
+    </tr>
+    <tr>
+      <td><strong>Arrival Date: </strong>{{load.loadData.loadDateTime | date:'mediumDate'}}</td>
+      <td><strong>Arrival Time: </strong>{{load.loadData.loadDateTime | date:'shortTime'}}</td>
+      <td><strong>Comments: </strong>{{load.loadData.loadComments}}</td>
+    </tr>
+  </table>
+  <table class="table-condensed" align="center">
+    <thead>
+      <tr>
+        <th>Bin ID</th>
+        <th>Block</th>
+        <th>Variety</th>
+        <th>Strain</th>
+        <th>Bearing</th>
+        <th>Treament</th>
+        <th>Pick</th>
+        <th>Job</th>
+        <th>Storage</th>
+        <th>Date Picked</th>
+        <th>Bushels</th>
+        <!-- <th>Comments</th> -->
+        <th>Pickers</th>
+      </tr>
+    </thead>
+    <tbody >
+      <tr ng-repeat-start="(keys,bins) in load.binData | groupBy: '[blockName,varietyName,strainName]' track by $index">
+      </tr>
+      <tr ng-repeat="bin in bins track by $index">
+        <td>{{bin.barcode}}</td>
+        <td>{{bin.blockName}}</td>
+        <td>{{bin.varietyName}}</td>
+        <td>{{bin.strainName}}</td>
+        <td>{{bin.bearingName}}</td>
+        <td>{{bin.treatmentName}}</td>
+        <td>{{bin.pickName.slice(0,7)}}</td>
+        <td>{{bin.jobName}}</td>
+        <td>{{bin.storage.name}}</td>
+        <td>{{bin.pickDate}}</td>
+        <td>{{bin.bushels}}</td>
+        <!-- <td>{{bin.binComments}}</td> -->
+        <td>{{bin.pickerIds.join(', ')}}</td>
+      </tr>
+      <tr ng-repeat-end>
+        <td class="tdTopBorder" colspan="3"><strong>Bins: {{bins.length}}</strong></td>
+        <td class="tdTopBorder" colspan="10"><strong>Bushels: {{getBushelSum(bins)}}</strong></td>
+      </tr>
+      <tr>
+        <td class="tdTopBorder" colspan="1"></td>
+        <td class="tdTopBorder" colspan="3"><strong>Load Bins: {{load.binData.length}}</strong></td>
+        <td class="tdTopBorder" colspan="9"><strong>Load Bushels: {{getBushelSum(load.binData)}}</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<br>
+<p>Submitted: {{timeSubmitted | date:'short'}}</p>
+<br>
+<a href="javascript:window.print()">print</a>
+<!-- <a href="javascript:callPrint('printArea')">print</a> -->

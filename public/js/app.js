@@ -27,6 +27,10 @@ app.config(['$routeProvider', function ($routeProvider) {
     controller: 'OrchardRunSaleController',
     templateUrl: 'js/views/orchard_run_sale.html',
   })
+  .when('/orchard_sale_report', {
+    controller: 'OrchardSaleReportController',
+    templateUrl: 'js/views/orchard_sale_report.html',
+  })
   .when('/time_form', {
     controller: 'TimeFormController',
     templateUrl: 'js/views/time_form.html',

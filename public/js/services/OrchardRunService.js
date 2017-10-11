@@ -1,53 +1,52 @@
 'use strict';
 
 angular.module('crist_farms').service('OrchardRunService', ['$http', function($http) {
-  var thisData = [];
-  var service = {};
+  var orchRunLoadData = [];
 
-  service.SubmitLoad = function(data, callback) {
+  this.SubmitLoad = function(data, callback) {
     $http.post("/api/orchardRunManager/", data).then(response => {
       callback(response.data);
     });
   };
 
-  service.GetLoadReport = function(callback) {
+  this.GetLoadReport = function(callback) {
     $http.get("/api/LoadReports/").then(response => {
       callback(response.data);
     });
   };
-  service.GetReplacements = function(callback) {
+  this.GetReplacements = function(callback) {
     $http.get("/api/replacementvalues/").then(response => {
       callback(response.data);
     });
   };
-  service.GetLoadId = function(data, callback) {
+  this.GetLoadId = function(data, callback) {
     $http.get("/api/loadId/", {params:{idType: data.idType}}).then(response => {
       callback(response.data);
     });
   };
 
-  service.BinLookup = function(data, callback) {
+  this.BinLookup = function(data, callback) {
     $http.get("/api/binlookup/", {params:{barcode: data.barcode}}).then(response => {
       callback(response.data);
     });
   };
 
-  service.BinCheck = function(data, callback) {
+  this.BinCheck = function(data, callback) {
     $http.get("/api/bincheck/", {params:{binId: data.binId}}).then(response => {
       callback(response.data);
     });
   };
 
-  service.SaveData = function(data) {
-    thisData = data;
+  this.SetOrchRunLoadData = function(data) {
+    orchRunLoadData = data;
   };
 
-  service.GetData = function() {
-    return thisData;
+  this.GetOrchRunLoadData = function() {
+    return orchRunLoadData;
   };
 
   //Initialize load datetime and pick date for OR Load only
-  service.timeSet = function () {
+  this.timeSet = function () {
     var pickDate = new Date(Date.now());
     var loadDate = pickDate;
     var loadTimeHour, loadTimeMinute;
@@ -69,7 +68,7 @@ angular.module('crist_farms').service('OrchardRunService', ['$http', function($h
   };
 
   //Time Picker <select> options
-  service.timeOptions = function() {
+  this.timeOptions = function() {
     var hourOptions = [{name: 'Midnight', value: 0},{name: '12 PM', value: 12},{name: '1 AM', value: 1},{name: '1 PM', value: 13}];
     var minuteOptions = [{name:'00',value:0},{name:'05',value:5}];
     for (var i=2; i<12; i++) {
@@ -83,6 +82,4 @@ angular.module('crist_farms').service('OrchardRunService', ['$http', function($h
       minuteOptions: minuteOptions
     };
   };
-
-  return service;
 }]);

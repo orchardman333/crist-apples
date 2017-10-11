@@ -38,10 +38,18 @@ module.exports = {
     }
 
     query.connectOnly(db)
-    .then(insertLoadHeading)
-    .then(insertBinValues)
-    .then(insertLoadBins)
-    .then(insertBushelValues)
+    .then(results => {
+      return query.insert(results.connection, loadHeadingValues, 'load_heading_table');
+    })
+    .then(results => {
+      return query.insert(results.connection, binValues, 'bin_table')
+    })
+    .then(results => {
+      return query.insert(results.connection, loadBinValues, 'load_bins_table')
+    })
+    .then(results => {
+      return query.insert(results.connection, bushelValues, 'bushels_picker_table')
+    })
     .then(results => {
       results.connection.release();
       res.json({message: 'Hooray! Load entered successfully', error: false})
@@ -54,18 +62,18 @@ module.exports = {
     });
 
     //Wrapper functions
-    function insertLoadHeading(results) {
-      return query.insert(results.connection, loadHeadingValues, 'load_heading_table')
-    }
-    function insertBinValues(results) {
-      return query.insert(results.connection, binValues, 'bin_table')
-    }
-    function insertLoadBins(results) {
-      return query.insert(results.connection, loadBinValues, 'load_bins_table')
-    }
-    function insertBushelValues(results) {
-      return query.insert(results.connection, bushelValues, 'bushels_picker_table')
-    }
+    // function insertLoadHeading(results) {
+    //   return query.insert(results.connection, loadHeadingValues, 'load_heading_table')
+    // }
+    // function insertBinValues(results) {
+    //   return query.insert(results.connection, binValues, 'bin_table')
+    // }
+    // function insertLoadBins(results) {
+    //   return query.insert(results.connection, loadBinValues, 'load_bins_table')
+    // }
+    // function insertBushelValues(results) {
+    //   return query.insert(results.connection, bushelValues, 'bushels_picker_table')
+    // }
   }
 };
 
@@ -81,7 +89,7 @@ function insertIntoBinArray(binValues, barcodeProperties, binData, loadId) {
     barcodeProperties.pickId,
     barcodeProperties.jobId,
     binData.pickDate,
-    binData.boxesCount,
+    binData.bushels,
     binData.binComments,
     loadId,
     binData.storage.id

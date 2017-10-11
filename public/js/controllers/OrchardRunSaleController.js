@@ -61,12 +61,11 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     }
     orchardRunService.GetLoadId({idType: 'sl'}, function(data){
       $scope.loadId = data.loadId;
-      var loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
       var load = {
         loadData: {
           load: {type:'sl', id: $scope.loadId},
           truckDriver: $scope.truckDriver,      //object
-          loadDateTime: moment(loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
+          loadDateTime: new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);,
           truck: {id: 'fkl'},                //object
           loadComments: $scope.loadComments,
           storage: {id: 'sl'},
@@ -77,11 +76,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       };
 
       storageService.SubmitStorageTransfer(load, function (data) {
-        alertModal(data, 2000);
-        if (!data.error) {
-          clearLoad(false);
-          Object.assign($scope, storageService.timeRefresh());
-        }
+        if (data.error) alertModal(data);
+        else $location.url('/orchard_sale_report')
       });
     });
   }

@@ -10,7 +10,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
 
   $scope.focused = false;
   $scope.scan = null;
-  $scope.boxesCount = 20;
+  $scope.bushels = 20;
   $scope.binComments = null;
   $scope.loadComments = null;
   $scope.binData = [];
@@ -57,7 +57,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
                 var value = {
                   barcode: $scope.scan,
                   pickDate : $scope.pickDate,
-                  boxesCount: $scope.boxesCount,
+                  bushels: $scope.bushels,
                   binComments: $scope.binComments,
                   storage: $scope.storage,    //object
                   blockName: decodedData.blockName,
@@ -71,7 +71,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
                 };
                 $scope.binData.push(value);
                 $scope.scan = null;
-                $scope.boxesCount = 20;
+                $scope.bushels = 20;
               }
               $scope.$broadcast('toggle');
               $scope.$broadcast('refocus');
@@ -114,6 +114,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     //scanned barcode is invalid type
     else alertError({message:'Invalid Barcode Type!'});
   }
+
   $scope.refocus = function() {
     $scope.$broadcast('refocus');
   };

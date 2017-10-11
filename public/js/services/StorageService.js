@@ -1,6 +1,8 @@
 'use strict';
 
 angular.module('crist_farms').service('StorageService', ['$http', function ($http) {
+  var orchRunSaleData = [];
+  var storageTransferData = [];
   // this service handles retrieving the storage data from API
   this.GetStorageList = function(callback) {
     $http.get("/api/storage").then(response => {
@@ -12,6 +14,22 @@ angular.module('crist_farms').service('StorageService', ['$http', function ($htt
     $http.post("/api/storageTransfer/", data).then(response => {
       callback(response.data);
     });
+  };
+
+  this.SetStorageTransferData = function(data) {
+    storageTransferData = data;
+  };
+
+  this.GetStorageTransferData = function() {
+    return storageTransferData;
+  };
+
+  this.SetOrchRunSaleData = function(data) {
+    orchRunSaleData = data;
+  };
+
+  this.GetOrchRunSaleData = function() {
+    return orchRunSaleData;
   };
 
   this.timeRefresh = function () {
