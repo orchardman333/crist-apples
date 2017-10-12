@@ -4,7 +4,7 @@ angular.module('crist_farms')
 .controller('OrchardRunReportController', ['$scope','OrchardRunService',
 function ($scope, orchardRunService) {
   $scope.timeSubmitted = new Date(Date.now());
-  $scope.load = orchardRunService.GetData();
+  $scope.load = orchardRunService.GetOrchRunData();
 
 var group = function(bins) {
   var grouping = groupBy(bins, 'blockName');

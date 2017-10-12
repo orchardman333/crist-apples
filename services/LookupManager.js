@@ -3,10 +3,23 @@ const db = require("./DatabaseManager");
 const query = require("./QueryManager");
 const asynch = require("async");
 
+const bvsQuery = `SELECT
+\`Bin ID\` AS binId,
+block_table.\`Block Name\` AS blockName,
+variety_table.\`Variety Name\` AS varietyName,
+strain_table.\`Strain Name\` AS strainName,
+\`Bushels\` AS bushels
+FROM bin_table
+INNER JOIN block_table ON bin_table.\`Block ID\` = block_table.\`Block ID\`
+INNER JOIN variety_table ON bin_table.\`Variety ID\` = variety_table.\`Variety ID\`
+INNER JOIN strain_table ON bin_table.\`Strain ID\` = strain_table.\`Strain ID\`
+WHERE \`Bin ID\` = ?`
+const bvsQueryString = bvsQuery.replace(/\n/g, ' ')    // Removes new-line characters
+
 module.exports = {
   //Check if bin has entered db
   BinCheck: function(req,res) {
-    query.standardStack(db, res, 'SELECT `Bin ID` AS binId FROM bin_table WHERE `Bin ID` = ?', [req.query.binId]);
+    query.standardStack(db, res, bvsQueryString, [req.query.binId]);
   },
 
   //Take bin's IDs and return full names to frontend

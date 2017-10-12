@@ -14,9 +14,7 @@ module.exports = {
       return Promise.all([results.data, query.queryOnly(results.connection, 'UPDATE load_sequence_table SET ?? = ?? + 1', [idType, idType])]);
     })
     .then(results => {
-      console.log("1");
       results[1].connection.release();
-      console.log("2");
       res.json({loadId: results[0][0].num});
     })
     .catch(error => {

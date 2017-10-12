@@ -14,7 +14,10 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
   $scope.buyer = null;
   $scope.binData = [];
 
-  truckService.GetTruckDrivers($scope, data => {});
+  truckService.GetTruckDrivers(data => {
+    $scope.truckDriverList = data;
+    $scope.truckDriver = $scope.truckDriverList[0];
+  });
 
   $scope.addScan = function() {
     //blank scan
@@ -29,12 +32,12 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         //check if Bin ID has been entered in db
         orchardRunService.BinCheck({binId: $scope.scan}, function(decodedData) {
           //bin exists
-          if (decodedData.length == 1) {
-            $scope.binData.push($scope.scan);
-            $scope.scan = null;
+          if (decodedData.length === 1) {
+            $scope.binData.push(decodedData[0]);
           }
           //bin check fails
           else alertError({message: 'Bin not found in database!'});
+          $scope.scan = null;
           $scope.$broadcast('toggle');
           $scope.$broadcast('refocus');
         });
@@ -65,7 +68,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         loadData: {
           load: {type:'sl', id: $scope.loadId},
           truckDriver: $scope.truckDriver,      //object
-          loadDateTime: new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);,
+          loadDateTime: new Date($scope.date.getFullYear(),$scope.date.getMonth(),$scope.date.getDate(),$scope.hour, $scope.minute, 0, 0),
           truck: {id: 'fkl'},                //object
           loadComments: $scope.loadComments,
           storage: {id: 'sl'},
@@ -77,7 +80,10 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
 
       storageService.SubmitStorageTransfer(load, function (data) {
         if (data.error) alertModal(data);
-        else $location.url('/orchard_sale_report')
+        else {
+          storageService.SetOrchRunSaleData(load);
+          $location.url('/orchard_sale_report');
+        }
       });
     });
   }
@@ -161,8 +167,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
   }
   //Datepickers
   $scope.dateOptions = {
-    maxDate: new Date($scope.loadDate.getFullYear()+1, 11, 31),
-    minDate: new Date($scope.loadDate.getFullYear()-1, 0, 1),
+    maxDate: new Date($scope.date.getFullYear()+1, 11, 31),
+    minDate: new Date($scope.date.getFullYear()-1, 0, 1),
     startingDay: 0,
     showWeeks: false
   };

@@ -18,7 +18,7 @@ module.exports = {
     //Iterate through list of bins
     for (var i=0; i < req.body.binData.length; i++) {
       //load_bin_table INSERTs
-      loadBinValues.push([req.body.loadData.load.id, req.body.binData[i], req.body.loadData.storage.id]);
+      loadBinValues.push([req.body.loadData.load.id, req.body.binData[i].binId, req.body.loadData.storage.id]);
     }
 
     query.connectOnly(db)
@@ -38,7 +38,7 @@ module.exports = {
     })
     .catch(error => {
       if (!error.getConnectionError) error.connection.release();
-      res.json({message: error.name + ' ' + error.message, error: true})
+      res.json({message: error.data.name + ' ' + error.data.message, error: true})
       console.error(error.data);
     });
 
@@ -60,7 +60,7 @@ function insertIntoLoadHeadingArray(loadHeadingValues, loadData) {
   loadHeadingValues.push([loadData.load.type,
     loadData.load.id,
     loadData.truckDriver.id,
-    loadData.loadDateTime,
+    new Date(loadData.loadDateTime),
     loadData.truck.id,
     loadData.loadComments,
     loadData.buyer,

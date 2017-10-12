@@ -37,11 +37,11 @@ angular.module('crist_farms').service('OrchardRunService', ['$http', function($h
     });
   };
 
-  this.SetOrchRunLoadData = function(data) {
+  this.SetOrchRunData = function(data) {
     orchRunLoadData = data;
   };
 
-  this.GetOrchRunLoadData = function() {
+  this.GetOrchRunData = function() {
     return orchRunLoadData;
   };
 
