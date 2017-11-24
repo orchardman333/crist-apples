@@ -18,8 +18,8 @@ module.exports = {
     .then(results => {
       //Release db connection and send response
       results[0].connection.release();   //release db connection
-      resObject.timeData = results[0];
-      resObject.crew = results[1];
+      resObject.timeData = results[0].data;
+      resObject.crew = results[1].data;
       res.json(resObject);
     })
     .catch(error => {

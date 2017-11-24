@@ -60,20 +60,6 @@ module.exports = {
       res.json({message: error.data.name + ' ' + error.data.message, error: true});
       console.error(error.data);
     });
-
-    //Wrapper functions
-    // function insertLoadHeading(results) {
-    //   return query.insert(results.connection, loadHeadingValues, 'load_heading_table')
-    // }
-    // function insertBinValues(results) {
-    //   return query.insert(results.connection, binValues, 'bin_table')
-    // }
-    // function insertLoadBins(results) {
-    //   return query.insert(results.connection, loadBinValues, 'load_bins_table')
-    // }
-    // function insertBushelValues(results) {
-    //   return query.insert(results.connection, bushelValues, 'bushels_picker_table')
-    // }
   }
 };
 
@@ -81,13 +67,13 @@ module.exports = {
 function insertIntoBinArray(binValues, barcodeProperties, binData, loadId) {
   binValues.push([
     barcodeProperties.binId,
-    barcodeProperties.blockId,
-    barcodeProperties.varietyId,
-    barcodeProperties.strainId,
-    barcodeProperties.bearingId ,
-    barcodeProperties.treatmentId,
-    barcodeProperties.pickId,
-    barcodeProperties.jobId,
+    barcodeProperties.block.id,
+    barcodeProperties.variety.id,
+    barcodeProperties.strain.id,
+    barcodeProperties.bearing.id ,
+    barcodeProperties.treatment.id,
+    barcodeProperties.pick.id,
+    barcodeProperties.job.id,
     binData.pickDate,
     binData.bushels,
     binData.binComments,

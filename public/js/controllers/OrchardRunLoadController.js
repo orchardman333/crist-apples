@@ -44,6 +44,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
           alertError({message: 'Bin already found in database!'});
           $scope.$broadcast('toggle');
           $scope.$broadcast('refocus');
+          $scope.scan = null;
         }
         //bin does not exist, continue checks
         else {
@@ -59,14 +60,14 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
                   pickDate : $scope.pickDate,
                   bushels: $scope.bushels,
                   binComments: $scope.binComments,
-                  storage: $scope.storage,    //object
-                  blockName: decodedData.blockName,
-                  varietyName: decodedData.varietyName,
-                  strainName: decodedData.strainName,
-                  bearingName: decodedData.bearingName,
-                  treatmentName: decodedData.treatmentName,
-                  pickName: decodedData.pickName,
-                  jobName: decodedData.jobName,
+                  storage: $scope.storage,    //objects below
+                  block: decodedData.block,
+                  variety: decodedData.variety,
+                  strain: decodedData.strain,
+                  bearing: decodedData.bearing,
+                  treatment: decodedData.treatment,
+                  pick: decodedData.pick,
+                  job: decodedData.job,
                   pickerIds: []
                 };
                 $scope.binData.push(value);
@@ -82,6 +83,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
             alertError({message: 'Duplicate Bin Entered!'});
             $scope.$broadcast('toggle');
             $scope.$broadcast('refocus');
+            $scope.scan = null;
           }
         }
       });

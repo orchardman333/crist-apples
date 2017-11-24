@@ -3,7 +3,7 @@ const db = require("./DatabaseManager");
 const query = require("./QueryManager");
 const asynch = require("async");
 
-const bvsQuery = `SELECT
+const longQuery = `SELECT
 \`Bin ID\` AS binId,
 block_table.\`Block Name\` AS blockName,
 variety_table.\`Variety Name\` AS varietyName,
@@ -13,34 +13,38 @@ FROM bin_table
 INNER JOIN block_table ON bin_table.\`Block ID\` = block_table.\`Block ID\`
 INNER JOIN variety_table ON bin_table.\`Variety ID\` = variety_table.\`Variety ID\`
 INNER JOIN strain_table ON bin_table.\`Strain ID\` = strain_table.\`Strain ID\`
-WHERE \`Bin ID\` = ?`
-const bvsQueryString = bvsQuery.replace(/\n/g, ' ')    // Removes new-line characters
+WHERE \`Bin ID\` = ?`.replace(/\n/g, ' ')    // Removes new-line characters
+
+const shortQuery = 'SELECT `Bin ID` AS binId, FROM bin_table WHERE `Bin ID` = ?'.replace(/\n/g, ' ')    // Removes new-line characters
 
 module.exports = {
   //Check if bin has entered db
-  BinCheck: function(req,res) {
-    query.standardStack(db, res, bvsQueryString, [req.query.binId]);
+  BinCheckShort: function(req,res) {
+    query.standardStack(db, res, shortQuery, [req.query.binId]);
   },
-
+  //Check if bin has entered db with properties
+  BinCheckLong: function(req,res) {
+    query.standardStack(db, res, longQuery, [req.query.binId]);
+  },
   //Take bin's IDs and return full names to frontend
   BinLookup: function(req,res) {
-    var resObject = {error: false, errorProp: null};
+    var resObject = module.exports.decodeBarcode(req.query.barcode, false);
     query.connectOnly(db)
     .then(results => {
       return new Promise (function (resolve, reject) {
-        var idObject = module.exports.decodeBarcode(req.query.barcode, false);
-        asynch.eachOf(idObject, function(value, property, callback) {
-          property = property.slice(0,-2);
+        // var resObject = module.exports.decodeBarcode(req.query.barcode, false);
+        asynch.eachOf(resObject, function(propertyValue, propertyKey, callback) {
+          //propertyKey = propertyKey.slice(0,-2);
           //SELECT `block name` AS prop FROM `block_table` WHERE `block ID` = [yourBlockId]
-          query.queryOnly(results.connection, 'SELECT `'+ property +' Name` AS prop FROM `'+ property +'_table` WHERE `'+ property + ' ID` = ?', [value])
+          query.queryOnly(results.connection, 'SELECT `'+ propertyKey +' name` AS prop FROM `'+ propertyKey +'_table` WHERE `'+ propertyKey + ' ID` = ?', [propertyValue.id])
           .then(results => {
             if (results.data.length ==1) {
-              resObject[property + 'Name'] = results.data[0].prop;
+              resObject[propertyKey]['name'] = results.data[0].prop;
             }
             else {
-              resObject[property + 'Name']='ERROR!';
+              resObject[propertyKey]['name']='ERROR!';
               resObject.error = true;
-              resObject.errorProp = property.toUpperCase();
+              resObject.errorProp = propertyKey.toUpperCase();
             }
               callback();
           })
@@ -49,7 +53,7 @@ module.exports = {
           });
         },
         function(error) {
-          if (error) reject(error);
+          if (error) reject({connection: results.connection, data: error});
           else resolve({connection: results.connection});
         });
       })
@@ -67,15 +71,15 @@ module.exports = {
 
   decodeBarcode : function(barcode, boolean) {
     var values = {
-      blockId: barcode.substring(0, 3),
-      varietyId: barcode.substring(3, 5),
-      strainId: barcode.substring(5, 7),
-      bearingId: barcode.substring(7, 8),
-      treatmentId: barcode.substring(8, 9),
-      pickId: barcode.substring(9, 10),
-      jobId: barcode.substring(10, 14)
+      block: {id: barcode.substring(0, 3)},
+      variety: {id: barcode.substring(3, 5)},
+      strain: {id: barcode.substring(5, 7)},
+      bearing: {id: barcode.substring(7, 8)},
+      treatment: {id: barcode.substring(8, 9)},
+      pick: {id: barcode.substring(9, 10)},
+      job: {id: barcode.substring(10, 14)}
     };
-    if (boolean) values.binId = barcode.substring(14, 19);
+    if (boolean) values.bin = {id: barcode.substring(14, 19)};
     return values;
   },
 

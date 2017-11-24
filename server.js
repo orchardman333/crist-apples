@@ -52,7 +52,7 @@ app.get('/api/binlookup', function(req,res) {
 });
 
 app.get('/api/bincheck', function(req,res) {
-  lookupManager.BinCheck(req,res);
+  lookupManager.BinCheckLong(req,res);
 });
 
 app.post('/api/orchardRunManager', function(req,res) {
