@@ -32,9 +32,9 @@
     <div class="col-sm-4">
       <label for="Load Date">Load Date:</label>
       <div class="input-group" id="load-date">
-        <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="loadDate" show-button-bar="false" is-open="popup.loadDate" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+        <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="date" show-button-bar="false" is-open="popup.date" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
         <span class="input-group-btn">
-          <button type="button" class="btn btn-default" ng-click="openDate('loadDate')"><i class="glyphicon glyphicon-calendar"></i></button>
+          <button type="button" class="btn btn-default" ng-click="openDate('date')"><i class="glyphicon glyphicon-calendar"></i></button>
         </span>
       </div>
     </div>
@@ -42,11 +42,11 @@
       <label for="Load Time">Load Time:</label>
       <div class="row load-time">
         <div class="col-sm-6">
-          <select class="form-control" ng-model="loadTimeHour" ng-options="hour.value as hour.name for hour in hourOptions">
+          <select class="form-control" ng-model="hour" ng-options="hour.value as hour.name for hour in hourOptions">
           </select>
         </div>
         <div class="col-sm-6">
-          <select class="form-control" ng-model="loadTimeMinute" ng-options="minute.value as minute.name for minute in minuteOptions">
+          <select class="form-control" ng-model="minute" ng-options="minute.value as minute.name for minute in minuteOptions">
           </select>
         </div>
       </div>

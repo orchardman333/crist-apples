@@ -35,8 +35,8 @@ angular.module('crist_farms')
       }, 1000);
     }
     else if ($scope.scan.length == 6) {
-      employeeService.LookupEmployee({barcode: $scope.scan}, function(decodedData) {
-        if (decodedData.error) {
+      employeeService.LookupEmployee({employeeId: $scope.scan}, function(decodedData) {
+        if (decodedData.length !== 1 || decodedData[0].error) {
           $scope.error = true;
           $scope.errorColor = 'danger';
           $scope.errorMessage = 'Employee not found!';
@@ -46,7 +46,7 @@ angular.module('crist_farms')
           }, 1000);
         }
         else {
-          $scope.employeeName = decodedData.firstName + ' ' + decodedData.lastName;
+          $scope.employeeName = decodedData[0].firstName + ' ' + decodedData[0].lastName;
           $scope.showEmployeeName = true;
         }
       });

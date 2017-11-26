@@ -65,7 +65,6 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     }
     orchardRunService.GetLoadId({idType: 'pk'}, function(data){
       $scope.loadId = data.loadId;
-      //var loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
       var loadDateTime = new Date(Date.now());
       var load = {
         loadData: {
@@ -171,18 +170,4 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
           }, time);
         }
       }
-
-      //Datepickers
-      // $scope.dateOptions = {
-      //   maxDate: new Date($scope.loadDate.getFullYear()+1, 11, 31),
-      //   minDate: new Date($scope.loadDate.getFullYear()-1, 0, 1),
-      //   startingDay: 0,
-      //   showWeeks: false
-      // };
-      //
-      // $scope.openDate = function(property) {
-      //   $scope.popup[property] = true;
-      // }
-      //
-      // $scope.popup = {};
     }]);

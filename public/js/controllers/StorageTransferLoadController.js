@@ -74,7 +74,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     }
     orchardRunService.GetLoadId({idType: 'st'}, function(data){
       $scope.loadId = data.loadId;
-      var loadDateTime = new Date($scope.loadDate.getFullYear(),$scope.loadDate.getMonth(),$scope.loadDate.getDate(),$scope.loadTimeHour, $scope.loadTimeMinute, 0, 0);
+      var loadDateTime = new Date($scope.date.getFullYear(),$scope.date.getMonth(),$scope.date.getDate(),$scope.hour, $scope.minute, 0, 0);
       var load = {
         loadData: {
           load: {type:'st', id: $scope.loadId},
@@ -180,8 +180,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
 
       //Datepickers
       $scope.dateOptions = {
-        maxDate: new Date($scope.loadDate.getFullYear()+1, 11, 31),
-        minDate: new Date($scope.loadDate.getFullYear()-1, 0, 1),
+        maxDate: new Date($scope.date.getFullYear()+1, 11, 31),
+        minDate: new Date($scope.date.getFullYear()-1, 0, 1),
         startingDay: 0,
         showWeeks: false
       };

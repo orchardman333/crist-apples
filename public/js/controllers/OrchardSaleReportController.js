@@ -9,5 +9,4 @@ function ($scope, storageService) {
   $scope.getBushelSum = function(items) {
     return items.map(a=>a.bushels).reduce((b,c)=>b+c,0);
   };
-  //console.log($scope.groupedBins);
 }]);
