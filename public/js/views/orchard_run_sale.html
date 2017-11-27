@@ -10,13 +10,25 @@
       <button type="button form-control" class="btn btn-lg btn-success" ng-click="submitLoadButton()">Submit Load</button>
     </div>
   </div>
+
   <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-4">
       <label for="Truck Driver">Driver/Conductor:</label>
       <select class="form-control" ng-model="truckDriver" ng-options="truckDrivers.name for truckDrivers in truckDriverList" ng-change="refocus()">
       </select>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
+      <label for="Load Comments">Purchaser:</label>
+      <input class="form-control input" ng-model="purchaser" type="text" placeholder="JPS, Concklin, Rice, etc...">
+    </div>
+    <div class="col-sm-4">
+      <label for="Load Comments">CB Ticket #:</label>
+      <input class="form-control input" ng-model="cbTicketId" type="text">
+    </div>
+  </div>
+  <br/>
+  <div class="row">
+    <div class="col-sm-6">
       <label for="Load Date">Load Date:</label>
       <div class="input-group" id="load-date">
         <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="date" show-button-bar="false" is-open="popup.loadDate" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
@@ -25,7 +37,7 @@
         </span>
       </div>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-6">
       <label for="Load Time">Load Time:</label>
       <div class="row load-time">
         <div class="col-sm-6">
@@ -38,15 +50,9 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-3">
-      <label for="Load Comments">Buyer:</label>
-      <input class="form-control input" ng-model="buyer" type="text" placeholder="JPS, Concklin, etc...">
-    </div>
   </div>
-
   <div class="row">
-    <div class="col-sm-2">
-    </div>
+    <div class="col-sm-2"></div>
     <div class="col-sm-8">
       <label for="Scan Barcode"></label>
       <div class="input-group">
@@ -59,8 +65,7 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-2">
-    </div>
+        <div class="col-sm-2"></div>
   </div>
 </br>
 

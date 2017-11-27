@@ -29,7 +29,16 @@ module.exports = {
       return query.insert(results.connection, loadBinValues, 'load_bins_table');
     })
     .then(results => {
-      return query.update(results.connection, req.body.loadData.load.id, req.body.loadData.storage.id);
+      switch (req.body.loadData.load.type) {
+      case 'st':
+        return query.updateStorage(results.connection, req.body.loadData.load.id, req.body.loadData.storage.id);
+      case 'pk':
+        return query.updatePack(results.connection, req.body.loadData.load.id, req.body.loadData.packoutId);
+      case 'sl':
+        return query.updateSale(results.connection, req.body.loadData.load.id, req.body.loadData.soldToId, req.body.loadData.cbTicketId);
+      default:
+        return Promise.reject('Unknown Load Type');
+      }
     })
     .then(results => {
       results.connection.release();
@@ -57,10 +66,11 @@ module.exports = {
 
 //Create arrays for INSERT
 function insertIntoLoadHeadingArray(loadHeadingValues, loadData) {
-  loadHeadingValues.push([loadData.load.type,
+  loadHeadingValues.push([
+    loadData.load.type,
     loadData.load.id,
     loadData.truckDriver.id,
-    new Date(loadData.loadDateTime),
+    loadData.loadDateTime,
     loadData.truck.id,
     loadData.loadComments,
     loadData.buyer,

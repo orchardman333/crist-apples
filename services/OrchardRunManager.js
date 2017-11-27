@@ -28,12 +28,12 @@ module.exports = {
 
       //bin_table & load_table INSERTs
       insertIntoBinArray(binValues, barcodeProperties, req.body.binData[i], req.body.loadData.load.id);
-      insertIntoLoadArray(loadBinValues, barcodeProperties.binId, req.body.binData[i].storage.id, req.body.loadData.load.id);
+      insertIntoLoadArray(loadBinValues, barcodeProperties.bin.id, req.body.binData[i].storage.id, req.body.loadData.load.id);
 
       //Pickers
       for (var j=0; j < req.body.binData[i].pickerIds.length; j++) {
         if (req.body.binData[i].pickerIds[j] === null) continue;
-        insertIntoBoxesArray(bushelValues, req.body.binData[i].pickerIds[j], barcodeProperties.binId)
+        insertIntoBoxesArray(bushelValues, req.body.binData[i].pickerIds[j], barcodeProperties.bin.id)
       }
     }
 
@@ -66,7 +66,7 @@ module.exports = {
 //Create arrays for INSERT statements
 function insertIntoBinArray(binValues, barcodeProperties, binData, loadId) {
   binValues.push([
-    barcodeProperties.binId,
+    barcodeProperties.bin.id,
     barcodeProperties.block.id,
     barcodeProperties.variety.id,
     barcodeProperties.strain.id,
@@ -78,19 +78,23 @@ function insertIntoBinArray(binValues, barcodeProperties, binData, loadId) {
     binData.bushels,
     binData.binComments,
     loadId,
-    binData.storage.id
+    binData.storage.id,
+    null,
+    null,
+    null
   ]);
 };
 
 function insertIntoLoadHeadingArray(loadHeadingValues, loadData) {
-  loadHeadingValues.push([loadData.load.type,
+  loadHeadingValues.push([
+    loadData.load.type,
     loadData.load.id,
     loadData.truckDriver.id,
     loadData.loadDateTime,
     loadData.truck.id,
     loadData.loadComments,
-    loadData.buyer,
-    loadData.packoutId
+    null,
+    null
   ]);
 };
 

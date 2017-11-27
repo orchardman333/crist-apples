@@ -154,7 +154,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         },
         binData: $scope.binData
       };
-      orchardRunService.SaveOrchardRunData(load);
+      orchardRunService.SetOrchRunData(load);
       orchardRunService.SubmitLoad(load, function (data){
         if (data.error) alertModal({titleMessage: data.message, color: 'btn-danger'});
         else $location.url('/orchard_run_report');

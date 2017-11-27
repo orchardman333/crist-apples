@@ -64,16 +64,18 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     }
     orchardRunService.GetLoadId({idType: 'sl'}, function(data){
       $scope.loadId = data.loadId;
+      var loadDateTime = new Date($scope.date.getFullYear(),$scope.date.getMonth(),$scope.date.getDate(),$scope.hour, $scope.minute, 0, 0);
+
       var load = {
         loadData: {
           load: {type:'sl', id: $scope.loadId},
           truckDriver: $scope.truckDriver,      //object
-          loadDateTime: new Date($scope.date.getFullYear(),$scope.date.getMonth(),$scope.date.getDate(),$scope.hour, $scope.minute, 0, 0),
+          loadDateTime: moment(loadDateTime).format('YYYY-MM-DD kk:mm:ss'),
           truck: {id: 'fkl'},                //object
           loadComments: $scope.loadComments,
           storage: {id: 'sl'},
-          buyer: $scope.buyer,
-          packoutId: null
+          soldToId: $scope.purchaser,
+          cbTicketId: $scope.cbTicketId
         },
         binData: $scope.binData
       };

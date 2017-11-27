@@ -33,7 +33,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         orchardRunService.BinCheck({binId: $scope.scan}, function(decodedData) {
           //bin exists
           if (decodedData.length === 1) {
-            $scope.binData.push($scope.scan);
+            $scope.binData.push({binId: $scope.scan});
             $scope.scan = null;
           }
           //bin check fails
@@ -61,6 +61,10 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
   var submitLoad = function() {
     if ($scope.binData.length === 0) {
       alertModal({message: 'No bins on load!', error: true})
+      return;
+    }
+    if ($scope.packoutId == null) {
+      alertModal({message: 'No Packout Number Entered!', error: true})
       return;
     }
     orchardRunService.GetLoadId({idType: 'pk'}, function(data){
