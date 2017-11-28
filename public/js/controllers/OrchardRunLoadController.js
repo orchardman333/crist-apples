@@ -40,7 +40,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       //check if Bin ID has been entered in db already
       orchardRunService.BinCheck({binId: $scope.scan.slice(-5)}, function(decodedData) {
         //bin already exists, discard scan
-        if (decodedData.exists) {
+        if (decodedData.length >= 1) {
           alertError({message: 'Bin already found in database!'});
           $scope.$broadcast('toggle');
           $scope.$broadcast('refocus');

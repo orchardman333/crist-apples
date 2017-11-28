@@ -28,7 +28,7 @@
       <tr ng-repeat-start="(keys,bins) in load.binData | groupBy: '[blockName,varietyName,strainName]' track by $index">
       </tr>
       <tr ng-repeat="bin in bins track by $index">
-        <td>{{bin.barcode}}</td>
+        <td>{{bin.binId}}</td>
         <td>{{bin.blockName}}</td>
         <td>{{bin.varietyName}}</td>
         <td>{{bin.strainName}}</td>

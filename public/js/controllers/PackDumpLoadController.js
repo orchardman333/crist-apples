@@ -67,7 +67,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       alertModal({message: 'No Packout Number Entered!', error: true})
       return;
     }
-    orchardRunService.GetLoadId({idType: 'pk'}, function(data){
+    orchardRunService.GetLoadId({idType: 'pk'}, function(data) {
       $scope.loadId = data.loadId;
       var loadDateTime = new Date(Date.now());
       var load = {

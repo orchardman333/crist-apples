@@ -72,7 +72,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
       alertModal({message: 'No bins on load!', error: true})
       return;
     }
-    orchardRunService.GetLoadId({idType: 'st'}, function(data){
+    orchardRunService.GetLoadId({idType: 'st'}, function(data) {
       $scope.loadId = data.loadId;
       var loadDateTime = new Date($scope.date.getFullYear(),$scope.date.getMonth(),$scope.date.getDate(),$scope.hour, $scope.minute, 0, 0);
       var load = {
@@ -89,8 +89,8 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         binData: $scope.binData
       };
 
-      storageService.SubmitStorageTransfer(load, function (resObj) {
-        alertModal(resObj, 2000);
+      storageService.SubmitStorageTransfer(load, function (data) {
+        alertModal(data, 2000);
         if (!data.error) {
           clearLoad(false);
           Object.assign($scope, storageService.timeRefresh());
