@@ -48,6 +48,7 @@ angular.module('crist_farms')
         else {
           $scope.employeeName = decodedData[0].firstName + ' ' + decodedData[0].lastName;
           $scope.showEmployeeName = true;
+          $scope.recentShifts = decodedData.recentShifts;
         }
       });
     }

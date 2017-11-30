@@ -31,7 +31,7 @@ module.exports = {
     return queryDb(connection, 'UPDATE `bin_table` INNER JOIN `load_bins_table` ON `bin_table`.`Bin ID`=`load_bins_table`.`Bin ID` SET `Previous Load` = ?, `Current Storage` = ? WHERE `Load ID` = ?', [loadId, storageId, loadId])
   },
   updatePack: function (connection, loadId, packoutId) {
-    return queryDb(connection, 'UPDATE `bin_table` INNER JOIN `load_bins_table` ON `bin_table`.`Bin ID`=`load_bins_table`.`Bin ID` SET `Previous Load` = ?, `Current Storage` = NULL, `Packout` = ? WHERE `Load ID` = ?', [loadId, packoutId, loadId])
+    return queryDb(connection, 'UPDATE `bin_table` INNER JOIN `load_bins_table` ON `bin_table`.`Bin ID`=`load_bins_table`.`Bin ID` SET `Previous Load` = ?, `Current Storage` = NULL, `Packout ID` = ? WHERE `Load ID` = ?', [loadId, packoutId, loadId])
   },
   updateSale: function (connection, loadId, soldToId, cbTicketId) {
     return queryDb(connection, 'UPDATE `bin_table` INNER JOIN `load_bins_table` ON `bin_table`.`Bin ID`=`load_bins_table`.`Bin ID` SET `Previous Load` = ?, `Current Storage` = NULL, `Sold To` = ?, `CB Ticket` = ? WHERE `Load ID` = ?', [loadId, soldToId, cbTicketId, loadId])

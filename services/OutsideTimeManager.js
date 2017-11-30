@@ -43,18 +43,18 @@ module.exports = {
             query.queryOnly(results.connection,'SELECT `Time In` AS timeIn, `Time Out` AS timeOut, `Job ID` AS jobId, `Manager ID` AS managerId FROM time_table WHERE `Employee ID`= ? AND (DATE(`Time In`)=?) ORDER BY timeIn DESC LIMIT 1', [employeeId, req.body.date])
             .then(results => {
               //Only 1 record found
-              if (results.length == 1) {
+              if (results.data.length === 1) {
                 //Only found record has no timeOut
-                if (results[0].timeOut == null) {
+                if (results.data[0].timeOut == null) {
                   //Include lunch break
                   if (req.body.lunch) {
                     //UPDATE morning entry, INSERT afternoon shift
-                    queryValues = [[employeeId, req.body.lunchEnd, req.body.time, req.body.lunchEnd, req.body.timeOffered, results[0].jobId, results[0].managerId, null]];
-                    return Promise.all([query.queryOnly(results.connection, 'UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.lunchStart, req.body.lunchStart, employeeId, results[0].timeIn]), query.queryOnly(results.connection, 'INSERT INTO time_table VALUES ?', [queryValues])]);
+                    queryValues = [[employeeId, req.body.lunchEnd, req.body.time, req.body.lunchEnd, req.body.timeOffered, results.data[0].jobId, results.data[0].managerId, null]];
+                    return Promise.all([query.queryOnly(results.connection, 'UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.lunchStart, req.body.lunchStart, employeeId, results.data[0].timeIn]), query.queryOnly(results.connection, 'INSERT INTO time_table VALUES ?', [queryValues])]);
                   }
                   //No lunch break
                   else {
-                    return query.queryOnly(results.connection, 'UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.time, req.body.timeOffered, employeeId, results[0].timeIn]);
+                    return query.queryOnly(results.connection, 'UPDATE time_table SET `Time Out` = ?, `Time Out Offered` = ? WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.time, req.body.timeOffered, employeeId, results.data[0].timeIn]);
                   }
                 }
               }

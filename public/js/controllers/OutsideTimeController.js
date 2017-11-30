@@ -75,8 +75,7 @@ $scope.hoursOffered = false;
           $scope.scan = null;
         }, 2000);
       }
-
-      else if ($scope.workingData.map(a => a.employeeId).indexOf($scope.scan) == -1) {
+      else if ($scope.workingData.map(a => a.employeeId.toUpperCase()).indexOf($scope.scan.toUpperCase()) === -1) {
         $scope.$broadcast('toggle');
         employeeService.LookupEmployee({employeeId: $scope.scan}, function(decodedData) {
           //error in employeeLookup
