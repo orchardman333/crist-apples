@@ -29,12 +29,21 @@ module.exports = {
             connection.release();
           }
           //Employee has no clock-in today
-          else if (results.length == 0) {
-            res.json({message:'Error! No previous clock-in records found', error:true});
-            connection.release();
+          else if (results.length === 0) {
+            var sqlValues = [req.body.employeeId, null, null, req.body.jobId, req.body.managerId, null];
+            var query = connection.query('INSERT INTO time_table VALUES (?, CURDATE(), NOW(), ?, ?, ?, ?, ?)', sqlValues, function (error, results, fields) {
+              if (error) {
+                console.log(error.message);
+                res.json({message:error.message, error:true});
+              }
+              else {
+                res.json({message:'Warning! No previous clock-in records found today', error:true});
+              }
+              connection.release();
+            });
           }
           //Employee has one time in
-          else if (results.length == 1) {
+          else if (results.length === 1) {
             //Correct case: employee's most recent time in today has no time out
             if (results[0].timeOut == null) {
               var query = connection.query('UPDATE time_table SET `Time Out` = NOW() WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.employeeId, results[0].timeIn], function (error, results, fields) {
@@ -51,7 +60,17 @@ module.exports = {
             }
             //Wrong case: employee's most recent time in today has time out already recorded
             else {
-              res.json({message:'Error! Your most recent record has been clocked out', error:true});
+              var query = connection.query('UPDATE time_table SET `Time Out` = NOW() WHERE `Employee ID`= ? AND `Time In`= ?', [req.body.employeeId, results[0].timeIn], function (error, results, fields) {
+                if (error) {
+                  console.log(error.message);
+                  res.json({message:error.message, error:true});
+                }
+                else {
+                  res.json({message:'Warning! Your most recent record has been clocked out', error:true});
+                }
+                connection.release();
+              });
+              console.log(query.sql);
             }
           }
           //Catch other cases
