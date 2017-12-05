@@ -21,46 +21,58 @@
           <button class="btn btn-lg btn-default" type="button" ng-click="selectShiftOptions()">Add</button>
         </span>
       </div>
-    </br>
-    <div class="alert alert-{{errorColor}} alert-dismissable" ng-if="error">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      <strong>{{errorMessage}}</strong>
+      <br>
+      <div class="alert alert-{{errorColor}} alert-dismissable" ng-if="error">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>{{errorMessage}}</strong>
+      </div>
+      <div ng-if="showEmployeeName">
+        <label>Employee Name:</label>
+        <input class="form-control input-lg" ng-model="employeeName">
+      </div>
+      <br>
+      <label>Shift Status:</label>
+      <br>
+      <div class="row">
+        <div class="col-sm-6">
+          <button type="button" class="btn btn-success btn-lg" ng-click="clockIn()">Clock In &nbsp;<span class="glyphicon glyphicon-play"></span></button>
+        </div>
+        <div class="col-sm-6" ng-if="!shiftStatus">
+          <button type="button" class="btn btn-danger btn-lg" ng-click="clockOut()">Clock Out &nbsp;<span class="glyphicon glyphicon-stop"></span></button>
+        </div>
+      </div>
+      <br>
+      <div ng-if="showClockInOptions">
+        <label>Job ID:</label>
+        <br>
+        <br>
+        <div class="row">
+          <div class="col-sm-6">
+            <button type="button" class="btn btn-primary btn-lg" ng-click="startPacking()">Start Packing &nbsp;<span class="glyphicon glyphicon-apple"></span></button>
+          </div>
+          <div class="col-sm-6">
+            <button type="button" class="btn btn-warning btn-lg" ng-click="startCleaning()">Start Cleaning &nbsp;<span class="glyphicon glyphicon-cog"></span></button>
+          </div>
+        </div>
+      </div>
+      <br>
+      <table class="table table-text-large table-align-left">
+        <thead>
+        <th>Day</th>
+        <th>Date</th>
+        <th>Employee ID</th>
+        <th>Hours Worked</th>
+        </thead>
+        <tbody>
+        <tr ng-repeat="shift in recentShifts">
+          <td>{{shift.day}}</td>
+          <td>{{shift.date | date:shortTime}}</td>
+          <td>{{shift.employeeId}}</td>
+          <td>{{shift.time}}</td>
+        </tr>
+        </tbody>
+      </table>
     </div>
-    <div ng-if="showEmployeeName">
-      <label>Employee Name:</label>
-      <input class="form-control input-lg" ng-model="employeeName">
-    </br>
-  </br>
-  <label>Shift Status:</label>
-</br>
-</br>
-<div class="row">
-  <div class="col-sm-6">
-    <button type="button" class="btn btn-success btn-lg" ng-click="clockIn()">Clock In &nbsp;<span class="glyphicon glyphicon-play"></span></button>
-  </div>
-  <div class="col-sm-6" ng-if="!shiftStatus">
-    <button type="button" class="btn btn-danger btn-lg" ng-click="clockOut()">Clock Out &nbsp;<span class="glyphicon glyphicon-stop"></span></button>
-  </div>
-</div>
-</br>
-</br>
-<div ng-if="showClockInOptions">
-  <label>Job ID:</label>
-</br>
-</br>
-<div class="row">
-  <div class="col-sm-6">
-    <button type="button" class="btn btn-primary btn-lg" ng-click="startPacking()">Start Packing &nbsp;<span class="glyphicon glyphicon-apple"></span></button>
-  </div>
-  <div class="col-sm-6">
-    <button type="button" class="btn btn-warning btn-lg" ng-click="startCleaning()">Start Cleaning &nbsp;<span class="glyphicon glyphicon-cog"></span></button>
-  </div>
-</div>
-<div class="row">
-  <div ng-repeat="n in [1,2,3]">
-  <div class="col-sm-6">
-  </div>
-  <div class="col-sm-6">
-  </div>
+    <div class="col-sm-3"></div>
   </div>
 </div>

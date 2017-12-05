@@ -31,10 +31,10 @@ angular.module('crist_farms')
       $timeout(function() {
         $scope.error = false;
         $scope.scan = null;
-      $scope.refocus();
+        $scope.refocus();
       }, 1000);
     }
-    else if ($scope.scan.length == 6) {
+    else if ($scope.scan.length === 6) {
       employeeService.LookupEmployee({employeeId: $scope.scan}, function(decodedData) {
         if (decodedData.length !== 1 || decodedData[0].error) {
           $scope.error = true;
@@ -48,8 +48,10 @@ angular.module('crist_farms')
         else {
           $scope.employeeName = decodedData[0].firstName + ' ' + decodedData[0].lastName;
           $scope.showEmployeeName = true;
-          $scope.recentShifts = decodedData.recentShifts;
         }
+      });
+      timeFormService.getTimeRecord({employeeId: $scope.scan}, function(decodedData) {
+          $scope.recentShifts = decodedData;
       });
     }
     else {
@@ -86,6 +88,7 @@ angular.module('crist_farms')
     $scope.shiftStatus = false;
     $scope.scan = null;
     $scope.refocus();
+    $scope.recentShifts = [];
   }
   $scope.modal = function (object, time) {
     object.error? soundFailure.play() : soundSuccess.play();

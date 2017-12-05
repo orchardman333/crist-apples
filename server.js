@@ -85,15 +85,19 @@ app.post('/api/storageTransfer', function(req,res) {
 // });
 //-------------------------------------------------------
 // Time Clock
-app.post('/api/outsideTime', function(req,res) {
-  outsideTimeManager.DoWork(req,res);
-});
-
 app.post('/api/getoutsidetime', function(req,res) {
   outsideTimeManager.SeeWork(req,res);
 });
 
-app.post('/api/timeForm', function(req,res) {
+app.post('/api/outsidetime', function(req,res) {
+  outsideTimeManager.DoWork(req,res);
+});
+
+app.get('/api/insidetime', function(req,res) {
+  timeFormManager.SeeWork(req,res);
+});
+
+app.post('/api/insidetime', function(req,res) {
   timeFormManager.DoWork(req,res);
 });
 
