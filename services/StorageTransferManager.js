@@ -50,17 +50,6 @@ module.exports = {
       res.json({message: error.data.name + ' ' + error.data.message, error: true})
       console.error(error.data);
     });
-
-    //Wrapper functions
-  //   function insertLoadHeading(results) {
-  //     return query.insert(results.connection, loadHeadingValues, 'load_heading_table')
-  //   }
-  //   function insertLoadBins(results) {
-  //     return query.insert(results.connection, loadBinValues, 'load_bins_table')
-  //   }
-  //   function updateBins(results) {
-  //     return query.update(results.connection, req.body.loadData.load.id, req.body.loadData.storage.id)
-  //   }
   }
 };
 

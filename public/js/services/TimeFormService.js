@@ -28,4 +28,9 @@ angular.module('crist_farms').service('TimeFormService', ['$http', function ($ht
       callback(response.data);
     });
   }
+  this.GetDailyTime = function(data, callback) {
+    $http.post("/api/dailytime", data).then(response => {
+      callback(response.data);
+    });
+  }
 }]);

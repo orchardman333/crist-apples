@@ -1,0 +1,43 @@
+<div class="container-fluid" style="padding-top: -60px;">
+  <div class="row">
+    <div class="col-sm-3">
+      <label for="Date">Date:</label>
+      <div class="input-group" id="date">
+        <input type="text" class="form-control"  uib-datepicker-popup="dd-MMMM-yyyy" ng-model="date" show-button-bar="false" is-open="popup.date" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats">
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default" ng-click="openDate('date')"><i class="glyphicon glyphicon-calendar"></i></button>
+        </span>
+      </div>
+      <div ng-repeat="department in departments track by $index">
+        <label>{{department.id}}</label>
+        <input type="checkbox" ng-model="department.selected">
+      </div>
+      <button class="btn btn-lg btn-primary" ng-click=submit()>Check</button>
+    </div>
+    <div class="col-sm-9" id="printArea">
+      <table class="table-condensed">
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Total</th>
+            <th>Shift 1</th>
+            <th>Shift 2</th>
+            <th>Shift 3</th>
+            <th>Shift 4</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(key,value) in timeData | groupBy: 'employeeId' track by $index">
+            <td>{{key.toLowerCase()}}</td>
+            <td>{{getHoursSum(value)}}</td>        
+            <td ng-repeat="record in value track by $index">
+              {{record.hours}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- <a href="javascript:window.print()">print</a> -->
+<a href="javascript:callPrint('printArea')">print</a>

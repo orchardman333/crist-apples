@@ -8,7 +8,6 @@ angular.module('crist_farms').service('OrchardRunService', ['$http', function($h
       callback(response.data);
     });
   };
-
   this.GetLoadReport = function(callback) {
     $http.get("/api/LoadReports/").then(response => {
       callback(response.data);
@@ -24,23 +23,19 @@ angular.module('crist_farms').service('OrchardRunService', ['$http', function($h
       callback(response.data);
     });
   };
-
   this.BinLookup = function(data, callback) {
     $http.get("/api/binlookup/", {params:{barcode: data.barcode}}).then(response => {
       callback(response.data);
     });
   };
-
   this.BinCheck = function(data, callback) {
     $http.get("/api/bincheck/", {params:{binId: data.binId}}).then(response => {
       callback(response.data);
     });
   };
-
   this.SetOrchRunData = function(data) {
     orchRunLoadData = data;
   };
-
   this.GetOrchRunData = function() {
     return orchRunLoadData;
   };

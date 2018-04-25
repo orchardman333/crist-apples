@@ -39,6 +39,10 @@ app.config(['$routeProvider', function ($routeProvider) {
     controller: 'OutsideTimeController',
     templateUrl: 'js/views/outside_time.html',
   })
+  .when('/daily_time', {
+    controller: 'DailyTimeReportController',
+    templateUrl: 'js/views/daily_time_report.html',
+  })
   .otherwise({ redirectTo: '/' });
 }]);
 

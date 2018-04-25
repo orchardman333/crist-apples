@@ -16,6 +16,7 @@ var loadSeqManager = require('./services/LoadSequenceIdManager');
 var timeFormManager = require('./services/TimeFormManager');
 var outsideTimeManager = require('./services/OutsideTimeManager');
 var replacementLabelManager = require('./services/ReplacementLabelManager');
+var timeReportManager = require('./services/TimeReportManager')
 // configuration =================
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
 app.use(morgan('dev'));                                         // log every request to the console
@@ -99,6 +100,10 @@ app.get('/api/insidetime', function(req,res) {
 
 app.post('/api/insidetime', function(req,res) {
   timeFormManager.DoWork(req,res);
+})
+
+app.post('/api/dailytime', function(req,res) {
+  timeReportManager.DailyTime(req,res);
 });
 
 // application -------------------------------------------------------------
