@@ -2,24 +2,34 @@
 
 angular.module('crist_farms')
 .controller('DailyTimeReportController', ['$scope','TimeFormService', function ($scope, timeFormService) {
-	var timeData = [];
-	$scope.date = new Date(Date.now() - 86400000);
-
-	$scope.departmentIds = ['PM','P1','P2','P3','PY'];
-	$scope.departments = [];
-	for (var i of $scope.departmentIds) {
-		$scope.departments.push({id: i, selected:false})
-	};
-
-	$scope.submit = function() {
-		timeFormService.GetDailyTime({date: $scope.date, departmentIds: $scope.departments.filter(a=>a.selected).map(b=>b.id)}, response => {
-			$scope.timeData = response.timeData;
-			console.log($scope.timeData);
-		});
-	};
-	  $scope.getHoursSum = function(items) {
-    return items.map(a=>a.hours).reduce((b,c)=>b+c,0).toFixed(3);
+	$scope.timeData = [];
+  $scope.date = new Date(Date.now() - 86400000);
+  var doc = new jsPDF();
+  doc.text('Daily Time Report: ' + moment($scope.date).format('YYYY-MM-DD'), 14, 16);
+  var res;
+  var departmentIds = ['PM','P1','P2','P3','PY','SH'];
+  $scope.departments = [];
+  for (const i of departmentIds) {
+    $scope.departments.push({id: i, selected:false})
   };
+
+  $scope.generatePDF = function() {
+    timeFormService.GetDailyTime({date: $scope.date, departmentIds: $scope.departments.filter(a=>a.selected).map(b=>b.id)}, response => {
+      $scope.timeData = response.timeData;
+      //console.log($scope.timeData);
+    });
+  };
+    
+  // Sum all hours propery of object array
+ $scope.getHoursSum = items => items.map(a=>a.hours).reduce((b,c)=>b+c,0).toFixed(3);
+
+
+ $scope.downloadPDF = () => {
+  res = doc.autoTableHtmlToJson(document.getElementById("hours-table"));
+  doc.autoTable(res.columns, res.data, {startY: 20});
+  document.getElementById("print").data = doc.output('datauristring');
+  doc.save();
+ }
         //Datepickers
         $scope.dateOptions = {
         	maxDate: new Date($scope.date.getFullYear()+1, 11, 31),
