@@ -20,6 +20,7 @@
       <table class="table-condensed" id="hours-table">
         <thead>
           <tr>
+            <th>Department ID</th>
             <th>Employee ID</th>
             <th>Total</th>
             <th>Shift 1</th>
@@ -29,13 +30,18 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="(key,value) in timeData | groupBy: 'employeeId' track by $index">
-            <td>{{key.toLowerCase()}}</td>
+          <tr ng-repeat-start="(deptId,records) in timeData | groupBy: 'departmentId' track by $index">
+            <td>{{deptId}}</td>
+          </tr>
+          <tr ng-repeat="(empId,value) in records | groupBy: 'employeeId' track by $index">
+            <td></td>
+            <td>{{empId.toLowerCase()}}</td>
             <td>{{getHoursSum(value)}}</td>        
             <td ng-repeat="record in value track by $index">
               {{record.hours}}
             </td>
           </tr>
+          <tr ng-repeat-end></tr>
         </tbody>
       </table>
     </div>
