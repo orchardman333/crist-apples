@@ -71,15 +71,14 @@ module.exports = {
 
   decodeBarcode : function(barcode, boolean) {
     var values = {
-      block: {id: barcode.substring(0, 3)},
-      variety: {id: barcode.substring(3, 5)},
-      strain: {id: barcode.substring(5, 7)},
-      bearing: {id: barcode.substring(7, 8)},
-      treatment: {id: barcode.substring(8, 9)},
-      pick: {id: barcode.substring(9, 10)},
-      job: {id: barcode.substring(10, 14)}
+      block: {id: barcode.substring(0,3)},
+      variety: {id: barcode.substring(3,5)},
+      strain: {id: barcode.substring(5,7)},
+      treatment: {id: barcode.substring(7,8)},
+      pick: {id: barcode.substring(8,9)},
+      job: {id: barcode.substring(9,13)}
     };
-    if (boolean) values.bin = {id: barcode.substring(14, 19)};
+    if (boolean) values.bin = {id: barcode.substring(13,18)};
     return values;
   },
 

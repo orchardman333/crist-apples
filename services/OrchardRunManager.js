@@ -70,7 +70,6 @@ function insertIntoBinArray(binValues, barcodeProperties, binData, loadId) {
     barcodeProperties.block.id,
     barcodeProperties.variety.id,
     barcodeProperties.strain.id,
-    barcodeProperties.bearing.id ,
     barcodeProperties.treatment.id,
     barcodeProperties.pick.id,
     barcodeProperties.job.id,

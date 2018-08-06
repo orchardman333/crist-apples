@@ -52,9 +52,9 @@
   </br>
   <div class="row">
     <div class="col-sm-4">
-      <label for="repBearing">Replacement Bearing:</label>
+      <!-- <label for="repBearing">Replacement Bearing:</label>
       <select class="form-control" ng-model="$parent.repBearing" ng-options="bearing.name for bearing in repList.bearing">
-      </select>
+      </select> -->
     </div>
     <div class="col-sm-4">
       <label for="repTreatment">Replacement Treatment:</label>
@@ -164,7 +164,6 @@
             <h4><span class="label label-success">{{bin.block.name}}</span></h4>
             <h4><span class="label label-danger">{{bin.variety.name}}</span></h4>
             <h4><span class="label label-warning">{{bin.strain.name}}</span></h4>
-            <h4><span class="label label-violet">{{bin.bearing.name}}</span></h4>
             <h4><span class="label label-blue">{{bin.treatment.name}}</span></h4>
             <h4><span class="label label-red">{{bin.pick.name}}</span></h4>
             <h4><span class="label label-indigo">{{bin.job.name}}</span></h4>

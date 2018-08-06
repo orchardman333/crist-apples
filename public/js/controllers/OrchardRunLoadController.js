@@ -35,7 +35,7 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     if ($scope.scan === null) alertError({message: 'No Barcode Entered!'});
 
     //scanned barcode is a bin's barcode
-    else if ($scope.scan.length === 19) {
+    else if ($scope.scan.length === 18) {
       $scope.$broadcast('toggle');
       //check if Bin ID has been entered in db already
       orchardRunService.BinCheck({binId: $scope.scan.slice(-5)}, function(decodedData) {
@@ -64,7 +64,6 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
                   block: decodedData.block,
                   variety: decodedData.variety,
                   strain: decodedData.strain,
-                  bearing: decodedData.bearing,
                   treatment: decodedData.treatment,
                   pick: decodedData.pick,
                   job: decodedData.job,
@@ -192,7 +191,6 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
         data.bvs.sort((a,b)=> a.blockName.localeCompare(b.blockName));
         $scope.repList = data;
         $scope.repBvs = $scope.repList.bvs[0];
-        $scope.repBearing = $scope.repList.bearing[0];
         $scope.repTreatment = $scope.repList.treatment[0];
         $scope.repPick = $scope.repList.pick[0];
         $scope.repJob = $scope.repList.job[0];
@@ -215,7 +213,6 @@ function ($scope, $location, $timeout, $uibModal, orchardRunService, employeeSer
     $scope.scan = $scope.repBvs.blockId.concat(
       $scope.repBvs.varietyId,
       $scope.repBvs.strainId,
-      $scope.repBearing.id,
       $scope.repTreatment.id,
       $scope.repPick.id,
       $scope.repJob.id);
