@@ -1,4 +1,5 @@
 // Some reusable code for connecting and querying the database
+const fs = require("fs");
 
 module.exports = {
   standardStack: function (db, res, queryString, queryValues) {
@@ -17,13 +18,14 @@ module.exports = {
   },
   connectOnly: connect,
   queryOnly: queryDb,
+  writeFile: writeSql,
 
   insert: function (dbConnection, values, tableName) {
     if (values.length > 0) {
       return queryDb(dbConnection, 'INSERT INTO ' + tableName + ' VALUES ?', [values]);
     }
     else {
-      return Promise.resolve({connection: dbConnection});
+      return Promise.resolve({connection: dbConnection, sql:''});
     }
   },
 
@@ -38,6 +40,7 @@ module.exports = {
   }
 };
 
+//Promisify async functions
 function connect(database) {
   return new Promise (function(resolve, reject) {
     database.getConnection(function(error, dbConnection) {
@@ -50,9 +53,18 @@ function connect(database) {
 function queryDb(dbConnection, queryString, queryValues) {
   return new Promise (function (resolve, reject) {
     var query = dbConnection.query(queryString, queryValues, function(error, results, fields) {
-      if (error) reject({connection: dbConnection, data: error});
-      else resolve({connection: dbConnection, data: results});
+      if (error) reject({connection: dbConnection, data: error, sql: query.sql});
+      else resolve({connection: dbConnection, data: results, sql: query.sql});
     });
     console.log(query.sql);
+  });
+}
+
+function writeSql(file, data, options) {
+  return new Promise (function (resolve, reject) {
+    fs.writeFile(file, data, options, function(error) {
+      if (error) reject(error);
+      else resolve({});
+    });
   });
 }

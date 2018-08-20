@@ -18,7 +18,8 @@ module.exports = {
     var bushelValues = [];
     var loadBinValues = [];
     var loadHeadingValues = [];
-
+    var log = '';
+    var responseObject = {};
     //load_heading_table INSERT
     insertIntoLoadHeadingArray(loadHeadingValues, req.body.loadData);
 
@@ -42,23 +43,46 @@ module.exports = {
       return query.insert(results.connection, loadHeadingValues, 'load_heading_table');
     })
     .then(results => {
-      return query.insert(results.connection, binValues, 'bin_table')
+      log += results.sql + "\n";
+      return query.insert(results.connection, binValues, 'bin_table');
     })
     .then(results => {
-      return query.insert(results.connection, loadBinValues, 'load_bins_table')
+      log += results.sql + "\n";
+      return query.insert(results.connection, loadBinValues, 'load_bins_table');
     })
     .then(results => {
-      return query.insert(results.connection, bushelValues, 'bushels_picker_table')
+      log += results.sql + "\n";
+      return query.insert(results.connection, bushelValues, 'bushels_picker_table');
     })
     .then(results => {
+      if (results.sql !== '') log += results.sql + "\n";
       results.connection.release();
-      res.json({message: 'Hooray! Load entered successfully', error: false})
-      console.log('END OF LOAD ' + loadHeadingValues[0][1])
+      responseObject.dbInsert = {message: 'Load inserted to database successfully', error: false};
+      return {};
     })
     .catch(error => {
       if (!error.getConnectionError) error.connection.release();
-      res.json({message: error.data.name + ' ' + error.data.message, error: true});
+      log += "\n" + error.data.name + "\n" + error.data.message;
+      responseObject.dbInsert = {message: error.data.name + ' ' + error.data.message, error: true};
       console.error(error.data);
+      return {};
+    })
+    .then(results => {
+      log += JSON.stringify(req.body);
+      return query.writeFile(__dirname + '/../logs/' + req.body.loadData.load.id + '.txt', log, {encoding: 'utf8', flag: 'a'});
+    })
+    .then(results => {
+      responseObject.writeLog = {message: 'Log written successfully', error: false};
+      return {};
+    })
+    .catch(error => {
+      responseObject.writeLog = {message: error.name + ' ' + error.message, error: true};
+      console.error(error);
+      return {};
+    })
+    .finally(results => {
+      res.json(responseObject);
+      console.log('END OF LOAD ' + loadHeadingValues[0][1]);
     });
   }
 };

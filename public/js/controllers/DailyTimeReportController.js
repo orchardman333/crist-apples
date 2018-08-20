@@ -6,7 +6,7 @@ angular.module('crist_farms')
   $scope.date = new Date(Date.now() - 86400000);
   var doc = new jsPDF();
   var res;
-  var departmentIds = ['PM','P1','P2','P3','PY','SH'];
+  var departmentIds = ['PM','P1','P2','P3','PY','M'];
   $scope.departments = [];
   for (const i of departmentIds) {
     $scope.departments.push({id: i, selected:false})

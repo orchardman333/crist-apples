@@ -169,7 +169,7 @@
             <h4><span class="label label-indigo">{{bin.job.name}}</span></h4>
             <h4><span class="label label-orange">{{bin.storage.name}}</span></h4>
             <h4><span class="label label-deeppink">{{bin.pickDate | date : 'shortDate'}}</span></h4>
-            <h4><span class="label label-green">{{bin.boxesCount}}</span></h4></br>
+            <h4><span class="label label-green">{{bin.bushels}}</span></h4></br>
             <h4><span class="label label-default">{{bin.binComments}}</span></h4>
             <h4><span class="label label-black" ng-click="removePicker($parent.$index, $index)" ng-repeat="empId in bin.pickerIds track by $index">{{empId}}</span></h4>
             <div class="" ng-if="showBoolean">
