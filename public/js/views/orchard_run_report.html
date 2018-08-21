@@ -4,19 +4,18 @@
       <td style="font-size: 12pt;"><strong>Orchard Run Load</strong></td>
     </tr>
   </table>
-  <table class="table-condensed borderless" align="center">
+  <table class="table-condensed borderless" align="center" id="header-table">
     <tr>
-      <td><strong>Load ID: </strong>{{load.loadData.load.id}}</td>
-      <td><strong>Truck Driver: </strong>{{load.loadData.truckDriver.name}}</td>
-      <td><strong>Truck ID: </strong>{{load.loadData.truck.name}}</td>
+      <td>Load ID: {{load.loadData.load.id}}</td>
+      <td>Truck Driver: {{load.loadData.truckDriver.name}}</td>
+      <td>Truck ID: {{load.loadData.truck.name}}</td>
     </tr>
     <tr>
-      <td><strong>Arrival Date: </strong>{{load.loadData.loadDateTime | date:'medium'}}</td>
-      <td><strong>Comments: </strong>{{load.loadData.loadComments}}</td>
+      <td>Arrival Date: {{load.loadData.loadDateTime | date:'medium'}}</td>
+      <td>Comments: {{load.loadData.loadComments}}</td>
     </tr>
   </table>
-  <table class="table-condensed" align="center">
-    <thead>
+  <table class="table-condensed" align="center" id="bins-table">
       <tr>
         <th>Bin ID</th>
         <th>Block</th>
@@ -31,8 +30,6 @@
         <!-- <th>Comments</th> -->
         <th>Pickers</th>
       </tr>
-    </thead>
-    <tbody >
       <tr ng-repeat-start="(keys,bins) in load.binData | groupBy: '[block.id,variety.id,strain.id]' track by $index">
       </tr>
       <tr ng-repeat="bin in bins track by $index">
@@ -49,6 +46,7 @@
         <!-- <td>{{bin.binComments}}</td> -->
         <td>{{bin.pickerIds.join(', ')}}</td>
       </tr>
+      <tr></tr>
       <tr ng-repeat-end>
         <td class="tdTopBorder" colspan="3"><strong>Bins: {{bins.length}}</strong></td>
         <td class="tdTopBorder" colspan="10"><strong>Bushels: {{getBushelSum(bins)}}</strong></td>
@@ -58,11 +56,11 @@
         <td class="tdTopBorder" colspan="3"><strong>Load Bins: {{load.binData.length}}</strong></td>
         <td class="tdTopBorder" colspan="9"><strong>Load Bushels: {{getBushelSum(load.binData)}}</strong></td>
       </tr>
-    </tbody>
   </table>
 </div>
 <br>
 <p>Submitted: {{timeSubmitted | date:'short'}}</p>
 <br>
-<a href="javascript:window.print()">print</a>
+<button class="btn btn-lg btn-primary" ng-click="downloadPDF()">Download</button>
+<object id="print" style="display: none;"></object>
 <!-- <a href="javascript:callPrint('printArea')">print</a> -->
