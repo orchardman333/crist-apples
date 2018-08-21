@@ -69,6 +69,7 @@ module.exports = {
     })
   },
 
+  //Parse a bin's barcode into object of properties
   decodeBarcode : function(barcode, boolean) {
     var values = {
       block: {id: barcode.substring(0,3)},

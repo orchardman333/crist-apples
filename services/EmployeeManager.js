@@ -1,4 +1,4 @@
-// Retrieve employees
+// Retrieve list of all employees/managers or individual
 // ========
 const db = require("./DatabaseManager");
 const query = require("./QueryManager")

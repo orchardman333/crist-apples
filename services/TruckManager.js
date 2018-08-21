@@ -1,4 +1,4 @@
-// Retrieve Trucks and Truck Drivers
+// Retrieve list of trucks or truck drivers
 // ========
 const db = require("./DatabaseManager");
 const query = require("./QueryManager")

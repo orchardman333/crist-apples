@@ -64,7 +64,7 @@ function writeSql(file, data, options) {
   return new Promise (function (resolve, reject) {
     fs.writeFile(file, data, options, function(error) {
       if (error) reject(error);
-      else resolve({});
+      else resolve(null);
     });
   });
 }

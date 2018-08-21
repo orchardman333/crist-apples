@@ -1,4 +1,4 @@
-// Retrieve storage rooms
+// Retrieve list of storage rooms
 // ========
 const db = require("./DatabaseManager");
 const query = require("./QueryManager")

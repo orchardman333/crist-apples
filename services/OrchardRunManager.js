@@ -1,4 +1,9 @@
-// OrchardRunManager.js
+//Submit load of orchard run bins to database
+//Take JSON list of barcode scans and accompanying data (e.g., storage, truck driver, pickers, etc.)
+
+//req.body.loadData = object of load heading information
+//req.body.binData = object array of bin and picker (employee) barcodes
+
 // [bbb][vv][ss][n][t][p][jjjj][binid]
 // h01 mc ld b u 1 p100 10000
 // h01mcldbu1p10010000
@@ -7,38 +12,46 @@ const db = require("./DatabaseManager");
 const query = require("./QueryManager")
 const decode = require("./LookupManager");
 
-//Take entire list of barcode scans (including form data like storage, truck driver, etc.) from Angular
-//Then sort and INSERT them into db
-//req.body.loadData = object of load heading information
-//req.body.binData = object array of bin and employee (picker) barcode
+
 module.exports = {
   LoadBins: function (req,res) {
+    //Helper variables to convert request object to usable form for INSERT functions
     var barcodeProperties = {};
     var binValues = [];
     var bushelValues = [];
     var loadBinValues = [];
     var loadHeadingValues = [];
+    //String to be written to log
     var log = '';
+    //Object response to API call
     var responseObject = {};
-    //load_heading_table INSERT
+
+    //Create data structure for load_heading_table INSERT
     insertIntoLoadHeadingArray(loadHeadingValues, req.body.loadData);
 
     //Iterate through list of bins
     for (var i=0; i < req.body.binData.length; i++) {
+      //Parse bin barcode
       barcodeProperties = decode.decodeBarcode(req.body.binData[i].barcode, true);
 
-      //bin_table & load_table INSERTs
+      //Create data structure for bin_table & load_table INSERTs
       insertIntoBinArray(binValues, barcodeProperties, req.body.binData[i], req.body.loadData.load.id);
       insertIntoLoadArray(loadBinValues, barcodeProperties.bin.id, req.body.binData[i].storage.id, req.body.loadData.load.id);
 
-      //Pickers
-      for (var j=0; j < req.body.binData[i].pickerIds.length; j++) {
-        if (req.body.binData[i].pickerIds[j] === null) continue;
-        insertIntoBoxesArray(bushelValues, req.body.binData[i].pickerIds[j], barcodeProperties.bin.id)
+      //Iterate through one bin's pickers (if any)
+      if (req.body.binData[i].pickerIds.length > 0) {
+        for (var j=0; j < req.body.binData[i].pickerIds.length; j++) {
+
+          //Create data structure for bushels_picker_table INSERT
+          insertIntoBoxesArray(bushelValues, req.body.binData[i].pickerIds[j], barcodeProperties.bin.id);
+        }
       }
     }
 
+    //Promise chain of INSERTing to database, writing logs, and responding to request 
+    //Obtain database connection from pool
     query.connectOnly(db)
+    //INSERT to tables
     .then(results => {
       return query.insert(results.connection, loadHeadingValues, 'load_heading_table');
     })
@@ -58,14 +71,15 @@ module.exports = {
       if (results.sql !== '') log += results.sql + "\n";
       results.connection.release();
       responseObject.dbInsert = {message: 'Load inserted to database successfully', error: false};
-      return {};
+      return null;
     })
+    //Catch any errors from INSERTing
     .catch(error => {
       if (!error.getConnectionError) error.connection.release();
       log += "\n" + error.data.name + "\n" + error.data.message;
       responseObject.dbInsert = {message: error.data.name + ' ' + error.data.message, error: true};
       console.error(error.data);
-      return {};
+      return null;
     })
     .then(results => {
       log += JSON.stringify(req.body);
@@ -73,21 +87,21 @@ module.exports = {
     })
     .then(results => {
       responseObject.writeLog = {message: 'Log written successfully', error: false};
-      return {};
+      return null;
     })
     .catch(error => {
       responseObject.writeLog = {message: error.name + ' ' + error.message, error: true};
       console.error(error);
-      return {};
+      return null;
     })
-    .finally(results => {
+    .then(results => {
       res.json(responseObject);
       console.log('END OF LOAD ' + loadHeadingValues[0][1]);
     });
   }
 };
 
-//Create arrays for INSERT statements
+//Create data structures for INSERT statements
 function insertIntoBinArray(binValues, barcodeProperties, binData, loadId) {
   binValues.push([
     barcodeProperties.bin.id,

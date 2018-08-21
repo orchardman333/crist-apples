@@ -4,7 +4,7 @@ angular.module('crist_farms')
 .controller('DailyTimeReportController', ['$scope','TimeFormService', function ($scope, timeFormService) {
 	$scope.timeData = [];
   $scope.date = new Date(Date.now() - 86400000);
-  var doc = new jsPDF();
+  var doc;
   var res;
   var departmentIds = ['PM','P1','P2','P3','PY','M'];
   $scope.departments = [];
@@ -13,10 +13,11 @@ angular.module('crist_farms')
   };
 
   $scope.generatePDF = function() {
+    doc = new jsPDF();
     timeFormService.GetDailyTime({date: $scope.date, departmentIds: $scope.departments.filter(a=>a.selected).map(b=>b.id)}, response => {
       $scope.timeData = response.timeData;
       //Set date on PDF same as query to db
-      doc.text('Daily Time Report: ' + moment($scope.date).format('YYYY-MM-DD'), 14, 16);
+      doc.text('Daily Time Report: ' + moment($scope.date).format('dddd YYYY-MM-DD'), 14, 16);
     });
   };
     

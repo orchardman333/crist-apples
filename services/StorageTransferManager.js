@@ -1,11 +1,10 @@
-// StorageTransferManager.js
+//Submit load of storage transfer bins to database
 
 const db = require("./DatabaseManager");
 const query = require("./QueryManager")
 const decode = require("./LookupManager");
 
-//Take entire list of barcode scans (including form data like storage, truck driver, etc.) from Angular
-//Then sort and INSERT them into db
+//Take JSON list of barcode scans and accompanying data (e.g., storage, truck driver, pickers, etc.)
 //req.body.loadData = object of load information
 //req.body.binData = object array of BinIDs and destination storage/buyer/pack house
 module.exports = {
